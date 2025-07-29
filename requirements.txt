@@ -1,0 +1,24 @@
+# Core scientific computing
+numpy>=1.24.0
+pandas>=2.0.0
+scipy>=1.10.0
+
+# Machine Learning and FL
+tensorflow>=2.15.0
+scikit-learn>=1.3.0
+flwr>=1.6.0
+
+# Signal processing (optional, for better HRV analysis)
+# neurokit2>=0.2.0
+
+# Visualization
+matplotlib>=3.7.0
+seaborn>=0.12.0
+
+# Utilities
+tqdm>=4.65.0
+jupyter>=1.0.0
+ipython>=8.0.0
+
+# For LaTeX document processing
+# pylatex>=1.4.0
