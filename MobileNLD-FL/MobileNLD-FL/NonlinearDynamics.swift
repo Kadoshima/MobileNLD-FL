@@ -100,22 +100,23 @@ struct NonlinearDynamics {
     private static func findNearestNeighbor(_ embeddings: [[Q15]], 
                                           targetIndex: Int, 
                                           minSeparation: Int) -> Int? {
-        let target = embeddings[targetIndex]
-        var minDistance: Float = Float.infinity
-        var nearestIndex: Int?
+        guard !embeddings.isEmpty else { return nil }
         
-        for i in 0..<embeddings.count {
-            // Skip points too close in time
-            if abs(i - targetIndex) < minSeparation { continue }
+        // Convert to contiguous memory layout for SIMD
+        let embeddingDim = embeddings[0].count
+        let flatEmbeddings = embeddings.flatMap { $0 }
+        
+        return flatEmbeddings.withUnsafeBufferPointer { flatPtr in
+            let neighbors = SIMDOptimizations.findNearestNeighborsSIMD(
+                phaseSpace: flatPtr.baseAddress!,
+                dimensions: (points: embeddings.count, embedding: embeddingDim),
+                pointIndex: targetIndex,
+                temporalWindow: minSeparation
+            )
             
-            let distance = euclideanDistance(target, embeddings[i])
-            if distance < minDistance {
-                minDistance = distance
-                nearestIndex = i
-            }
+            // Return the nearest neighbor (first in sorted list)
+            return neighbors.first?.index
         }
-        
-        return nearestIndex
     }
     
     // MARK: - Distance Calculation
@@ -123,13 +124,17 @@ struct NonlinearDynamics {
     private static func euclideanDistance(_ a: [Q15], _ b: [Q15]) -> Float {
         guard a.count == b.count else { return Float.infinity }
         
-        var sumSquares: Float = 0.0
-        for i in 0..<a.count {
-            let diff = FixedPointMath.q15ToFloat(FixedPointMath.subtract(a[i], b[i]))
-            sumSquares += diff * diff
+        // Use SIMD-optimized version for better performance
+        return a.withUnsafeBufferPointer { aPtr in
+            b.withUnsafeBufferPointer { bPtr in
+                let q15Distance = SIMDOptimizations.euclideanDistanceSIMD(
+                    aPtr.baseAddress!,
+                    bPtr.baseAddress!,
+                    dimension: a.count
+                )
+                return FixedPointMath.q15ToFloat(q15Distance)
+            }
         }
-        
-        return sqrt(sumSquares)
     }
     
     // MARK: - Linear Regression for Slope
@@ -172,15 +177,12 @@ struct NonlinearDynamics {
         
         guard timeSeries.count >= maxBoxSize * 2 else { return 0.0 }
         
-        // Convert to cumulative sum (integration)
-        let floatSeries = timeSeries.map { FixedPointMath.q15ToFloat($0) }
-        let mean = floatSeries.reduce(0.0, +) / Float(floatSeries.count)
-        let centeredSeries = floatSeries.map { $0 - mean }
+        // Convert to cumulative sum using SIMD
+        let mean = timeSeries.reduce(Q15(0), &+) / Q15(timeSeries.count)
+        let cumulativeSumInt32 = SIMDOptimizations.cumulativeSumSIMD(timeSeries, mean: mean)
         
-        var cumulativeSum: [Float] = [0.0]
-        for value in centeredSeries {
-            cumulativeSum.append(cumulativeSum.last! + value)
-        }
+        // Convert to Float for DFA calculations
+        let cumulativeSum = cumulativeSumInt32.map { Float($0) / Float(1 << 15) }
         
         var boxSizes: [Int] = []
         var fluctuations: [Float] = []
@@ -214,59 +216,30 @@ struct NonlinearDynamics {
             let endIndex = min(startIndex + boxSize, cumulativeSum.count)
             
             let boxData = Array(cumulativeSum[startIndex..<endIndex])
-            let trend = linearTrend(boxData)
             
-            var sumSquaredResiduals: Float = 0.0
-            for (j, value) in boxData.enumerated() {
-                let trendValue = trend.slope * Float(j) + trend.intercept
-                let residual = value - trendValue
-                sumSquaredResiduals += residual * residual
-            }
+            // Use SIMD-optimized detrending for each box
+            let boxDataInt32 = boxData.map { Int32($0 * Float(1 << 15)) }
+            let rms = SIMDOptimizations.detrendBoxSIMD(boxDataInt32[...])
             
-            totalFluctuation += sumSquaredResiduals
+            totalFluctuation += rms * rms * Float(boxSize)
         }
         
         return sqrt(totalFluctuation / Float(numBoxes * boxSize))
     }
     
     private static func linearTrend(_ data: [Float]) -> (slope: Float, intercept: Float) {
-        let n = Float(data.count)
-        guard n > 1 else { return (0.0, data.first ?? 0.0) }
+        guard !data.isEmpty else { return (0.0, 0.0) }
         
-        var sumX: Float = 0.0
-        var sumY: Float = 0.0
-        var sumXY: Float = 0.0
-        var sumX2: Float = 0.0
-        
-        for (i, y) in data.enumerated() {
-            let x = Float(i)
-            sumX += x
-            sumY += y
-            sumXY += x * y
-            sumX2 += x * x
-        }
-        
-        let denominator = n * sumX2 - sumX * sumX
-        guard abs(denominator) > 1e-10 else { return (0.0, sumY / n) }
-        
-        let slope = (n * sumXY - sumX * sumY) / denominator
-        let intercept = (sumY - slope * sumX) / n
-        
-        return (slope, intercept)
+        // Use SIMD-optimized linear regression
+        let x = Array(0..<data.count).map { Float($0) }
+        return SIMDOptimizations.linearRegressionSIMD(x: x, y: data)
     }
     
     private static func calculateSlope(_ yValues: [Float], _ xValues: [Float]) -> Float {
         guard yValues.count == xValues.count && yValues.count > 1 else { return 0.0 }
         
-        let n = Float(yValues.count)
-        let sumX = xValues.reduce(0.0, +)
-        let sumY = yValues.reduce(0.0, +)
-        let sumXY = zip(xValues, yValues).reduce(0.0) { result, pair in result + pair.0 * pair.1 }
-        let sumX2 = xValues.reduce(0.0) { $0 + $1 * $1 }
-        
-        let denominator = n * sumX2 - sumX * sumX
-        guard abs(denominator) > 1e-10 else { return 0.0 }
-        
-        return (n * sumXY - sumX * sumY) / denominator
+        // Use SIMD-optimized linear regression
+        let (slope, _) = SIMDOptimizations.linearRegressionSIMD(x: xValues, y: yValues)
+        return slope
     }
 }
