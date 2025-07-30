@@ -60,7 +60,7 @@ Nonlinear dynamics analysis, Q15 fixed-point arithmetic, SIMD optimization, Nume
 
 近年，ウェアラブルデバイスの普及により，歩行パターンから健康状態を推定する研究が活発化している\cite{hausdorff2009}．特に非線形動力学（NLD）指標は，疲労や神経系疾患の早期発見において重要なバイオマーカーとして注目されている\cite{peng1995}．しかし，NLD計算の高い計算複雑性により，モバイル環境での実時間処理は困難であった．
 
-既存のNLD実装の課題として，(1)浮動小数点演算による高い電力消費，(2)メモリ帯域幅の制約，(3)数値的不安定性が挙げられる．特に，累積和計算やユークリッド距離計算において，固定小数点演算では数値オーバーフローが頻発し，実用的な実装が困難であった．Apple社の報告\cite{apple2021}では，iPhone上でのPython実装で5秒以上の処理時間を要し，リアルタイム処理は不可能とされていた．
+既存のNLD実装の課題として，(1)浮動小数点演算による高い電力消費，(2)メモリ帯域幅の制約，(3)数値的不安定性が挙げられる．特に，累積和計算やユークリッド距離計算において，固定小数点演算では数値オーバーフローが頻発し，実用的な実装が困難であった．___
 
 本研究では，これらの課題を解決する数値的に安定なQ15固定小数点SIMD実装を提案する．主な貢献は以下の通りである：
 
@@ -78,8 +78,8 @@ Nonlinear dynamics analysis, Q15 fixed-point arithmetic, SIMD optimization, Nume
 Lyapunov指数\cite{rosenstein1993}は時系列の予測可能性を定量化し，DFA（Detrended Fluctuation Analysis）\cite{peng1994}は長期相関を評価する．しかし，従来実装には以下の制約がある：
 
 \begin{itemize}
-\item \textbf{MATLAB/Python実装}：60ms以上の処理時間，電力効率が低い
-\item \textbf{CMSIS-DSP}\cite{arm2020}：汎用最適化のため60\%のSIMD利用率に留まる
+\item \textbf{MATLAB/Python実装}：___，電力効率が低い
+\item \textbf{CMSIS-DSP}\cite{arm2020}：汎用最適化のため___のSIMD利用率に留まる
 \item \textbf{固定小数点実装の欠如}：Q15での数値的不安定性への対処が不十分
 \end{itemize}
 
@@ -194,16 +194,7 @@ let totalSum = sum0 + sum1 + sum2 + sum3
 \end{lstlisting}
 
 \subsubsection{SIMD利用率の最大化}
-CMSIS-DSPの汎用パターンと比較し，NLD特化の最適化により100\%のSIMD利用率を達成：
-
-\begin{figure}[t]
-\centering
-\includegraphics[width=0.85\linewidth]{simd_utilization_comparison.pdf}
-\caption{SIMD利用率の比較：(a)CMSIS-DSP（60\%），(b)提案手法（100\%）}
-\label{fig:simd_util}
-\end{figure}
-
-図\ref{fig:simd_util}に示すように，CMSIS-DSPでは汎用的なメモリレイアウトのため部分的なベクトル化に留まるが，提案手法ではNLD特化のメモリ配置により完全なベクトル化を実現した．
+NLD特化のメモリレイアウトと4-way unrollingにより，SIMD命令の効率的な活用を実現した．
 
 \subsection{Lyapunov指数とDFAの最適化実装}
 
@@ -263,14 +254,9 @@ $N=150$時点，平均距離$\bar{d} \approx 0.1$において：
 \end{equation}
 
 ここで：
-\begin{itemize}
-\item $C_{\text{FP32}} = 4$サイクル（ARM Cortex-A15）
-\item $C_{\text{SIMD}} = 1$サイクル（NEON vmul）
-\item $\eta_{\text{mem}} = 0.9$（メモリ効率）
-\item $\eta_{\text{pipe}} = 0.75$（パイプライン効率）
-\end{itemize}
+___
 
-理論限界：$32 \times 0.9 \times 0.75 = 21.6$倍
+___
 
 \section{実験評価}
 
@@ -289,10 +275,10 @@ $N=150$時点，平均距離$\bar{d} \approx 0.1$において：
 メモリ & 6GB LPDDR4X \\
 OS & iOS 17.0 \\
 開発環境 & Xcode 15.0 \\
-データセット & MHEALTH\cite{banos2014} \\
-被験者数 & 10名 \\
+データセット & ___ \\
+被験者数 & ___ \\
 サンプリング周波数 & 50Hz \\
-センサチャンネル数 & 23 \\
+センサチャンネル数 & ___ \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -406,7 +392,7 @@ Q15変換精度 & - & - & $9.8 \times 10^{-6}$ \\
 \item 連合学習の実装が未完成（シミュレーション結果）
 \end{itemize}
 
-今後の展開として，(1)クロスプラットフォーム対応，(2)オンデバイス学習の実装，(3)臨床試験での有効性検証を計画している．
+今後の展開として，クロスプラットフォーム対応が挙げられる．
 
 \section{むすび}
 
@@ -415,7 +401,7 @@ Q15変換精度 & - & - & $9.8 \times 10^{-6}$ \\
 本手法は，モバイル環境でのリアルタイムNLD解析の実現可能性を示し，ウェアラブルヘルスケアデバイスへの応用が期待される．特に，Q15飽和問題の解決と数値的安定性の確保は，モバイル信号処理における固定小数点演算の実用性を大きく向上させる成果である．
 
 \section*{謝辞}
-本研究の一部は，JSPS科研費JP12345678の助成を受けたものである．
+___
 
 \begin{thebibliography}{99}
 \bibitem{hausdorff2009}
@@ -424,8 +410,6 @@ J. Hausdorff, ``Gait dynamics in Parkinson's disease: common and distinct behavi
 \bibitem{peng1995}
 C.K. Peng, et al., ``Quantification of scaling exponents and crossover phenomena in nonstationary heartbeat time series,'' \textit{Chaos}, vol.5, no.1, pp.82--87, 1995.
 
-\bibitem{apple2021}
-Apple Inc., ``Measuring Walking Quality Through iPhone Mobility Metrics,'' WWDC21, Session 10285, 2021.
 
 \bibitem{rosenstein1993}
 M.T. Rosenstein, J.J. Collins, and C.J. De Luca, ``A practical method for calculating largest Lyapunov exponents from small data sets,'' \textit{Physica D}, vol.65, pp.117--134, 1993.
@@ -442,8 +426,6 @@ B. McMahan, et al., ``Communication-efficient learning of deep networks from dec
 \bibitem{li2020}
 T. Li, et al., ``Federated optimization in heterogeneous networks,'' \textit{Proc. MLSys}, pp.429--450, 2020.
 
-\bibitem{banos2014}
-O. Banos, et al., ``mHealthDroid: A novel framework for agile development of mobile health applications,'' \textit{Proc. IWAAL} 2014, pp.91--98, 2014.
 \end{thebibliography}
 
 \end{document}
