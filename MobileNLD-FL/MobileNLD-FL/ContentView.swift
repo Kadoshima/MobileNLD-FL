@@ -11,7 +11,9 @@ struct ContentView: View {
     @State private var testResults: [TestResult] = []
     @State private var isRunningTests = false
     @State private var showResults = false
-    @StateObject private var benchmark = PerformanceBenchmark()
+    @State private var errorMessage: String = ""
+    @State private var showError = false
+    // @StateObject private var benchmark = PerformanceBenchmark()
     
     var body: some View {
         NavigationView {
@@ -28,7 +30,7 @@ struct ContentView: View {
                         .fontWeight(.bold)
                     
                     Text("Nonlinear Dynamics Analysis")
-                        .font(.subtitle)
+                        .font(.subheadline)
                         .foregroundColor(.secondary)
                 }
                 .padding()
@@ -52,9 +54,10 @@ struct ContentView: View {
                         .foregroundColor(.white)
                         .cornerRadius(10)
                     }
-                    .disabled(isRunningTests || benchmark.isRunning)
+                    .disabled(isRunningTests) // || benchmark.isRunning)
                     
                     // 5-Minute Benchmark for Instruments
+                    /*
                     Button(action: startBenchmark) {
                         HStack {
                             if benchmark.isRunning {
@@ -71,8 +74,10 @@ struct ContentView: View {
                         .foregroundColor(.white)
                         .cornerRadius(10)
                     }
-                    .disabled(isRunningTests || benchmark.isRunning)
+                    .disabled(isRunningTests) // || benchmark.isRunning)
+                    */
                     
+                    /*
                     if benchmark.isRunning {
                         Button(action: benchmark.stopBenchmark) {
                             HStack {
@@ -86,6 +91,7 @@ struct ContentView: View {
                             .cornerRadius(10)
                         }
                     }
+                    */
                     
                     if !testResults.isEmpty {
                         Button(action: { showResults.toggle() }) {
@@ -106,6 +112,7 @@ struct ContentView: View {
                 // Real-time Stats
                 VStack(spacing: 15) {
                     // Benchmark Progress
+                    /*
                     if benchmark.isRunning {
                         VStack(spacing: 10) {
                             Text("Instruments Benchmark Running")
@@ -130,6 +137,7 @@ struct ContentView: View {
                         .cornerRadius(10)
                         .padding(.horizontal)
                     }
+                    */
                     
                     // Test Results
                     if !testResults.isEmpty {
@@ -169,24 +177,45 @@ struct ContentView: View {
         .sheet(isPresented: $showResults) {
             TestResultsView(results: testResults)
         }
+        .alert("Error", isPresented: $showError) {
+            Button("OK") { }
+        } message: {
+            Text(errorMessage)
+        }
     }
     
     private func runTests() {
         isRunningTests = true
+        errorMessage = ""
         
         // Run tests on background thread
         DispatchQueue.global(qos: .userInitiated).async {
-            let results = NonlinearDynamicsTests.runAllTests()
-            
-            DispatchQueue.main.async {
-                self.testResults = results
-                self.isRunningTests = false
+            do {
+                let results = NonlinearDynamicsTests.runAllTests()
+                
+                DispatchQueue.main.async {
+                    self.testResults = results
+                    self.isRunningTests = false
+                    
+                    // Check for failed tests
+                    let failedTests = results.filter { !$0.passed }
+                    if !failedTests.isEmpty {
+                        self.errorMessage = "Failed tests:\n" + failedTests.map { $0.testName }.joined(separator: "\n")
+                        self.showError = true
+                    }
+                }
+            } catch {
+                DispatchQueue.main.async {
+                    self.errorMessage = "Error running tests: \(error.localizedDescription)"
+                    self.showError = true
+                    self.isRunningTests = false
+                }
             }
         }
     }
     
     private func startBenchmark() {
-        benchmark.startContinuousBenchmark()
+        // benchmark.startContinuousBenchmark()
     }
 }
 

@@ -217,13 +217,43 @@ struct NonlinearDynamics {
             
             let boxData = Array(cumulativeSum[startIndex..<endIndex])
             
-            // Use SIMD-optimized detrending for each box
-            let boxDataInt32 = boxData.map { Int32($0 * Float(1 << 15)) }
-            let rms = SIMDOptimizations.detrendBoxSIMD(boxDataInt32[...])
+            // Ensure we have valid data
+            guard boxData.count > 1 else { continue }
+            
+            // boxData is already in Float format - use direct SIMD linear regression
+            let x = Array(0..<boxData.count).map { Float($0) }
+            
+            // Check for any extreme values that might cause issues
+            let maxValue = boxData.max() ?? 0
+            let minValue = boxData.min() ?? 0
+            
+            // If values are too extreme, scale them down
+            var scaledBoxData = boxData
+            var scaleFactor: Float = 1.0
+            
+            if abs(maxValue) > 1e6 || abs(minValue) > 1e6 {
+                scaleFactor = 1e6 / max(abs(maxValue), abs(minValue))
+                scaledBoxData = boxData.map { $0 * scaleFactor }
+            }
+            
+            let (slope, intercept) = SIMDOptimizations.linearRegressionSIMD(x: x, y: scaledBoxData)
+            
+            // Calculate RMS of residuals
+            var rms: Float = 0.0
+            for j in 0..<scaledBoxData.count {
+                let fitted = slope * Float(j) + intercept
+                let residual = scaledBoxData[j] - fitted
+                rms += residual * residual
+            }
+            rms = sqrt(rms / Float(scaledBoxData.count))
+            
+            // Scale back if we scaled down
+            rms = rms / scaleFactor
             
             totalFluctuation += rms * rms * Float(boxSize)
         }
         
+        guard numBoxes > 0 else { return 0.0 }
         return sqrt(totalFluctuation / Float(numBoxes * boxSize))
     }
     

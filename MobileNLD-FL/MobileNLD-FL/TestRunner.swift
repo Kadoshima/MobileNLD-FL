@@ -7,6 +7,9 @@
 //
 
 import Foundation
+#if canImport(UIKit)
+import UIKit
+#endif
 
 class TestRunner {
     
@@ -24,6 +27,10 @@ class TestRunner {
             var output = "=== MobileNLD-FL Test Results ===\n"
             output += "Date: \(Date())\n"
             output += "Device: \(self.getDeviceInfo())\n\n"
+            
+            // Add error handling
+            var hasErrors = false
+            var errorMessages: [String] = []
             
             // Q15 Tests
             output += self.runQ15Tests()
@@ -334,8 +341,10 @@ class TestRunner {
     private func getDeviceInfo() -> String {
         #if targetEnvironment(simulator)
         return "iOS Simulator"
-        #else
+        #elseif canImport(UIKit)
         return UIDevice.current.model + " (" + UIDevice.current.systemVersion + ")"
+        #else
+        return "Unknown Device"
         #endif
     }
     
@@ -373,12 +382,4 @@ class TestRunner {
 }
 
 // MARK: - Test Result Structure
-
-struct TestResult {
-    let testName: String
-    let passed: Bool
-    let result: Float
-    let reference: Float
-    let rmse: Float
-    let executionTime: Double
-}
+// TestResult is defined in NonlinearDynamicsTests.swift
