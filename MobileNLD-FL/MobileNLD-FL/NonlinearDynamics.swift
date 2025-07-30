@@ -127,12 +127,12 @@ struct NonlinearDynamics {
         // Use SIMD-optimized version for better performance
         return a.withUnsafeBufferPointer { aPtr in
             b.withUnsafeBufferPointer { bPtr in
-                let q15Distance = SIMDOptimizations.euclideanDistanceSIMD(
+                // euclideanDistanceSIMD now returns Float directly
+                return SIMDOptimizations.euclideanDistanceSIMD(
                     aPtr.baseAddress!,
                     bPtr.baseAddress!,
                     dimension: a.count
                 )
-                return FixedPointMath.q15ToFloat(q15Distance)
             }
         }
     }

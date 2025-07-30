@@ -24,7 +24,8 @@ struct SIMDOptimizations {
     /// Uses ARM NEON intrinsics via Swift SIMD types
     /// Uses 64-bit accumulator to prevent overflow for high-dimensional vectors (up to 20 dimensions)
     /// Optimized with 4-way unrolling for better ILP (Instruction Level Parallelism)
-    static func euclideanDistanceSIMD(_ a: UnsafePointer<Q15>, _ b: UnsafePointer<Q15>, dimension: Int) -> Q15 {
+    /// Returns Float instead of Q15 to handle large distance values
+    static func euclideanDistanceSIMD(_ a: UnsafePointer<Q15>, _ b: UnsafePointer<Q15>, dimension: Int) -> Float {
         // Use 4 independent accumulators for better pipelining
         var sum0: Int64 = 0
         var sum1: Int64 = 0
@@ -137,8 +138,13 @@ struct SIMDOptimizations {
             i += 1
         }
         
-        // Convert back to Q15 (with square root approximation)
-        return Q15(sqrt(Double(sum)) / Double(1 << 15))
+        // Return as Float to handle large distance values properly
+        // The sum contains squared Q15 values (each Q15^2 can be up to 2^30)
+        // We need to scale back to unit values before taking sqrt
+        // Each squared difference is in range [0, (2^15)^2] = [0, 2^30]
+        let q15Scale = Float(1 << 15)
+        let scaledSum = Float(sum) / (q15Scale * q15Scale)
+        return sqrt(scaledSum)
     }
     
     // MARK: - Cumulative Sum
@@ -239,9 +245,9 @@ struct SIMDOptimizations {
         dimensions: (points: Int, embedding: Int),
         pointIndex: Int,
         temporalWindow: Int
-    ) -> [(index: Int, distance: Q15)] {
+    ) -> [(index: Int, distance: Float)] {
         
-        var neighbors: [(index: Int, distance: Q15)] = []
+        var neighbors: [(index: Int, distance: Float)] = []
         let targetPoint = phaseSpace.advanced(by: pointIndex * dimensions.embedding)
         
         // Process multiple points in parallel
