@@ -102,6 +102,68 @@ MobileNLD-FL/
 - **Paper target**: IEICE Transactions on Information and Systems
 - **Evaluation dataset**: MHEALTH (UCI Repository) - publicly available
 
+## Experiment Execution Rules
+
+### Log File Requirements
+When executing experiments from `/docs/最適化実験計画_IEICE85％採択目標.md`, create detailed log files for each TODO item:
+
+**Log file format**: `logs/YYYY-MM-DD_HH-MM_task-name.log`
+
+**Required log contents**:
+1. **Task Summary**: Brief description of the TODO item
+2. **Files Modified**: List all files edited with paths
+3. **Changes Made**: Detailed description of modifications
+4. **Conceptual Impact**: How this change affects the research narrative
+5. **Paper Impact**: Specific sections/claims in the paper affected
+6. **Quantitative Results**: Any measurements, benchmarks, or statistics
+7. **Issues Encountered**: Problems and their solutions
+8. **Next Steps**: What follows from this task
+
+**Example log structure**:
+```
+=== TASK LOG: P-1 CMSIS-DSP Differentiation ===
+Date: 2024-07-30 14:30
+Task ID: P-1
+Priority: CRITICAL (Research lifeline)
+
+FILES MODIFIED:
+- /MobileNLD-FL/MobileNLD-FL/PerformanceBenchmark.swift (added CMSIS comparison)
+- /MobileNLD-FL/MobileNLD-FL/CMSISComparison.swift (new file)
+
+CHANGES MADE:
+1. Implemented CMSIS-DSP baseline using standard arm_math.h APIs
+2. Added cycle-accurate timing using mach_absolute_time()
+3. Created side-by-side SIMD utilization measurement
+
+CONCEPTUAL IMPACT:
+- Proves our NLD-specific optimization outperforms generic DSP library
+- Establishes quantitative differentiation (95% vs 60% SIMD utilization)
+- Addresses reviewer concern: "Why not just use CMSIS-DSP?"
+
+PAPER IMPACT:
+- Section 2.2: Update CMSIS-DSP limitation discussion with measured data
+- Section 4.2: Add comparison table showing 1.5x performance advantage
+- Figure 3: Include SIMD utilization graph
+
+RESULTS:
+- CMSIS-DSP baseline: 75ms (SIMD util: 60%)
+- Our method: 50ms (SIMD util: 95%)
+- Performance gain: 1.5x
+- Statistical significance: p<0.001
+
+NEXT STEPS:
+- Assembly code analysis for detailed instruction comparison
+- Energy measurement using Instruments
+```
+
+### Execution Protocol
+1. **Read TODO carefully** from the experiment plan
+2. **Create log file** before starting any work
+3. **Update log continuously** as you work
+4. **Commit changes** with reference to log file
+5. **Update paper draft** based on results
+6. **Mark TODO complete** only after log is finalized
+
 ## Implementation Timeline
 
 Based on the project planning documents (`docs/実装TODO.md`):

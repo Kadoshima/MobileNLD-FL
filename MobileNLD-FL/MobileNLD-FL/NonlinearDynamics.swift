@@ -261,7 +261,7 @@ struct NonlinearDynamics {
         let n = Float(yValues.count)
         let sumX = xValues.reduce(0.0, +)
         let sumY = yValues.reduce(0.0, +)
-        let sumXY = zip(xValues, yValues).reduce(0.0) { $0 + $1.0 * $1.1 }
+        let sumXY = zip(xValues, yValues).reduce(0.0) { result, pair in result + pair.0 * pair.1 }
         let sumX2 = xValues.reduce(0.0) { $0 + $1 * $1 }
         
         let denominator = n * sumX2 - sumX * sumX

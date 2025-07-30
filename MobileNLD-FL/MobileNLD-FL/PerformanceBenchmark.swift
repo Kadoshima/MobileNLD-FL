@@ -4,6 +4,7 @@
 //
 //  Performance measurement and continuous benchmarking for Day 3 testing
 //  Includes Instruments Points of Interest and energy profiling support
+//  Enhanced with CMSIS-DSP comparison for P-1 differentiation (CRITICAL)
 //
 
 import Foundation
@@ -30,6 +31,12 @@ class PerformanceBenchmark: ObservableObject {
     
     private var processingTimes: [Double] = []
     private var benchmarkResults: [BenchmarkResult] = []
+    
+    // MARK: - CMSIS-DSP Comparison Properties
+    
+    @Published var cmsisComparison: CMSISComparisonResult?
+    @Published var simdUtilizationOurs: Double = 0.0
+    @Published var simdUtilizationCMSIS: Double = 0.0
     
     // MARK: - Benchmark Configuration
     
@@ -129,6 +136,72 @@ class PerformanceBenchmark: ObservableObject {
         DispatchQueue.main.async {
             self.finalizeBenchmark(duration: totalDuration)
         }
+    }
+    
+    // MARK: - CMSIS-DSP Comparison Methods
+    
+    func runCMSISComparison() {
+        print("🔍 Starting CMSIS-DSP comparison (P-1 Critical)...")
+        
+        // Generate standard test signal
+        let testSignal = generateRealtimeTestSignal(length: 150, samplingRate: 50, iteration: 0)
+        
+        // Run both implementations and compare
+        let comparison = performCMSISComparison(testSignal)
+        
+        DispatchQueue.main.async {
+            self.cmsisComparison = comparison
+            self.simdUtilizationOurs = comparison.ourMetrics.simdUtilization
+            self.simdUtilizationCMSIS = comparison.cmsisMetrics.simdUtilization
+            
+            print("\n📊 CMSIS-DSP Comparison Results:")
+            print("   Our SIMD Utilization: \(String(format: "%.1f", comparison.ourMetrics.simdUtilization))%")
+            print("   CMSIS SIMD Utilization: \(String(format: "%.1f", comparison.cmsisMetrics.simdUtilization))%")
+            print("   Performance Gain: \(String(format: "%.2f", comparison.performanceGain))x")
+            print("   Memory Efficiency Gain: \(String(format: "%.1f", comparison.memoryEfficiencyGain))%")
+        }
+    }
+    
+    private func performCMSISComparison(_ signal: [Q15]) -> CMSISComparisonResult {
+        // Call into C implementation via bridge
+        let q15Signal = signal.withUnsafeBufferPointer { buffer in
+            q15_vector_t(data: UnsafeMutablePointer(mutating: buffer.baseAddress), length: buffer.count)
+        }
+        
+        var lyeResult: Int16 = 0
+        var alphaResult: Int16 = 0
+        
+        // Measure CMSIS implementation
+        let cmsisLyE = cmsis_compute_lyapunov_q15(&q15Signal, 5, 4, &lyeResult)
+        let cmsisDFA = cmsis_compute_dfa_q15(&q15Signal, 4, 64, &alphaResult)
+        
+        // Measure our implementation
+        let ourLyE = nld_compute_lyapunov_q15(&q15Signal, 5, 4, &lyeResult)
+        let ourDFA = nld_compute_dfa_q15(&q15Signal, 4, 64, &alphaResult)
+        
+        // Aggregate metrics
+        let cmsisMetrics = ImplementationMetrics(
+            processingTime: cmsisLyE.processing_time_ms + cmsisDFA.processing_time_ms,
+            simdUtilization: (cmsisLyE.simd_utilization_percent + cmsisDFA.simd_utilization_percent) / 2.0,
+            memoryBandwidth: max(cmsisLyE.memory_bandwidth_gb_s, cmsisDFA.memory_bandwidth_gb_s),
+            totalInstructions: cmsisLyE.total_instructions + cmsisDFA.total_instructions,
+            simdInstructions: cmsisLyE.simd_instructions + cmsisDFA.simd_instructions
+        )
+        
+        let ourMetrics = ImplementationMetrics(
+            processingTime: ourLyE.processing_time_ms + ourDFA.processing_time_ms,
+            simdUtilization: (ourLyE.simd_utilization_percent + ourDFA.simd_utilization_percent) / 2.0,
+            memoryBandwidth: max(ourLyE.memory_bandwidth_gb_s, ourDFA.memory_bandwidth_gb_s),
+            totalInstructions: ourLyE.total_instructions + ourDFA.total_instructions,
+            simdInstructions: ourLyE.simd_instructions + ourDFA.simd_instructions
+        )
+        
+        return CMSISComparisonResult(
+            cmsisMetrics: cmsisMetrics,
+            ourMetrics: ourMetrics,
+            performanceGain: cmsisMetrics.processingTime / ourMetrics.processingTime,
+            memoryEfficiencyGain: (1.0 - ourMetrics.memoryBandwidth / cmsisMetrics.memoryBandwidth) * 100.0
+        )
     }
     
     // MARK: - Window Processing Measurement
@@ -301,6 +374,21 @@ class PerformanceBenchmark: ObservableObject {
 }
 
 // MARK: - Data Structures
+
+struct ImplementationMetrics {
+    let processingTime: Double      // milliseconds
+    let simdUtilization: Double     // percentage
+    let memoryBandwidth: Double     // GB/s
+    let totalInstructions: UInt64
+    let simdInstructions: UInt64
+}
+
+struct CMSISComparisonResult {
+    let cmsisMetrics: ImplementationMetrics
+    let ourMetrics: ImplementationMetrics
+    let performanceGain: Double     // our speed vs CMSIS
+    let memoryEfficiencyGain: Double // percentage improvement
+}
 
 struct BenchmarkResult {
     let iteration: Int
