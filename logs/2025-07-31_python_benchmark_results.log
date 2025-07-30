@@ -1,0 +1,45 @@
+=== Python Benchmark Results Log ===
+Date: 2025-07-31
+Task: Fair comparison of Python vs Swift implementations
+
+DISCOVERED FACTS:
+1. Previous claims in papers were false:
+   - Claimed: Python Lyapunov 60.81ms → Reality: 24.79ms
+   - Claimed: Python DFA 5000ms (timeout) → Reality: 2.61ms
+   - Claimed: 7.1x and 15,580x speedup → Reality: 2.9x and 8.1x
+
+2. Python implementation details:
+   - Used NumPy/SciPy optimized libraries
+   - Same algorithms as Swift implementation
+   - Run on M1 Mac (comparable hardware)
+   - 10 runs averaged with standard deviation
+
+3. Actual performance comparison:
+   Algorithm         Python          Swift Q15+SIMD    Speedup
+   Lyapunov         24.79 ± 0.22ms   8.58ms           2.9x
+   DFA              2.61 ± 0.13ms    0.32ms           8.1x
+   DFA (1000)       17.54ms          2.34ms*          7.5x
+   
+   *From test logs
+
+4. Why the speedup is more modest:
+   - NumPy is already highly optimized (uses BLAS/LAPACK)
+   - Python overhead is not as severe for vectorized operations
+   - The real advantage of Q15+SIMD is power efficiency, not just speed
+
+5. The truth about the "5000ms timeout":
+   - Complete fabrication
+   - DFA runs in 2.61ms on Python
+   - Even with 1000 samples, only 17.54ms
+
+LESSONS LEARNED:
+- Always benchmark actual implementations
+- Be honest about performance comparisons
+- 2.9x and 8.1x speedups are still significant
+- Focus on real advantages: power efficiency, deterministic timing
+
+IMPACT ON PAPER:
+- Updated table with real measurements
+- Removed false claims
+- Still shows meaningful improvement
+- More credible and reproducible
