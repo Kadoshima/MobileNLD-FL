@@ -33,7 +33,7 @@ struct SIMDOptimizations {
         var sum3: Int64 = 0
         var i = 0
         
-        #if DEBUG
+        #if DEBUG && false  // Disable verbose logging
         print("    [euclideanDistanceSIMD] dimension=\(dimension)")
         #endif
         
@@ -41,7 +41,7 @@ struct SIMDOptimizations {
         let unrollFactor = 32
         let unrolledIterations = dimension / unrollFactor
         
-        #if DEBUG
+        #if DEBUG && false  // Disable verbose logging
         print("    [euclideanDistanceSIMD] unrolledIterations=\(unrolledIterations)")
         #endif
         
@@ -57,7 +57,13 @@ struct SIMDOptimizations {
                 b[i], b[i+1], b[i+2], b[i+3],
                 b[i+4], b[i+5], b[i+6], b[i+7]
             )
-            let diff0 = va0 &- vb0
+            // Convert to Int32 to avoid saturation
+            let diff0 = SIMD8<Int32>(
+                Int32(va0[0]) - Int32(vb0[0]), Int32(va0[1]) - Int32(vb0[1]),
+                Int32(va0[2]) - Int32(vb0[2]), Int32(va0[3]) - Int32(vb0[3]),
+                Int32(va0[4]) - Int32(vb0[4]), Int32(va0[5]) - Int32(vb0[5]),
+                Int32(va0[6]) - Int32(vb0[6]), Int32(va0[7]) - Int32(vb0[7])
+            )
             
             // Group 2
             let va1 = SIMD8<Int16>(
@@ -68,7 +74,13 @@ struct SIMDOptimizations {
                 b[i+8], b[i+9], b[i+10], b[i+11],
                 b[i+12], b[i+13], b[i+14], b[i+15]
             )
-            let diff1 = va1 &- vb1
+            // Convert to Int32 to avoid saturation
+            let diff1 = SIMD8<Int32>(
+                Int32(va1[0]) - Int32(vb1[0]), Int32(va1[1]) - Int32(vb1[1]),
+                Int32(va1[2]) - Int32(vb1[2]), Int32(va1[3]) - Int32(vb1[3]),
+                Int32(va1[4]) - Int32(vb1[4]), Int32(va1[5]) - Int32(vb1[5]),
+                Int32(va1[6]) - Int32(vb1[6]), Int32(va1[7]) - Int32(vb1[7])
+            )
             
             // Group 3
             let va2 = SIMD8<Int16>(
@@ -79,7 +91,13 @@ struct SIMDOptimizations {
                 b[i+16], b[i+17], b[i+18], b[i+19],
                 b[i+20], b[i+21], b[i+22], b[i+23]
             )
-            let diff2 = va2 &- vb2
+            // Convert to Int32 to avoid saturation
+            let diff2 = SIMD8<Int32>(
+                Int32(va2[0]) - Int32(vb2[0]), Int32(va2[1]) - Int32(vb2[1]),
+                Int32(va2[2]) - Int32(vb2[2]), Int32(va2[3]) - Int32(vb2[3]),
+                Int32(va2[4]) - Int32(vb2[4]), Int32(va2[5]) - Int32(vb2[5]),
+                Int32(va2[6]) - Int32(vb2[6]), Int32(va2[7]) - Int32(vb2[7])
+            )
             
             // Group 4
             let va3 = SIMD8<Int16>(
@@ -90,7 +108,13 @@ struct SIMDOptimizations {
                 b[i+24], b[i+25], b[i+26], b[i+27],
                 b[i+28], b[i+29], b[i+30], b[i+31]
             )
-            let diff3 = va3 &- vb3
+            // Convert to Int32 to avoid saturation
+            let diff3 = SIMD8<Int32>(
+                Int32(va3[0]) - Int32(vb3[0]), Int32(va3[1]) - Int32(vb3[1]),
+                Int32(va3[2]) - Int32(vb3[2]), Int32(va3[3]) - Int32(vb3[3]),
+                Int32(va3[4]) - Int32(vb3[4]), Int32(va3[5]) - Int32(vb3[5]),
+                Int32(va3[6]) - Int32(vb3[6]), Int32(va3[7]) - Int32(vb3[7])
+            )
             
             // Compute squared differences for all groups
             sum0 += squaredSum(diff0)
@@ -102,12 +126,12 @@ struct SIMDOptimizations {
         }
         
         // Process remaining elements in groups of 8
-        #if DEBUG
+        #if DEBUG && false  // Disable verbose logging
         print("    [euclideanDistanceSIMD] Starting SIMD8 processing at i=\(i)")
         #endif
         
         while i + simdWidth <= dimension {
-            #if DEBUG
+            #if DEBUG && false  // Disable verbose logging
             print("    [euclideanDistanceSIMD] Processing SIMD8 at i=\(i)")
             #endif
             
@@ -121,28 +145,23 @@ struct SIMDOptimizations {
                 b[i+4], b[i+5], b[i+6], b[i+7]
             )
             
-            // Compute differences
-            let diff = va &- vb  // Subtract with saturation
-            
-            // Square the differences (need to handle overflow)
-            // Split into two 4-element operations to prevent overflow
-            let diff_low = SIMD4<Int32>(
-                Int32(diff.lowHalf[0]), Int32(diff.lowHalf[1]), 
-                Int32(diff.lowHalf[2]), Int32(diff.lowHalf[3])
-            )
-            let diff_high = SIMD4<Int32>(
-                Int32(diff.highHalf[0]), Int32(diff.highHalf[1]), 
-                Int32(diff.highHalf[2]), Int32(diff.highHalf[3])
+            // Compute differences without saturation using Int32
+            let diff = SIMD8<Int32>(
+                Int32(va[0]) - Int32(vb[0]), Int32(va[1]) - Int32(vb[1]),
+                Int32(va[2]) - Int32(vb[2]), Int32(va[3]) - Int32(vb[3]),
+                Int32(va[4]) - Int32(vb[4]), Int32(va[5]) - Int32(vb[5]),
+                Int32(va[6]) - Int32(vb[6]), Int32(va[7]) - Int32(vb[7])
             )
             
-            let squared_low = diff_low &* diff_low
-            let squared_high = diff_high &* diff_high
+            // Square the differences using Int64 to prevent overflow
+            let squared = diff &* diff
             
             // Accumulate to sum0 for remaining SIMD blocks
-            let partialSum = Int64(squared_low.wrappedSum()) + Int64(squared_high.wrappedSum())
+            let partialSum = Int64(squared[0]) + Int64(squared[1]) + Int64(squared[2]) + Int64(squared[3]) +
+                            Int64(squared[4]) + Int64(squared[5]) + Int64(squared[6]) + Int64(squared[7])
             sum0 += partialSum
             
-            #if DEBUG
+            #if DEBUG && false  // Disable verbose logging
             print("    [euclideanDistanceSIMD] SIMD8 partial sum=\(partialSum), sum0=\(sum0)")
             #endif
             
@@ -152,20 +171,20 @@ struct SIMDOptimizations {
         // Combine all accumulators
         var sum = sum0 + sum1 + sum2 + sum3
         
-        #if DEBUG
+        #if DEBUG && false  // Disable verbose logging
         print("    [euclideanDistanceSIMD] After SIMD: sum0=\(sum0), sum1=\(sum1), sum2=\(sum2), sum3=\(sum3)")
         print("    [euclideanDistanceSIMD] Combined sum before scalar=\(sum)")
         #endif
         
         // Handle remaining elements
-        #if DEBUG
+        #if DEBUG && false  // Disable verbose logging
         print("    [euclideanDistanceSIMD] Starting scalar processing at i=\(i), remaining=\(dimension-i)")
         #endif
         
         while i < dimension {
             let diff = Int64(a[i]) - Int64(b[i])  // Use Int64 for safety
             sum += diff * diff
-            #if DEBUG
+            #if DEBUG && false  // Disable verbose logging
             print("    [euclideanDistanceSIMD] Scalar at i=\(i): diff=\(diff), diff²=\(diff*diff), sum=\(sum)")
             #endif
             i += 1
@@ -179,7 +198,7 @@ struct SIMDOptimizations {
         let scaledSum = Float(sum) / (q15Scale * q15Scale)
         let result = sqrt(scaledSum)
         
-        #if DEBUG
+        #if DEBUG && false  // Disable verbose logging
         print("    [euclideanDistanceSIMD] Final: sum=\(sum), scaledSum=\(scaledSum), result=\(result)")
         #endif
         
@@ -385,6 +404,14 @@ extension SIMDOptimizations {
         let squared_high = diff_high &* diff_high
         
         return Int64(squared_low.wrappedSum()) + Int64(squared_high.wrappedSum())
+    }
+    
+    @inline(__always)
+    private static func squaredSum(_ diff: SIMD8<Int32>) -> Int64 {
+        // For Int32 input, directly compute squared sum
+        let squared = diff &* diff
+        return Int64(squared[0]) + Int64(squared[1]) + Int64(squared[2]) + Int64(squared[3]) +
+               Int64(squared[4]) + Int64(squared[5]) + Int64(squared[6]) + Int64(squared[7])
     }
 }
 

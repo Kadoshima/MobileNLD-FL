@@ -538,9 +538,9 @@ struct NonlinearDynamicsTests {
                     
                     print("  Dimension \(testDim): distance=\(floatDistance), expected=\(expected), error=\(error*100)%")
                     
-                    if error > 0.05 {  // Allow 5% error with fixed scaling
+                    if error > 0.01 {  // Allow 1% error for numerical precision
                         passed = false
-                        errorMessage += "\nDimension \(testDim): expected \(expected), got \(floatDistance)"
+                        errorMessage += "\nDimension \(testDim): expected \(expected), got \(floatDistance) (error: \(error*100)%)"
                     }
                 }
             }
