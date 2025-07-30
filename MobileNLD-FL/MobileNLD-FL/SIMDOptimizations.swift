@@ -33,9 +33,17 @@ struct SIMDOptimizations {
         var sum3: Int64 = 0
         var i = 0
         
+        #if DEBUG
+        print("    [euclideanDistanceSIMD] dimension=\(dimension)")
+        #endif
+        
         // Process 32 elements at a time (4x8 SIMD) for better ILP
         let unrollFactor = 32
         let unrolledIterations = dimension / unrollFactor
+        
+        #if DEBUG
+        print("    [euclideanDistanceSIMD] unrolledIterations=\(unrolledIterations)")
+        #endif
         
         // Main unrolled loop
         for _ in 0..<unrolledIterations {
@@ -94,7 +102,15 @@ struct SIMDOptimizations {
         }
         
         // Process remaining elements in groups of 8
+        #if DEBUG
+        print("    [euclideanDistanceSIMD] Starting SIMD8 processing at i=\(i)")
+        #endif
+        
         while i + simdWidth <= dimension {
+            #if DEBUG
+            print("    [euclideanDistanceSIMD] Processing SIMD8 at i=\(i)")
+            #endif
+            
             // Load 8 Q15 values into SIMD vectors
             let va = SIMD8<Int16>(
                 a[i], a[i+1], a[i+2], a[i+3],
@@ -123,7 +139,12 @@ struct SIMDOptimizations {
             let squared_high = diff_high &* diff_high
             
             // Accumulate to sum0 for remaining SIMD blocks
-            sum0 += Int64(squared_low.wrappedSum()) + Int64(squared_high.wrappedSum())
+            let partialSum = Int64(squared_low.wrappedSum()) + Int64(squared_high.wrappedSum())
+            sum0 += partialSum
+            
+            #if DEBUG
+            print("    [euclideanDistanceSIMD] SIMD8 partial sum=\(partialSum), sum0=\(sum0)")
+            #endif
             
             i += simdWidth
         }
@@ -131,10 +152,22 @@ struct SIMDOptimizations {
         // Combine all accumulators
         var sum = sum0 + sum1 + sum2 + sum3
         
+        #if DEBUG
+        print("    [euclideanDistanceSIMD] After SIMD: sum0=\(sum0), sum1=\(sum1), sum2=\(sum2), sum3=\(sum3)")
+        print("    [euclideanDistanceSIMD] Combined sum before scalar=\(sum)")
+        #endif
+        
         // Handle remaining elements
+        #if DEBUG
+        print("    [euclideanDistanceSIMD] Starting scalar processing at i=\(i), remaining=\(dimension-i)")
+        #endif
+        
         while i < dimension {
             let diff = Int64(a[i]) - Int64(b[i])  // Use Int64 for safety
             sum += diff * diff
+            #if DEBUG
+            print("    [euclideanDistanceSIMD] Scalar at i=\(i): diff=\(diff), diff²=\(diff*diff), sum=\(sum)")
+            #endif
             i += 1
         }
         
@@ -144,7 +177,13 @@ struct SIMDOptimizations {
         // Each squared difference is in range [0, (2^15)^2] = [0, 2^30]
         let q15Scale = Float(1 << 15)
         let scaledSum = Float(sum) / (q15Scale * q15Scale)
-        return sqrt(scaledSum)
+        let result = sqrt(scaledSum)
+        
+        #if DEBUG
+        print("    [euclideanDistanceSIMD] Final: sum=\(sum), scaledSum=\(scaledSum), result=\(result)")
+        #endif
+        
+        return result
     }
     
     // MARK: - Cumulative Sum
