@@ -170,3 +170,29 @@ Based on the project planning documents (`docs/実装TODO.md`):
 1. **Day 1-3**: Data pipeline and iOS core implementation
 2. **Day 4**: Flower federated learning implementation  
 3. **Day 5-7**: Evaluation, figures, and paper writing
+
+## Research Task Plans
+
+### 3. 提案手法の理論深化：誤差・高速化の数式拡張【Day 2-3】
+**なぜMUST**: 「なぜ速い/正確か」の理論なしは学生レポート。査読で必ず突かれる。
+
+**実行方法**:
+1. 誤差解析の理論化（4h）
+   - Q15量子化誤差：εq = 2^-15
+   - 累積誤差上限導出：δd ≤ √N × εq × σ(x)
+   - 証明：中心極限定理とCauchy-Schwarz不等式
+   - N=150でδd < 0.002を保証
+
+2. 高速化の理論的根拠（3h）
+   - メモリ帯域解析：B_FP32 = 4N byte vs B_Q15 = 2N byte
+   - パイプライン効率：η = IPC / IPC_max
+   - 理論高速化：S = (C_FP32/C_Q15) × (B_FP32/B_Q15) × (η_Q15/η_FP32)
+   - 実測で検証：S = 4 × 2 × 2.7 = 21.6倍
+
+3. フローチャート置換（2h）
+   - 現状のコード例を削除（スペース節約）
+   - アルゴリズムフローを図式化
+   - SIMD並列化の視覚的説明
+
+**ツール**: LaTeX（数式）, Draw.io（図）
+**期待効果**: 査読者「理論的裏付けが堅固」→ 技術的信頼性確保
