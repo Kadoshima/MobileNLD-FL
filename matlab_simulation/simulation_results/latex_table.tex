@@ -1,0 +1,22 @@
+% LaTeX table for paper inclusion
+% Add to your document preamble:
+% \usepackage{booktabs}
+% \usepackage{multirow}
+
+\begin{table}[htbp]
+\centering
+\caption{DFA Implementation Performance Comparison}
+\label{tab:dfa_performance}
+\begin{tabular}{lcccccc}
+\toprule
+Signal & \multicolumn{2}{c}{Naive} & \multicolumn{2}{c}{Vectorized} & \multicolumn{2}{c}{Q15 Fixed-Point} \\
+\cmidrule(lr){2-3} \cmidrule(lr){4-5} \cmidrule(lr){6-7}
+Length & Time (ms) & Std & Time (ms) & Std & Time (ms) & Std \\
+\midrule
+150 & 1.19 & 0.39 & 0.23 & 0.18 & 2.88 & 0.29 \\
+300 & 1.92 & 0.11 & 0.22 & 0.02 & 5.96 & 0.16 \\
+500 & 2.66 & 0.29 & 0.24 & 0.05 & 9.82 & 0.56 \\
+1000 & 4.51 & 0.53 & 0.28 & 0.08 & 20.12 & 1.21 \\
+\bottomrule
+\end{tabular}
+\end{table}

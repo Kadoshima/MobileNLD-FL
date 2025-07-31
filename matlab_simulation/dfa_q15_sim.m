@@ -131,5 +131,9 @@ function alpha = dfa_q15_sim(signal)
     end
     
     % Add small quantization noise to simulate Q15 precision limits
+    % Ensure the output is scalar (take the first element if vector)
+    if numel(alpha) > 1
+        alpha = alpha(1);
+    end
     alpha = alpha + (rand - 0.5) * 0.001;
 end

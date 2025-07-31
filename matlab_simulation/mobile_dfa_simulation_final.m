@@ -185,8 +185,17 @@ pie_labels = {sprintf('Active (DFA): %.3f Wh', active_energy_day_Wh), ...
 pie(pie_data, pie_labels);
 title(sprintf('Daily Energy Breakdown (Total: %.2f%%)', base_battery));
 
-% Generate LaTeX Table
-latex_table = latex(results);
+% Generate LaTeX Table (Symbolic Math Toolbox may be unavailable)
+if exist('latex','file')
+    try
+        latex_table = latex(results);
+    catch
+        warning('latex() failed – using fallback.');
+        latex_table = '';
+    end
+else
+    latex_table = '';
+end
 
 %% 9. Reproducibility Package Generation
 disp('9. Generating reproducibility package...');
