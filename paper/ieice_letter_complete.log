@@ -1,4 +1,4 @@
-This is e-upTeX, Version 3.141592653-p4.1.2-u2.00-250202-2.6 (utf8.euc) (TeX Live 2025) (preloaded format=platex 2025.7.31)  31 JUL 2025 20:21
+This is e-upTeX, Version 3.141592653-p4.1.2-u2.00-250202-2.6 (utf8.euc) (TeX Live 2025) (preloaded format=platex 2025.7.31)  31 JUL 2025 20:22
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -422,19 +422,6 @@ LaTeX Font Info:    External font `jis-v at5.1748pt' loaded for size
 (Font)              <5> on input line 120.
 
 
-
-! LaTeX Error: Cannot determine size of graphic in error_distribution_histogram
-.xbb (no BoundingBox).
-
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.172 ...ewidth]{error_distribution_histogram.pdf}
-                                                  
-Try typing  <return>  to proceed.
-If that doesn't work, type  X <return>  to quit.
-
 File: error_distribution_histogram.pdf Graphic file (type pdf)
 <error_distribution_histogram.pdf>
 
@@ -443,19 +430,6 @@ LaTeX Warning: `h' float specifier changed to `ht'.
 
 
 [3]
-
-! LaTeX Error: Cannot determine size of graphic in q15_simd_optimization_flow.x
-bb (no BoundingBox).
-
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.184 ...inewidth]{q15_simd_optimization_flow.pdf}
-                                                  
-Try typing  <return>  to proceed.
-If that doesn't work, type  X <return>  to quit.
-
 File: q15_simd_optimization_flow.pdf Graphic file (type pdf)
 <q15_simd_optimization_flow.pdf>
 
@@ -478,58 +452,18 @@ LaTeX Warning: `h' float specifier changed to `ht'.
 
 
 
-LaTeX Warning: Citation `harris2020' on page 5 undefined on input line 304.
-
-LaTeX Font Info:    Font shape `JT1/mc/bx/n' in size <6> not available
-(Font)              Font shape `JT1/gt/m/n' tried instead on input line 308.
-LaTeX Font Info:    External font `jisg-v at6.6533pt' loaded for size
-(Font)              <6> on input line 308.
-LaTeX Font Info:    Font shape `JY1/mc/bx/n' in size <6> not available
-(Font)              Font shape `JY1/gt/m/n' tried instead on input line 308.
-LaTeX Font Info:    External font `jisg at6.6533pt' loaded for size
-(Font)              <6> on input line 308.
-
-LaTeX Warning: Citation `vanderwalt2011' on page 5 undefined on input line 308.
-
-
-
 Overfull \hbox (46.10043pt too wide) in paragraph at lines 345--357
  [][][][] 
  []
 
-
-! LaTeX Error: Cannot determine size of graphic in performance_analysis.xbb (no
- BoundingBox).
-
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.363 ...0.85\linewidth]{performance_analysis.pdf}
-                                                  
-Try typing  <return>  to proceed.
-If that doesn't work, type  X <return>  to quit.
-
 File: performance_analysis.pdf Graphic file (type pdf)
 <performance_analysis.pdf>
 
-! LaTeX Error: Cannot determine size of graphic in numerical_stability_1000.xbb
- (no BoundingBox).
 
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.374 ...\linewidth]{numerical_stability_1000.pdf}
-                                                  
-Try typing  <return>  to proceed.
-If that doesn't work, type  X <return>  to quit.
-
+[5]
 File: numerical_stability_1000.pdf Graphic file (type pdf)
 <numerical_stability_1000.pdf>
 
-
-[5]
 Overfull \hbox (12.71564pt too wide) in paragraph at lines 385--395
  [][][][] 
  []
@@ -637,8 +571,6 @@ l.459 \bibitem{yamamoto2021}
                             
 I'm forgetting what you said and using zero instead.
 
-
-
 LaTeX Font Info:    Font shape `JT1/mc/m/it' in size <7> not available
 (Font)              Font shape `JT1/mc/m/n' tried instead on input line 464.
 LaTeX Font Info:    External font `jis-v at7.3926pt' loaded for size
@@ -647,6 +579,8 @@ LaTeX Font Info:    Font shape `JY1/mc/m/it' in size <7> not available
 (Font)              Font shape `JY1/mc/m/n' tried instead on input line 464.
 LaTeX Font Info:    External font `jis at7.3926pt' loaded for size
 (Font)              <7> on input line 464.
+
+
 ! Misplaced alignment tab character &.
 l.479 ...pple A15 SoC Performance Review: Faster &
                                                    More Efficient,'' AnandTe...
@@ -676,21 +610,14 @@ pLaTeX2e <2023-02-14>+1, based on
 LaTeX2e <2025-06-01> patch level 1
 L3 programming layer <2025-07-19>
  ***********
-
-
-LaTeX Warning: There were undefined references.
-
-
-LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
-
  ) 
 Here is how much of TeX's memory you used:
- 4900 strings out of 468460
- 72590 string characters out of 5447603
+ 4893 strings out of 468460
+ 72477 string characters out of 5447603
  677520 words of memory out of 5000000
- 33469 multiletter control sequences out of 15000+600000
- 645963 words of font info for 135 fonts, out of 8000000 for 9000
+ 33468 multiletter control sequences out of 15000+600000
+ 645467 words of font info for 132 fonts, out of 8000000 for 9000
  929 hyphenation exceptions out of 8191
  57i,13n,65p,997b,368s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
-Output written on ieice_letter_complete.dvi (8 pages, 40900 bytes).
+Output written on ieice_letter_complete.dvi (8 pages, 40840 bytes).
