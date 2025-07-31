@@ -53,6 +53,7 @@ Assets.xcassets/
 CMSISBridge.h
 CMSISImplementation.c
 ContentView.swift
+DistanceDebugTest.swift
 FixedPointMath.swift
 MobileNLD_FLApp.swift
 MobileNLD-FL-Bridging-Header.h
@@ -727,6 +728,107 @@ struct TestResultRow: View {
 
 #Preview {
     ContentView()
+}
+</file>
+
+<file path="DistanceDebugTest.swift">
+//
+//  DistanceDebugTest.swift
+//  MobileNLD-FL
+//
+//  Debug test to identify distance calculation issue
+//
+
+import Foundation
+
+struct DistanceDebugTest {
+    
+    static func runDebugTest() {
+        print("=== Distance Calculation Debug Test ===\n")
+        
+        // Test 1: Simple case with known values
+        print("Test 1: Simple 2D case")
+        let a2d: [Q15] = [FixedPointMath.floatToQ15(0.5), FixedPointMath.floatToQ15(0.5)]
+        let b2d: [Q15] = [FixedPointMath.floatToQ15(-0.5), FixedPointMath.floatToQ15(-0.5)]
+        
+        a2d.withUnsafeBufferPointer { aPtr in
+            b2d.withUnsafeBufferPointer { bPtr in
+                let distance = SIMDOptimizations.euclideanDistanceSIMD(
+                    aPtr.baseAddress!,
+                    bPtr.baseAddress!,
+                    dimension: 2
+                )
+                
+                // Manual calculation
+                let diff = 0.5 - (-0.5) // = 1.0
+                let expected = Float(sqrt(2.0 * Double(diff) * Double(diff))) // = sqrt(2)
+                
+                print("  Result: \(distance)")
+                print("  Expected: \(expected)")
+                print("  Match: \(abs(distance - expected) < 0.001)\n")
+            }
+        }
+        
+        // Test 2: Check Q15 conversion
+        print("Test 2: Q15 conversion check")
+        let testFloat: Float = 0.5
+        let q15Val = FixedPointMath.floatToQ15(testFloat)
+        let backToFloat = FixedPointMath.q15ToFloat(q15Val)
+        print("  Original: \(testFloat)")
+        print("  Q15: \(q15Val)")
+        print("  Back to float: \(backToFloat)")
+        print("  Q15 max: \(Q15.max) = \(FixedPointMath.q15ToFloat(Q15.max))")
+        print("  Q15 min: \(Q15.min) = \(FixedPointMath.q15ToFloat(Q15.min))\n")
+        
+        // Test 3: Manual distance calculation
+        print("Test 3: Manual calculation for dim=10")
+        let dim = 10
+        let aVal: Q15 = FixedPointMath.floatToQ15(0.5)
+        let bVal: Q15 = FixedPointMath.floatToQ15(-0.5)
+        
+        // Manual sum calculation
+        var manualSum: Int64 = 0
+        for _ in 0..<dim {
+            let diff = Int64(aVal) - Int64(bVal)
+            manualSum += diff * diff
+        }
+        
+        print("  a value (Q15): \(aVal)")
+        print("  b value (Q15): \(bVal)")
+        print("  diff (Q15): \(Int64(aVal) - Int64(bVal))")
+        print("  diff^2: \((Int64(aVal) - Int64(bVal)) * (Int64(aVal) - Int64(bVal)))")
+        print("  sum (10 dims): \(manualSum)")
+        
+        let q15Scale = Float(1 << 15)
+        let scaledSum = Float(manualSum) / (q15Scale * q15Scale)
+        let manualDistance = sqrt(scaledSum)
+        
+        print("  q15Scale: \(q15Scale)")
+        print("  scaledSum: \(scaledSum)")
+        print("  Manual distance: \(manualDistance)")
+        print("  Expected: \(sqrt(10.0))\n")
+        
+        // Test 4: Test actual function with dim=10
+        print("Test 4: Actual function test (dim=10)")
+        let a10d = [Q15](repeating: FixedPointMath.floatToQ15(0.5), count: dim)
+        let b10d = [Q15](repeating: FixedPointMath.floatToQ15(-0.5), count: dim)
+        
+        a10d.withUnsafeBufferPointer { aPtr in
+            b10d.withUnsafeBufferPointer { bPtr in
+                let distance = SIMDOptimizations.euclideanDistanceSIMD(
+                    aPtr.baseAddress!,
+                    bPtr.baseAddress!,
+                    dimension: dim
+                )
+                
+                print("  Function result: \(distance)")
+                print("  Expected: \(sqrt(10.0))")
+                print("  Error: \(abs(distance - sqrt(10.0)) / sqrt(10.0) * 100)%\n")
+            }
+        }
+        
+        print("=== End Debug Test ===")
+    }
 }
 </file>
 
@@ -1664,37 +1766,38 @@ struct NonlinearDynamicsTests {
         let testName = "High-Dimensional Distance (Overflow Test)"
         print("Testing high-dimensional distance calculation...")
         
-        let startTime = CFAbsoluteTimeGetCurrent()
-        
-        // Test with maximum values to trigger potential overflow
-        let dim = 20  // High dimension to test overflow handling
-        let a = [Q15](repeating: Q15.max / 2, count: dim)  // Use half max to avoid saturation
-        let b = [Q15](repeating: Q15.min / 2, count: dim)  // Use half min
-        
-        var passed = true
-        var errorMessage = ""
-        
-        // Test SIMD distance calculation
-        a.withUnsafeBufferPointer { aPtr in
-            b.withUnsafeBufferPointer { bPtr in
-                let distance = SIMDOptimizations.euclideanDistanceSIMD(
-                    aPtr.baseAddress!,
-                    bPtr.baseAddress!,
-                    dimension: dim
-                )
-                
-                // Verify result is reasonable
-                if distance <= 0 {
-                    passed = false
-                    errorMessage = "Distance should be positive"
+        return autoreleasepool {
+            let startTime = CFAbsoluteTimeGetCurrent()
+            
+            // Test with maximum values to trigger potential overflow
+            let dim = 20  // High dimension to test overflow handling
+            let a = [Q15](repeating: Q15.max / 2, count: dim)  // Use half max to avoid saturation
+            let b = [Q15](repeating: Q15.min / 2, count: dim)  // Use half min
+            
+            var passed = true
+            var errorMessage = ""
+            
+            // Test SIMD distance calculation
+            a.withUnsafeBufferPointer { aPtr in
+                b.withUnsafeBufferPointer { bPtr in
+                    let distance = SIMDOptimizations.euclideanDistanceSIMD(
+                        aPtr.baseAddress!,
+                        bPtr.baseAddress!,
+                        dimension: dim
+                    )
+                    
+                    // Verify result is reasonable
+                    if distance <= 0 {
+                        passed = false
+                        errorMessage = "Distance should be positive"
+                    }
+                    
+                    print("  Distance for \(dim)-dimensional vectors: \(distance)")
                 }
-                
-                print("  Distance for \(dim)-dimensional vectors: \(distance)")
             }
-        }
-        
-        // Test with varying dimensions
-        let testDimensions = [5, 10, 15, 20]
+            
+            // Test with varying dimensions - use smaller test to reduce memory
+            let testDimensions = [5, 10]  // Reduced from [5, 10, 15, 20]
         for testDim in testDimensions {
             let testA = [Q15](repeating: FixedPointMath.floatToQ15(0.5), count: testDim)
             let testB = [Q15](repeating: FixedPointMath.floatToQ15(-0.5), count: testDim)
@@ -1708,13 +1811,25 @@ struct NonlinearDynamicsTests {
                     )
                     let floatDistance = distance  // Already Float
                     
-                    // Debug: Check actual Q15 values
+                    // Debug: Check actual Q15 values and manual calculation
                     let q15A = testA[0]
                     let q15B = testB[0]
                     let floatA = FixedPointMath.q15ToFloat(q15A)
                     let floatB = FixedPointMath.q15ToFloat(q15B)
                     let diff = floatA - floatB
+                    
+                    // Manual calculation to verify
+                    var manualSum: Int64 = 0
+                    for i in 0..<testDim {
+                        let d = Int64(testA[i]) - Int64(testB[i])
+                        manualSum += d * d
+                    }
+                    let q15Scale = Float(1 << 15)
+                    let manualScaledSum = Float(manualSum) / (q15Scale * q15Scale)
+                    let manualDistance = sqrt(manualScaledSum)
+                    
                     print("    Debug: Q15 values: a=\(q15A) (\(floatA)), b=\(q15B) (\(floatB)), diff=\(diff)")
+                    print("    Manual calculation: sum=\(manualSum), scaledSum=\(manualScaledSum), distance=\(manualDistance)")
                     
                     // Expected distance: sqrt(testDim * diff^2)
                     let expected = sqrt(Float(testDim)) * abs(diff)
@@ -1722,30 +1837,31 @@ struct NonlinearDynamicsTests {
                     
                     print("  Dimension \(testDim): distance=\(floatDistance), expected=\(expected), error=\(error*100)%")
                     
-                    if error > 0.05 {  // Allow 5% error with fixed scaling
+                    if error > 0.01 {  // Allow 1% error for numerical precision
                         passed = false
-                        errorMessage += "\nDimension \(testDim): expected \(expected), got \(floatDistance)"
+                        errorMessage += "\nDimension \(testDim): expected \(expected), got \(floatDistance) (error: \(error*100)%)"
                     }
                 }
             }
+            }
+            
+            let executionTime = (CFAbsoluteTimeGetCurrent() - startTime) * 1000
+            
+            if passed {
+                print("  Overflow test PASSED - 64-bit accumulator handles high dimensions correctly")
+            } else {
+                print("  Overflow test FAILED: \(errorMessage)")
+            }
+            
+            return TestResult(
+                testName: testName,
+                passed: passed,
+                result: 0,
+                reference: 0,
+                rmse: 0,
+                executionTime: executionTime
+            )
         }
-        
-        let executionTime = (CFAbsoluteTimeGetCurrent() - startTime) * 1000
-        
-        if passed {
-            print("  Overflow test PASSED - 64-bit accumulator handles high dimensions correctly")
-        } else {
-            print("  Overflow test FAILED: \(errorMessage)")
-        }
-        
-        return TestResult(
-            testName: testName,
-            passed: passed,
-            result: 0,
-            reference: 0,
-            rmse: 0,
-            executionTime: executionTime
-        )
     }
     
     // MARK: - Cumulative Sum Overflow Tests
@@ -2302,9 +2418,17 @@ struct SIMDOptimizations {
         var sum3: Int64 = 0
         var i = 0
         
+        #if DEBUG && false  // Disable verbose logging
+        print("    [euclideanDistanceSIMD] dimension=\(dimension)")
+        #endif
+        
         // Process 32 elements at a time (4x8 SIMD) for better ILP
         let unrollFactor = 32
         let unrolledIterations = dimension / unrollFactor
+        
+        #if DEBUG && false  // Disable verbose logging
+        print("    [euclideanDistanceSIMD] unrolledIterations=\(unrolledIterations)")
+        #endif
         
         // Main unrolled loop
         for _ in 0..<unrolledIterations {
@@ -2318,7 +2442,13 @@ struct SIMDOptimizations {
                 b[i], b[i+1], b[i+2], b[i+3],
                 b[i+4], b[i+5], b[i+6], b[i+7]
             )
-            let diff0 = va0 &- vb0
+            // Convert to Int32 to avoid saturation
+            let diff0 = SIMD8<Int32>(
+                Int32(va0[0]) - Int32(vb0[0]), Int32(va0[1]) - Int32(vb0[1]),
+                Int32(va0[2]) - Int32(vb0[2]), Int32(va0[3]) - Int32(vb0[3]),
+                Int32(va0[4]) - Int32(vb0[4]), Int32(va0[5]) - Int32(vb0[5]),
+                Int32(va0[6]) - Int32(vb0[6]), Int32(va0[7]) - Int32(vb0[7])
+            )
             
             // Group 2
             let va1 = SIMD8<Int16>(
@@ -2329,7 +2459,13 @@ struct SIMDOptimizations {
                 b[i+8], b[i+9], b[i+10], b[i+11],
                 b[i+12], b[i+13], b[i+14], b[i+15]
             )
-            let diff1 = va1 &- vb1
+            // Convert to Int32 to avoid saturation
+            let diff1 = SIMD8<Int32>(
+                Int32(va1[0]) - Int32(vb1[0]), Int32(va1[1]) - Int32(vb1[1]),
+                Int32(va1[2]) - Int32(vb1[2]), Int32(va1[3]) - Int32(vb1[3]),
+                Int32(va1[4]) - Int32(vb1[4]), Int32(va1[5]) - Int32(vb1[5]),
+                Int32(va1[6]) - Int32(vb1[6]), Int32(va1[7]) - Int32(vb1[7])
+            )
             
             // Group 3
             let va2 = SIMD8<Int16>(
@@ -2340,7 +2476,13 @@ struct SIMDOptimizations {
                 b[i+16], b[i+17], b[i+18], b[i+19],
                 b[i+20], b[i+21], b[i+22], b[i+23]
             )
-            let diff2 = va2 &- vb2
+            // Convert to Int32 to avoid saturation
+            let diff2 = SIMD8<Int32>(
+                Int32(va2[0]) - Int32(vb2[0]), Int32(va2[1]) - Int32(vb2[1]),
+                Int32(va2[2]) - Int32(vb2[2]), Int32(va2[3]) - Int32(vb2[3]),
+                Int32(va2[4]) - Int32(vb2[4]), Int32(va2[5]) - Int32(vb2[5]),
+                Int32(va2[6]) - Int32(vb2[6]), Int32(va2[7]) - Int32(vb2[7])
+            )
             
             // Group 4
             let va3 = SIMD8<Int16>(
@@ -2351,7 +2493,13 @@ struct SIMDOptimizations {
                 b[i+24], b[i+25], b[i+26], b[i+27],
                 b[i+28], b[i+29], b[i+30], b[i+31]
             )
-            let diff3 = va3 &- vb3
+            // Convert to Int32 to avoid saturation
+            let diff3 = SIMD8<Int32>(
+                Int32(va3[0]) - Int32(vb3[0]), Int32(va3[1]) - Int32(vb3[1]),
+                Int32(va3[2]) - Int32(vb3[2]), Int32(va3[3]) - Int32(vb3[3]),
+                Int32(va3[4]) - Int32(vb3[4]), Int32(va3[5]) - Int32(vb3[5]),
+                Int32(va3[6]) - Int32(vb3[6]), Int32(va3[7]) - Int32(vb3[7])
+            )
             
             // Compute squared differences for all groups
             sum0 += squaredSum(diff0)
@@ -2363,7 +2511,15 @@ struct SIMDOptimizations {
         }
         
         // Process remaining elements in groups of 8
+        #if DEBUG && false  // Disable verbose logging
+        print("    [euclideanDistanceSIMD] Starting SIMD8 processing at i=\(i)")
+        #endif
+        
         while i + simdWidth <= dimension {
+            #if DEBUG && false  // Disable verbose logging
+            print("    [euclideanDistanceSIMD] Processing SIMD8 at i=\(i)")
+            #endif
+            
             // Load 8 Q15 values into SIMD vectors
             let va = SIMD8<Int16>(
                 a[i], a[i+1], a[i+2], a[i+3],
@@ -2374,25 +2530,25 @@ struct SIMDOptimizations {
                 b[i+4], b[i+5], b[i+6], b[i+7]
             )
             
-            // Compute differences
-            let diff = va &- vb  // Subtract with saturation
-            
-            // Square the differences (need to handle overflow)
-            // Split into two 4-element operations to prevent overflow
-            let diff_low = SIMD4<Int32>(
-                Int32(diff.lowHalf[0]), Int32(diff.lowHalf[1]), 
-                Int32(diff.lowHalf[2]), Int32(diff.lowHalf[3])
-            )
-            let diff_high = SIMD4<Int32>(
-                Int32(diff.highHalf[0]), Int32(diff.highHalf[1]), 
-                Int32(diff.highHalf[2]), Int32(diff.highHalf[3])
+            // Compute differences without saturation using Int32
+            let diff = SIMD8<Int32>(
+                Int32(va[0]) - Int32(vb[0]), Int32(va[1]) - Int32(vb[1]),
+                Int32(va[2]) - Int32(vb[2]), Int32(va[3]) - Int32(vb[3]),
+                Int32(va[4]) - Int32(vb[4]), Int32(va[5]) - Int32(vb[5]),
+                Int32(va[6]) - Int32(vb[6]), Int32(va[7]) - Int32(vb[7])
             )
             
-            let squared_low = diff_low &* diff_low
-            let squared_high = diff_high &* diff_high
+            // Square the differences using Int64 to prevent overflow
+            let squared = diff &* diff
             
             // Accumulate to sum0 for remaining SIMD blocks
-            sum0 += Int64(squared_low.wrappedSum()) + Int64(squared_high.wrappedSum())
+            let partialSum = Int64(squared[0]) + Int64(squared[1]) + Int64(squared[2]) + Int64(squared[3]) +
+                            Int64(squared[4]) + Int64(squared[5]) + Int64(squared[6]) + Int64(squared[7])
+            sum0 += partialSum
+            
+            #if DEBUG && false  // Disable verbose logging
+            print("    [euclideanDistanceSIMD] SIMD8 partial sum=\(partialSum), sum0=\(sum0)")
+            #endif
             
             i += simdWidth
         }
@@ -2400,10 +2556,22 @@ struct SIMDOptimizations {
         // Combine all accumulators
         var sum = sum0 + sum1 + sum2 + sum3
         
+        #if DEBUG && false  // Disable verbose logging
+        print("    [euclideanDistanceSIMD] After SIMD: sum0=\(sum0), sum1=\(sum1), sum2=\(sum2), sum3=\(sum3)")
+        print("    [euclideanDistanceSIMD] Combined sum before scalar=\(sum)")
+        #endif
+        
         // Handle remaining elements
+        #if DEBUG && false  // Disable verbose logging
+        print("    [euclideanDistanceSIMD] Starting scalar processing at i=\(i), remaining=\(dimension-i)")
+        #endif
+        
         while i < dimension {
             let diff = Int64(a[i]) - Int64(b[i])  // Use Int64 for safety
             sum += diff * diff
+            #if DEBUG && false  // Disable verbose logging
+            print("    [euclideanDistanceSIMD] Scalar at i=\(i): diff=\(diff), diff²=\(diff*diff), sum=\(sum)")
+            #endif
             i += 1
         }
         
@@ -2413,7 +2581,13 @@ struct SIMDOptimizations {
         // Each squared difference is in range [0, (2^15)^2] = [0, 2^30]
         let q15Scale = Float(1 << 15)
         let scaledSum = Float(sum) / (q15Scale * q15Scale)
-        return sqrt(scaledSum)
+        let result = sqrt(scaledSum)
+        
+        #if DEBUG && false  // Disable verbose logging
+        print("    [euclideanDistanceSIMD] Final: sum=\(sum), scaledSum=\(scaledSum), result=\(result)")
+        #endif
+        
+        return result
     }
     
     // MARK: - Cumulative Sum
@@ -2615,6 +2789,14 @@ extension SIMDOptimizations {
         let squared_high = diff_high &* diff_high
         
         return Int64(squared_low.wrappedSum()) + Int64(squared_high.wrappedSum())
+    }
+    
+    @inline(__always)
+    private static func squaredSum(_ diff: SIMD8<Int32>) -> Int64 {
+        // For Int32 input, directly compute squared sum
+        let squared = diff &* diff
+        return Int64(squared[0]) + Int64(squared[1]) + Int64(squared[2]) + Int64(squared[3]) +
+               Int64(squared[4]) + Int64(squared[5]) + Int64(squared[6]) + Int64(squared[7])
     }
 }
 

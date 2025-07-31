@@ -93,6 +93,20 @@ struct ContentView: View {
                     }
                     */
                     
+                    // SIMD Performance Measurement Button
+                    Button(action: runSIMDMeasurement) {
+                        HStack {
+                            Image(systemName: "speedometer")
+                            Text("Measure SIMD Performance")
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Color.purple)
+                        .foregroundColor(.white)
+                        .cornerRadius(10)
+                    }
+                    .disabled(isRunningTests)
+                    
                     if !testResults.isEmpty {
                         Button(action: { showResults.toggle() }) {
                             HStack {
@@ -216,6 +230,16 @@ struct ContentView: View {
     
     private func startBenchmark() {
         // benchmark.startContinuousBenchmark()
+    }
+    
+    private func runSIMDMeasurement() {
+        // Signpostを使った測定を実行
+        PerformanceMeasurement.measureNLDPerformance()
+        
+        // 少し待ってから特定関数の測定も実行
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+            PerformanceMeasurement.measureSpecificFunctions()
+        }
     }
 }
 
