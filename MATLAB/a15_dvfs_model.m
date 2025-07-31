@@ -32,19 +32,12 @@ function [freq, power, ipc] = a15_dvfs_model(load_percent)
         ipc = 4.0;      % P-core主体
     else  % 87.5-100%
         freq = 3.2e9;   % 3.2 GHz (実測値)
-        power = 4.2;    % 文献値（AnandTech）
+        power = 4.3;    % 文献値（AnandTech）
         ipc = 4.2;      % 最大性能
     end
     
-    % 周波数-電力の関数モデル（二次関数フィッティング）
-    % 文献調査結果に基づく高精度モデル
-    % power = 0.422 * freq_ghz^2 - 0.022
-    freq_ghz = freq / 1e9;
-    power_model = 0.422 * freq_ghz^2 - 0.022;
-    
-    % 静的電力フロアを確保
-    min_power = 0.35;  % 最小電力（リーク電流）
-    power = max(power_model, min_power);
+    % 文献値をそのまま使用（二次関数モデルは検証用のみ）
+    % DVFSの段階的な特性を正確に反映
     
     % キャッシュ効率とメモリ帯域の影響
     cache_efficiency = get_cache_efficiency(load_percent);
@@ -54,10 +47,12 @@ function [freq, power, ipc] = a15_dvfs_model(load_percent)
     ipc = ipc * cache_efficiency * memory_bandwidth_factor;
     
     % 温度スロットリングモデル（高負荷時）
-    if load_percent > 90
-        thermal_throttle = 0.85;  % 15%性能低下
+    % 短時間バーストでは最大周波数を維持可能
+    if load_percent > 95 && freq > 3.0e9
+        % 持続的な最大負荷時のみ軽微なスロットリング
+        thermal_throttle = 0.95;  % 5%性能低下
         freq = freq * thermal_throttle;
-        power = power * thermal_throttle^1.8;  % 電力は周波数の1.8乗に比例
+        power = power * thermal_throttle^2;  % 電力は周波数の2乗に比例
     end
 end
 
