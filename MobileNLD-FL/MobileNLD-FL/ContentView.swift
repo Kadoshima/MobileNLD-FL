@@ -120,6 +120,19 @@ struct ContentView: View {
                         .cornerRadius(10)
                     }
                     
+                    // Accuracy Comparison Button
+                    NavigationLink(destination: AccuracyComparisonView()) {
+                        HStack {
+                            Image(systemName: "checkmark.seal.fill")
+                            Text("Accuracy vs Speed Analysis")
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Color.green)
+                        .foregroundColor(.white)
+                        .cornerRadius(10)
+                    }
+                    
                     if !testResults.isEmpty {
                         Button(action: { showResults.toggle() }) {
                             HStack {
