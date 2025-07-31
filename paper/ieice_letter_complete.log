@@ -1,0 +1,690 @@
+This is e-upTeX, Version 3.141592653-p4.1.2-u2.00-250202-2.6 (utf8.euc) (TeX Live 2025) (preloaded format=platex 2025.7.31)  31 JUL 2025 18:34
+entering extended mode
+ restricted \write18 enabled.
+ %&-line parsing enabled.
+**ieice_letter_complete.tex
+(./ieice_letter_complete.tex
+pLaTeX2e <2023-02-14>+1, based on
+LaTeX2e <2025-06-01> patch level 1
+L3 programming layer <2025-07-19>
+(./ieicej.cls
+Document Class: ieicej 2020/06/09 v3.3 for Transactions of IEICE
+\@JQ=\dimen164
+\@Q=\dimen165
+\@EM=\dimen166
+\c@@paper=\count274
+LaTeX Font Info:    External font `jis-v at8.8711pt' loaded for size
+(Font)              <9> on input line 702.
+LaTeX Font Info:    External font `jis at8.8711pt' loaded for size
+(Font)              <9> on input line 702.
+\@authorlist=\toks18
+\@authorcnt=\count275
+\@alcnt=\count276
+\p@alcnt=\count277
+\@totalnumber=\count278
+\authornamesep=\dimen167
+\@spcnt=\count279
+\alignorder=\count280
+\totalnumberm@ne=\count281
+\@authorcntp@ne=\count282
+\chk@alcnt=\count283
+\chk@p@alcnt=\count284
+\eabstractbox=\box70
+\ekeywordbox=\box71
+\Pauthorsep=\dimen168
+\abstractbox=\box72
+\keywordbox=\box73
+\Lauthorsep=\dimen169
+\LPauthorsep=\dimen170
+\c@section=\count285
+\c@subsection=\count286
+\c@subsubsection=\count287
+\c@paragraph=\count288
+\c@subparagraph=\count289
+\@hlskip=\skip49
+\verbatimleftmargin=\dimen171
+\verbatimbaselineskip=\dimen172
+\c@figure=\count290
+\c@table=\count291
+\abovecaptionskip=\skip50
+\belowcaptionskip=\skip51
+\@tempboxb=\box74
+\capwidth=\dimen173
+\ecapwidth=\dimen174
+\symmincho=\mathgroup4
+LaTeX Font Info:    Overwriting symbol font `mincho' in version `bold'
+(Font)                  JY1/mc/m/n --> JY1/gt/m/n on input line 3168.
+\bibindent=\dimen175
+\c@profile=\count292
+\mathindent=\dimen176
+\heisei=\count293
+\@minsofar=\count294
+\@min=\count295
+\@cite@temp=\count296
+) (/usr/local/texlive/2025/texmf-dist/tex/latex/graphics/graphicx.sty
+Package: graphicx 2024/12/31 v1.2e Enhanced LaTeX Graphics (DPC,SPQR)
+
+(/usr/local/texlive/2025/texmf-dist/tex/latex/graphics/keyval.sty
+Package: keyval 2022/05/29 v1.15 key=value parser (DPC)
+\KV@toks@=\toks19
+)
+(/usr/local/texlive/2025/texmf-dist/tex/latex/graphics/graphics.sty
+Package: graphics 2024/08/06 v1.4g Standard LaTeX Graphics (DPC,SPQR)
+
+(/usr/local/texlive/2025/texmf-dist/tex/latex/graphics/trig.sty
+Package: trig 2023/12/02 v1.11 sin cos tan (DPC)
+)
+(/usr/local/texlive/2025/texmf-dist/tex/latex/graphics-cfg/graphics.cfg
+File: graphics.cfg 2016/06/04 v1.11 sample graphics configuration
+)
+Package graphics Info: Driver file: dvipdfmx.def on input line 106.
+
+(/usr/local/texlive/2025/texmf-dist/tex/latex/graphics-def/dvipdfmx.def
+File: dvipdfmx.def 2022/09/22 v5.0m Graphics/color driver for dvipdfmx
+))
+\Gin@req@height=\dimen177
+\Gin@req@width=\dimen178
+)
+(/usr/local/texlive/2025/texmf-dist/tex/latex/amsmath/amsmath.sty
+Package: amsmath 2025/06/16 v2.17y AMS math features
+\@mathmargin=\skip52
+
+For additional information on amsmath, use the `?' option.
+(/usr/local/texlive/2025/texmf-dist/tex/latex/amsmath/amstext.sty
+Package: amstext 2024/11/17 v2.01 AMS text
+
+(/usr/local/texlive/2025/texmf-dist/tex/latex/amsmath/amsgen.sty
+File: amsgen.sty 1999/11/30 v2.0 generic functions
+\@emptytoks=\toks20
+\ex@=\dimen179
+))
+(/usr/local/texlive/2025/texmf-dist/tex/latex/amsmath/amsbsy.sty
+Package: amsbsy 1999/11/29 v1.2d Bold Symbols
+\pmbraise@=\dimen180
+)
+(/usr/local/texlive/2025/texmf-dist/tex/latex/amsmath/amsopn.sty
+Package: amsopn 2022/04/08 v2.04 operator names
+)
+\inf@bad=\count297
+LaTeX Info: Redefining \frac on input line 233.
+\uproot@=\count298
+\leftroot@=\count299
+LaTeX Info: Redefining \overline on input line 398.
+LaTeX Info: Redefining \colon on input line 409.
+\classnum@=\count300
+\DOTSCASE@=\count301
+LaTeX Info: Redefining \ldots on input line 495.
+LaTeX Info: Redefining \dots on input line 498.
+LaTeX Info: Redefining \cdots on input line 619.
+\Mathstrutbox@=\box75
+\strutbox@=\box76
+LaTeX Info: Redefining \big on input line 721.
+LaTeX Info: Redefining \Big on input line 722.
+LaTeX Info: Redefining \bigg on input line 723.
+LaTeX Info: Redefining \Bigg on input line 724.
+\big@size=\dimen181
+LaTeX Font Info:    Redeclaring font encoding OML on input line 742.
+LaTeX Font Info:    Redeclaring font encoding OMS on input line 743.
+\macc@depth=\count302
+LaTeX Info: Redefining \bmod on input line 904.
+LaTeX Info: Redefining \pmod on input line 909.
+LaTeX Info: Redefining \smash on input line 939.
+LaTeX Info: Redefining \relbar on input line 969.
+LaTeX Info: Redefining \Relbar on input line 970.
+\c@MaxMatrixCols=\count303
+\dotsspace@=\muskip17
+\c@parentequation=\count304
+\dspbrk@lvl=\count305
+\tag@help=\toks21
+\row@=\count306
+\column@=\count307
+\maxfields@=\count308
+\andhelp@=\toks22
+\eqnshift@=\dimen182
+\alignsep@=\dimen183
+\tagshift@=\dimen184
+\tagwidth@=\dimen185
+\totwidth@=\dimen186
+\lineht@=\dimen187
+\@envbody=\toks23
+\multlinegap=\skip53
+\multlinetaggap=\skip54
+\mathdisplay@stack=\toks24
+LaTeX Info: Redefining \[ on input line 2949.
+LaTeX Info: Redefining \] on input line 2950.
+)
+(/usr/local/texlive/2025/texmf-dist/tex/latex/amsfonts/amssymb.sty
+Package: amssymb 2013/01/14 v3.01 AMS font symbols
+
+(/usr/local/texlive/2025/texmf-dist/tex/latex/amsfonts/amsfonts.sty
+Package: amsfonts 2013/01/14 v3.01 Basic AMSFonts support
+\symAMSa=\mathgroup5
+\symAMSb=\mathgroup6
+LaTeX Font Info:    Redeclaring math symbol \hbar on input line 98.
+LaTeX Font Info:    Overwriting math alphabet `\mathfrak' in version `bold'
+(Font)                  U/euf/m/n --> U/euf/b/n on input line 106.
+))
+(/usr/local/texlive/2025/texmf-dist/tex/latex/tools/enumerate.sty
+Package: enumerate 2023/07/04 v3.00 enumerate extensions (DPC)
+\@enLab=\toks25
+)
+(/usr/local/texlive/2025/texmf-dist/tex/latex/cite/cite.sty
+LaTeX Info: Redefining \cite on input line 302.
+LaTeX Info: Redefining \nocite on input line 332.
+Package: cite 2015/02/27  v 5.5
+)
+(/usr/local/texlive/2025/texmf-dist/tex/latex/url/url.sty
+\Urlmuskip=\muskip18
+Package: url 2013/09/16  ver 3.4  Verb mode for urls, etc.
+)
+(/usr/local/texlive/2025/texmf-dist/tex/latex/listings/listings.sty
+\lst@mode=\count309
+\lst@gtempboxa=\box77
+\lst@token=\toks26
+\lst@length=\count310
+\lst@currlwidth=\dimen188
+\lst@column=\count311
+\lst@pos=\count312
+\lst@lostspace=\dimen189
+\lst@width=\dimen190
+\lst@newlines=\count313
+\lst@lineno=\count314
+\lst@maxwidth=\dimen191
+
+(/usr/local/texlive/2025/texmf-dist/tex/latex/listings/lstpatch.sty
+File: lstpatch.sty 2024/09/23 1.10c (Carsten Heinz)
+)
+(/usr/local/texlive/2025/texmf-dist/tex/latex/listings/lstmisc.sty
+File: lstmisc.sty 2024/09/23 1.10c (Carsten Heinz)
+\c@lstnumber=\count315
+\lst@skipnumbers=\count316
+\lst@framebox=\box78
+)
+(/usr/local/texlive/2025/texmf-dist/tex/latex/listings/listings.cfg
+File: listings.cfg 2024/09/23 1.10c listings configuration
+))
+Package: listings 2024/09/23 1.10c (Carsten Heinz)
+
+(/usr/local/texlive/2025/texmf-dist/tex/latex/multirow/multirow.sty
+Package: multirow 2024/11/12 v2.9 Span multiple rows of a table
+\multirow@colwidth=\skip55
+\multirow@cntb=\count317
+\multirow@dima=\skip56
+\bigstrutjot=\dimen192
+)
+(/usr/local/texlive/2025/texmf-dist/tex/latex/booktabs/booktabs.sty
+Package: booktabs 2020/01/12 v1.61803398 Publication quality tables
+\heavyrulewidth=\dimen193
+\lightrulewidth=\dimen194
+\cmidrulewidth=\dimen195
+\belowrulesep=\dimen196
+\belowbottomsep=\dimen197
+\aboverulesep=\dimen198
+\abovetopsep=\dimen199
+\cmidrulesep=\dimen256
+\cmidrulekern=\dimen257
+\defaultaddspace=\dimen258
+\@cmidla=\count318
+\@cmidlb=\count319
+\@aboverulesep=\dimen259
+\@belowrulesep=\dimen260
+\@thisruleclass=\count320
+\@lastruleclass=\count321
+\@thisrulewidth=\dimen261
+)
+(/usr/local/texlive/2025/texmf-dist/tex/latex/algorithms/algorithm.sty
+Package: algorithm 2009/08/24 v0.1 Document Style `algorithm' - floating enviro
+nment
+
+(/usr/local/texlive/2025/texmf-dist/tex/latex/float/float.sty
+Package: float 2001/11/08 v1.3d Float enhancements (AL)
+\c@float@type=\count322
+\float@exts=\toks27
+\float@box=\box79
+\@float@everytoks=\toks28
+\@floatcapt=\box80
+)
+(/usr/local/texlive/2025/texmf-dist/tex/latex/base/ifthen.sty
+Package: ifthen 2024/03/16 v1.1e Standard LaTeX ifthen package (DPC)
+)
+\@float@every@algorithm=\toks29
+\c@algorithm=\count323
+)
+(/usr/local/texlive/2025/texmf-dist/tex/latex/algorithms/algorithmic.sty
+Package: algorithmic 2009/08/24 v0.1 Document Style `algorithmic'
+\c@ALC@unique=\count324
+\c@ALC@line=\count325
+\c@ALC@rem=\count326
+\c@ALC@depth=\count327
+\ALC@tlm=\skip57
+\algorithmicindent=\skip58
+)
+(/usr/local/texlive/2025/texmf-dist/tex/latex/subfigure/subfigure.sty
+Package: subfigure 2002/03/15 v2.1.5 subfigure package
+\subfigtopskip=\skip59
+\subfigcapskip=\skip60
+\subfigcaptopadj=\dimen262
+\subfigbottomskip=\skip61
+\subfigcapmargin=\dimen263
+\subfiglabelskip=\skip62
+\c@subfigure=\count328
+\c@lofdepth=\count329
+\c@subtable=\count330
+\c@lotdepth=\count331
+
+****************************************
+* Local config file subfigure.cfg used *
+****************************************
+(/usr/local/texlive/2025/texmf-dist/tex/latex/subfigure/subfigure.cfg)
+\subfig@top=\skip63
+\subfig@bottom=\skip64
+)
+(/usr/local/texlive/2025/texmf-dist/tex/latex/listings/lstlang1.sty
+File: lstlang1.sty 2024/09/23 1.10c listings language file
+)
+(/usr/local/texlive/2025/texmf-dist/tex/latex/listings/lstmisc.sty
+File: lstmisc.sty 2024/09/23 1.10c (Carsten Heinz)
+)
+
+Class ieicej Warning: Author's name "萩原　圭島" doesn't have a space.
+
+
+Class ieicej Warning: Author's name "松浦　未来" doesn't have a space.
+
+
+Class ieicej Warning: Author's name "菊澤　百々菜" doesn't have a space.
+
+
+! LaTeX Error: Missing \begin{document}.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.38   {1
+         200 Matsumoto-cho, Kasugai-shi, Aichi, 487-8501 Japan}
+You're in trouble here.  Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+(/usr/local/texlive/2025/texmf-dist/tex/latex/l3backend/l3backend-dvips.def
+File: l3backend-dvips.def 2025-06-09 L3 backend support: dvips
+\l__pdfannot_backend_content_box=\box81
+\l__pdfannot_backend_model_box=\box82
+\g__pdfannot_backend_int=\count332
+\g__pdfannot_backend_link_int=\count333
+\g__pdfannot_backend_link_sf_int=\count334
+)
+(./ieice_letter_complete.aux)
+\openout1 = `ieice_letter_complete.aux'.
+
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 40.
+LaTeX Font Info:    ... okay on input line 40.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 40.
+LaTeX Font Info:    ... okay on input line 40.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 40.
+LaTeX Font Info:    ... okay on input line 40.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 40.
+LaTeX Font Info:    ... okay on input line 40.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 40.
+LaTeX Font Info:    ... okay on input line 40.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 40.
+LaTeX Font Info:    ... okay on input line 40.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 40.
+LaTeX Font Info:    ... okay on input line 40.
+LaTeX Font Info:    Checking defaults for JY1/mc/m/n on input line 40.
+LaTeX Font Info:    ... okay on input line 40.
+LaTeX Font Info:    Checking defaults for JT1/mc/m/n on input line 40.
+LaTeX Font Info:    ... okay on input line 40.
+\c@lstlisting=\count335
+LaTeX Font Info:    External font `jis-v at8.1318pt' loaded for size
+(Font)              <8> on input line 41.
+LaTeX Font Info:    External font `jis at8.1318pt' loaded for size
+(Font)              <8> on input line 41.
+LaTeX Font Info:    Font shape `JT1/mc/bx/n' in size <8> not available
+(Font)              Font shape `JT1/gt/m/n' tried instead on input line 41.
+LaTeX Font Info:    External font `jisg-v at8.1318pt' loaded for size
+(Font)              <8> on input line 41.
+LaTeX Font Info:    Font shape `JY1/mc/bx/n' in size <8> not available
+(Font)              Font shape `JY1/gt/m/n' tried instead on input line 41.
+LaTeX Font Info:    External font `jisg at8.1318pt' loaded for size
+(Font)              <8> on input line 41.
+LaTeX Font Info:    Font shape `JT1/mc/bx/n' in size <9> not available
+(Font)              Font shape `JT1/gt/m/n' tried instead on input line 49.
+LaTeX Font Info:    External font `jisg-v at8.8711pt' loaded for size
+(Font)              <9> on input line 49.
+LaTeX Font Info:    Font shape `JY1/mc/bx/n' in size <9> not available
+(Font)              Font shape `JY1/gt/m/n' tried instead on input line 49.
+LaTeX Font Info:    External font `jisg at8.8711pt' loaded for size
+(Font)              <9> on input line 49.
+
+
+
+
+[1
+
+
+]
+LaTeX Font Info:    External font `jis-v at13.307pt' loaded for size
+(Font)              <12> on input line 57.
+LaTeX Font Info:    External font `jis at13.307pt' loaded for size
+(Font)              <12> on input line 57.
+LaTeX Font Info:    External font `jis-v at11.089pt' loaded for size
+(Font)              <10.95> on input line 57.
+LaTeX Font Info:    External font `jis at11.089pt' loaded for size
+(Font)              <10.95> on input line 57.
+LaTeX Font Info:    External font `jis at6.6533pt' loaded for size
+(Font)              <6> on input line 57.
+LaTeX Font Info:    External font `jis-v at9.6104pt' loaded for size
+(Font)              <10> on input line 57.
+LaTeX Font Info:    External font `jis at9.6104pt' loaded for size
+(Font)              <10> on input line 57.
+LaTeX Font Info:    External font `jis at7.3926pt' loaded for size
+(Font)              <7> on input line 57.
+LaTeX Font Info:    External font `jis at5.1748pt' loaded for size
+(Font)              <5> on input line 57.
+LaTeX Font Info:    External font `jis-v at6.6533pt' loaded for size
+(Font)              <6> on input line 57.
+LaTeX Font Info:    Font shape `JT1/mc/bx/n' in size <10.95> not available
+(Font)              Font shape `JT1/gt/m/n' tried instead on input line 59.
+LaTeX Font Info:    External font `jisg-v at11.089pt' loaded for size
+(Font)              <10.95> on input line 59.
+LaTeX Font Info:    Font shape `JY1/mc/bx/n' in size <10.95> not available
+(Font)              Font shape `JY1/gt/m/n' tried instead on input line 59.
+LaTeX Font Info:    External font `jisg at11.089pt' loaded for size
+(Font)              <10.95> on input line 59.
+
+
+
+
+LaTeX Font Info:    External font `jis-v at17.742pt' loaded for size
+(Font)              <17.28> on input line 76.
+LaTeX Font Info:    External font `jis at17.742pt' loaded for size
+(Font)              <17.28> on input line 76.
+[2
+
+]
+LaTeX Font Info:    External font `jis-v at7.3926pt' loaded for size
+(Font)              <7> on input line 90.
+LaTeX Font Info:    Font shape `JT1/mc/bx/n' in size <7> not available
+(Font)              Font shape `JT1/gt/m/n' tried instead on input line 102.
+LaTeX Font Info:    External font `jisg-v at7.3926pt' loaded for size
+(Font)              <7> on input line 102.
+LaTeX Font Info:    Font shape `JY1/mc/bx/n' in size <7> not available
+(Font)              Font shape `JY1/gt/m/n' tried instead on input line 102.
+LaTeX Font Info:    External font `jisg at7.3926pt' loaded for size
+(Font)              <7> on input line 102.
+
+Overfull \hbox (23.82529pt too wide) in paragraph at lines 94--105
+ [][][][] 
+ []
+
+LaTeX Font Info:    External font `jis-v at5.1748pt' loaded for size
+(Font)              <5> on input line 117.
+
+
+
+LaTeX Warning: File `error_distribution_histogram.pdf' not found on input line 
+169.
+
+
+! LaTeX Error: Cannot determine size of graphic in error_distribution_histogram
+.xbb (no BoundingBox).
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.169 ...ewidth]{error_distribution_histogram.pdf}
+                                                  
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+File: error_distribution_histogram.pdf Graphic file (type pdf)
+<error_distribution_histogram.pdf>
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+
+
+[3]
+
+LaTeX Warning: File `q15_simd_optimization_flow.pdf' not found on input line 18
+1.
+
+
+! LaTeX Error: Cannot determine size of graphic in q15_simd_optimization_flow.x
+bb (no BoundingBox).
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.181 ...inewidth]{q15_simd_optimization_flow.pdf}
+                                                  
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+File: q15_simd_optimization_flow.pdf Graphic file (type pdf)
+<q15_simd_optimization_flow.pdf>
+
+
+
+Overfull \hbox (36.32341pt too wide) detected at line 208
+[]\OML/cmm/m/it/9 Y[] \OT1/cmr/m/n/9 = [] []
+ []
+
+
+
+[4]
+Overfull \hbox (46.68405pt too wide) in paragraph at lines 284--295
+ [][][][] 
+ []
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+
+
+
+Overfull \hbox (46.10043pt too wide) in paragraph at lines 341--353
+ [][][][] 
+ []
+
+
+LaTeX Warning: File `performance_analysis.pdf' not found on input line 359.
+
+
+! LaTeX Error: Cannot determine size of graphic in performance_analysis.xbb (no
+ BoundingBox).
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.359 ...0.85\linewidth]{performance_analysis.pdf}
+                                                  
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+File: performance_analysis.pdf Graphic file (type pdf)
+<performance_analysis.pdf>
+
+
+[5]
+
+LaTeX Warning: File `numerical_stability_1000.pdf' not found on input line 370.
+
+
+
+! LaTeX Error: Cannot determine size of graphic in numerical_stability_1000.xbb
+ (no BoundingBox).
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.370 ...\linewidth]{numerical_stability_1000.pdf}
+                                                  
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+File: numerical_stability_1000.pdf Graphic file (type pdf)
+<numerical_stability_1000.pdf>
+
+Overfull \hbox (12.71564pt too wide) in paragraph at lines 381--391
+ [][][][] 
+ []
+
+
+
+
+
+[6]
+
+! LaTeX Error: Lonely \item--perhaps a missing list environment.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.449 \bibitem{liang2019}
+                         
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+! Undefined control sequence.
+<argument> \@listctr 
+                     
+l.449 \bibitem{liang2019}
+                         
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+! You can't use `\relax' after \the.
+<recently read> \c@ 
+                    
+l.449 \bibitem{liang2019}
+                         
+I'm forgetting what you said and using zero instead.
+
+LaTeX Font Info:    Font shape `JT1/mc/m/it' in size <9> not available
+(Font)              Font shape `JT1/mc/m/n' tried instead on input line 450.
+LaTeX Font Info:    External font `jis-v at8.8711pt' loaded for size
+(Font)              <9> on input line 450.
+LaTeX Font Info:    Font shape `JY1/mc/m/it' in size <9> not available
+(Font)              Font shape `JY1/mc/m/n' tried instead on input line 450.
+LaTeX Font Info:    External font `jis at8.8711pt' loaded for size
+(Font)              <9> on input line 450.
+
+! LaTeX Error: Lonely \item--perhaps a missing list environment.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.452 \bibitem{chen2020}
+                        
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+! Undefined control sequence.
+<argument> \@listctr 
+                     
+l.452 \bibitem{chen2020}
+                        
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+! You can't use `\relax' after \the.
+<recently read> \c@ 
+                    
+l.452 \bibitem{chen2020}
+                        
+I'm forgetting what you said and using zero instead.
+
+
+! LaTeX Error: Lonely \item--perhaps a missing list environment.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.455 \bibitem{yamamoto2021}
+                            
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+! Undefined control sequence.
+<argument> \@listctr 
+                     
+l.455 \bibitem{yamamoto2021}
+                            
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+! You can't use `\relax' after \the.
+<recently read> \c@ 
+                    
+l.455 \bibitem{yamamoto2021}
+                            
+I'm forgetting what you said and using zero instead.
+
+LaTeX Font Info:    Font shape `JT1/mc/m/it' in size <7> not available
+(Font)              Font shape `JT1/mc/m/n' tried instead on input line 460.
+LaTeX Font Info:    External font `jis-v at7.3926pt' loaded for size
+(Font)              <7> on input line 460.
+LaTeX Font Info:    Font shape `JY1/mc/m/it' in size <7> not available
+(Font)              Font shape `JY1/mc/m/n' tried instead on input line 460.
+LaTeX Font Info:    External font `jis at7.3926pt' loaded for size
+(Font)              <7> on input line 460.
+
+
+! Misplaced alignment tab character &.
+l.475 ...pple A15 SoC Performance Review: Faster &
+                                                   More Efficient,'' AnandTe...
+I can't figure out why you would want to use a tab mark
+here. If you just want an ampersand, the remedy is
+simple: Just type `I\&' now. But if some right brace
+up above has ended a previous alignment prematurely,
+you're probably due for more error messages, and you
+might try typing `S' now just to see what is salvageable.
+
+
+Overfull \hbox (75.98581pt too wide) in paragraph at lines 475--476
+\OT1/cmr/m/n/7 2021. [On-line]. Avail-able: https://www.anandtech.com/show/1702
+4/apple-
+ []
+
+
+
+[7]
+
+[8
+
+
+] (./ieice_letter_complete.aux)
+ ***********
+pLaTeX2e <2023-02-14>+1, based on
+LaTeX2e <2025-06-01> patch level 1
+L3 programming layer <2025-07-19>
+ ***********
+ ) 
+Here is how much of TeX's memory you used:
+ 5064 strings out of 468460
+ 79087 string characters out of 5447603
+ 677520 words of memory out of 5000000
+ 33634 multiletter control sequences out of 15000+600000
+ 645467 words of font info for 132 fonts, out of 8000000 for 9000
+ 929 hyphenation exceptions out of 8191
+ 57i,13n,65p,997b,368s stack positions out of 10000i,1000n,20000p,200000b,200000s
+
+Output written on ieice_letter_complete.dvi (8 pages, 39440 bytes).
