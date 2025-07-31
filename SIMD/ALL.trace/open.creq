@@ -117,6 +117,36 @@
 		<integer>1</integer>
 		<string>This version does not support the new engineering type 'narrative'.</string>
 	</array>
+	<key>com.apple.dt.etype.XROSLogCategoryTypeID</key>
+	<array>
+		<integer>1</integer>
+		<string>This version does not support the new engineering type 'category'.</string>
+	</array>
+	<key>com.apple.dt.etype.XROSLogEventTypeID</key>
+	<array>
+		<integer>1</integer>
+		<string>This version does not support the new engineering type 'event-type'.</string>
+	</array>
+	<key>com.apple.dt.etype.XROSLogFormatStringTypeID</key>
+	<array>
+		<integer>1</integer>
+		<string>This version does not support the new engineering type 'format-string'.</string>
+	</array>
+	<key>com.apple.dt.etype.XROSLogMetadataTypeID</key>
+	<array>
+		<integer>1</integer>
+		<string>This version does not support the new engineering type 'os-log-metadata'.</string>
+	</array>
+	<key>com.apple.dt.etype.XROSLogSubsystemTypeID</key>
+	<array>
+		<integer>1</integer>
+		<string>This version does not support the new engineering type 'subsystem'.</string>
+	</array>
+	<key>com.apple.dt.etype.XROSSignpostIdentifierTypeID</key>
+	<array>
+		<integer>1</integer>
+		<string>This version does not support the new engineering type 'os-signpost-identifier'.</string>
+	</array>
 	<key>com.apple.dt.etype.XRProcessIDTypeID</key>
 	<array>
 		<integer>1</integer>
@@ -152,10 +182,20 @@
 		<integer>1</integer>
 		<string>This version does not support the new engineering type 'sample-time'.</string>
 	</array>
+	<key>com.apple.dt.etype.XRSignpostNameTypeID</key>
+	<array>
+		<integer>1</integer>
+		<string>This version does not support the new engineering type 'signpost-name'.</string>
+	</array>
 	<key>com.apple.dt.etype.XRStartTimeTypeID</key>
 	<array>
 		<integer>1</integer>
 		<string>This version does not support the new engineering type 'start-time'.</string>
+	</array>
+	<key>com.apple.dt.etype.XRTextBacktraceTypeID</key>
+	<array>
+		<integer>1</integer>
+		<string>This version does not support the new engineering type 'text-backtrace'.</string>
 	</array>
 	<key>com.apple.dt.etype.XRThreadIDTypeID</key>
 	<array>

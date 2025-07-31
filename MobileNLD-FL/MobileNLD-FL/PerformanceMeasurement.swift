@@ -26,7 +26,7 @@ class PerformanceMeasurement {
         // ウォームアップ
         for _ in 0..<5 {
             _ = OptimizedNonlinearDynamics.lyapunovExponentOptimized(
-                testSignal[0..<150], 
+                Array(testSignal[0..<150]), 
                 embeddingDim: 5, 
                 delay: 4, 
                 samplingRate: 50
