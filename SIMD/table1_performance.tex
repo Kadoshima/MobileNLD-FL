@@ -1,0 +1,14 @@
+\begin{table}[htbp]
+\centering
+\caption{Performance Comparison of NLD Implementations}
+\label{tab:performance}
+\begin{tabular}{lrrrrr}
+\hline
+Implementation & Lyapunov (ms) & DFA (ms) & Memory (KB) & SIMD Util. (\%) & Speedup \\
+\hline
+Python (NumPy) & 24.79 $\pm$ 0.22 & 2.61 $\pm$ 0.13 & 2048 & N/A & 1.0$\times$ \\
+Swift (Baseline) & 85.0 & 85.0 & 600 & N/A & 0.29$\times$ \\
+Swift (Q15+SIMD) & 3.9 & 0.32 & 300 & 95 & 6.4$\times$ / 8.2$\times$ \\
+\hline
+\end{tabular}
+\end{table}

@@ -1,7 +1,0 @@
-Study,Method,Application Domain,Personalization,Communication Efficiency,Real-time Processing,Privacy Guarantee,Mobile Optimization,Evaluation Dataset,Performance Metric,Key Innovation
-McMahan et al. (2017),FedAvg,Image Classification,None,Standard,No,Basic FL,No,CIFAR-10/100,Accuracy: 85.2%,Federated Averaging
-Li et al. (2020),FedProx,Natural Language,Proximal Term,Standard,No,Basic FL,No,Shakespeare,Accuracy: 87.1%,Proximal Regularization
-Kairouz et al. (2019),FedNova,General Survey,Variance Reduction,Improved,No,Differential Privacy,No,Synthetic,Convergence Rate,Variance Reduction
-Wang et al. (2021),Mobile FL Survey,Mobile Healthcare,Client Clustering,Bandwidth Aware,Limited,Secure Aggregation,Yes,Various Mobile,Energy Efficiency,Mobile-Specific Survey
-Smith et al. (2022),Edge Computing Review,Edge AI,Local Adaptation,Edge Optimized,Yes,Local Processing,Yes,IoT Datasets,Latency: 100ms,Edge Computing Framework
-Our Work (2024),PFL-AE (Proposed),Gait Analysis,Shared Encoder + Local Decoder,38% Reduction,Yes (4ms),Local Processing + FL,Yes (Q15 Fixed-Point),MHEALTH (Gait),"AUC: 0.84, Latency: 4ms",NLD + Personalized FL

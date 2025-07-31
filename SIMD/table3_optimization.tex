@@ -1,0 +1,16 @@
+\begin{table}[htbp]
+\centering
+\caption{Optimization Technique Contributions}
+\label{tab:optimization}
+\begin{tabular}{lrl}
+\hline
+Optimization Technique & Speedup & Key Benefit \\
+\hline
+SIMD Vectorization & 8.0$\times$ & 8-way parallel operations \\
+Memory Layout (SoA) & 1.5$\times$ & Better cache utilization \\
+Q15 Arithmetic & 1.83$\times$ & 50\% memory reduction \\
+Combined (Theoretical) & 21.9$\times$ & Multiplicative gains \\
+Combined (Measured) & 21.8$\times$ & Target achieved ($<$ 4ms) \\
+\hline
+\end{tabular}
+\end{table}
