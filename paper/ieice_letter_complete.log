@@ -1,4 +1,4 @@
-This is e-upTeX, Version 3.141592653-p4.1.2-u2.00-250202-2.6 (utf8.euc) (TeX Live 2025) (preloaded format=platex 2025.7.31)  31 JUL 2025 18:34
+This is e-upTeX, Version 3.141592653-p4.1.2-u2.00-250202-2.6 (utf8.euc) (TeX Live 2025) (preloaded format=platex 2025.7.31)  31 JUL 2025 20:21
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -301,8 +301,8 @@ See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.38   {1
-         200 Matsumoto-cho, Kasugai-shi, Aichi, 487-8501 Japan}
+l.38 {1
+       200~Matsumoto-cho, Kasugai-shi, Aichi, 487-8501~Japan}
 You're in trouble here.  Try typing  <return>  to proceed.
 If that doesn't work, type  X <return>  to quit.
 
@@ -414,17 +414,13 @@ LaTeX Font Info:    Font shape `JY1/mc/bx/n' in size <7> not available
 LaTeX Font Info:    External font `jisg at7.3926pt' loaded for size
 (Font)              <7> on input line 102.
 
-Overfull \hbox (23.82529pt too wide) in paragraph at lines 94--105
+Overfull \hbox (69.6919pt too wide) in paragraph at lines 94--106
  [][][][] 
  []
 
 LaTeX Font Info:    External font `jis-v at5.1748pt' loaded for size
-(Font)              <5> on input line 117.
+(Font)              <5> on input line 120.
 
-
-
-LaTeX Warning: File `error_distribution_histogram.pdf' not found on input line 
-169.
 
 
 ! LaTeX Error: Cannot determine size of graphic in error_distribution_histogram
@@ -434,7 +430,7 @@ See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.169 ...ewidth]{error_distribution_histogram.pdf}
+l.172 ...ewidth]{error_distribution_histogram.pdf}
                                                   
 Try typing  <return>  to proceed.
 If that doesn't work, type  X <return>  to quit.
@@ -448,10 +444,6 @@ LaTeX Warning: `h' float specifier changed to `ht'.
 
 [3]
 
-LaTeX Warning: File `q15_simd_optimization_flow.pdf' not found on input line 18
-1.
-
-
 ! LaTeX Error: Cannot determine size of graphic in q15_simd_optimization_flow.x
 bb (no BoundingBox).
 
@@ -459,7 +451,7 @@ See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.181 ...inewidth]{q15_simd_optimization_flow.pdf}
+l.184 ...inewidth]{q15_simd_optimization_flow.pdf}
                                                   
 Try typing  <return>  to proceed.
 If that doesn't work, type  X <return>  to quit.
@@ -469,14 +461,14 @@ File: q15_simd_optimization_flow.pdf Graphic file (type pdf)
 
 
 
-Overfull \hbox (36.32341pt too wide) detected at line 208
+Overfull \hbox (36.32341pt too wide) detected at line 211
 []\OML/cmm/m/it/9 Y[] \OT1/cmr/m/n/9 = [] []
  []
 
 
 
 [4]
-Overfull \hbox (46.68405pt too wide) in paragraph at lines 284--295
+Overfull \hbox (46.68405pt too wide) in paragraph at lines 287--298
  [][][][] 
  []
 
@@ -486,12 +478,24 @@ LaTeX Warning: `h' float specifier changed to `ht'.
 
 
 
-Overfull \hbox (46.10043pt too wide) in paragraph at lines 341--353
+LaTeX Warning: Citation `harris2020' on page 5 undefined on input line 304.
+
+LaTeX Font Info:    Font shape `JT1/mc/bx/n' in size <6> not available
+(Font)              Font shape `JT1/gt/m/n' tried instead on input line 308.
+LaTeX Font Info:    External font `jisg-v at6.6533pt' loaded for size
+(Font)              <6> on input line 308.
+LaTeX Font Info:    Font shape `JY1/mc/bx/n' in size <6> not available
+(Font)              Font shape `JY1/gt/m/n' tried instead on input line 308.
+LaTeX Font Info:    External font `jisg at6.6533pt' loaded for size
+(Font)              <6> on input line 308.
+
+LaTeX Warning: Citation `vanderwalt2011' on page 5 undefined on input line 308.
+
+
+
+Overfull \hbox (46.10043pt too wide) in paragraph at lines 345--357
  [][][][] 
  []
-
-
-LaTeX Warning: File `performance_analysis.pdf' not found on input line 359.
 
 
 ! LaTeX Error: Cannot determine size of graphic in performance_analysis.xbb (no
@@ -501,20 +505,13 @@ See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.359 ...0.85\linewidth]{performance_analysis.pdf}
+l.363 ...0.85\linewidth]{performance_analysis.pdf}
                                                   
 Try typing  <return>  to proceed.
 If that doesn't work, type  X <return>  to quit.
 
 File: performance_analysis.pdf Graphic file (type pdf)
 <performance_analysis.pdf>
-
-
-[5]
-
-LaTeX Warning: File `numerical_stability_1000.pdf' not found on input line 370.
-
-
 
 ! LaTeX Error: Cannot determine size of graphic in numerical_stability_1000.xbb
  (no BoundingBox).
@@ -523,7 +520,7 @@ See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.370 ...\linewidth]{numerical_stability_1000.pdf}
+l.374 ...\linewidth]{numerical_stability_1000.pdf}
                                                   
 Try typing  <return>  to proceed.
 If that doesn't work, type  X <return>  to quit.
@@ -531,7 +528,9 @@ If that doesn't work, type  X <return>  to quit.
 File: numerical_stability_1000.pdf Graphic file (type pdf)
 <numerical_stability_1000.pdf>
 
-Overfull \hbox (12.71564pt too wide) in paragraph at lines 381--391
+
+[5]
+Overfull \hbox (12.71564pt too wide) in paragraph at lines 385--395
  [][][][] 
  []
 
@@ -547,7 +546,7 @@ See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.449 \bibitem{liang2019}
+l.453 \bibitem{liang2019}
                          
 Try typing  <return>  to proceed.
 If that doesn't work, type  X <return>  to quit.
@@ -555,7 +554,7 @@ If that doesn't work, type  X <return>  to quit.
 ! Undefined control sequence.
 <argument> \@listctr 
                      
-l.449 \bibitem{liang2019}
+l.453 \bibitem{liang2019}
                          
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
@@ -566,18 +565,18 @@ and I'll forget about whatever was undefined.
 ! You can't use `\relax' after \the.
 <recently read> \c@ 
                     
-l.449 \bibitem{liang2019}
+l.453 \bibitem{liang2019}
                          
 I'm forgetting what you said and using zero instead.
 
 LaTeX Font Info:    Font shape `JT1/mc/m/it' in size <9> not available
-(Font)              Font shape `JT1/mc/m/n' tried instead on input line 450.
+(Font)              Font shape `JT1/mc/m/n' tried instead on input line 454.
 LaTeX Font Info:    External font `jis-v at8.8711pt' loaded for size
-(Font)              <9> on input line 450.
+(Font)              <9> on input line 454.
 LaTeX Font Info:    Font shape `JY1/mc/m/it' in size <9> not available
-(Font)              Font shape `JY1/mc/m/n' tried instead on input line 450.
+(Font)              Font shape `JY1/mc/m/n' tried instead on input line 454.
 LaTeX Font Info:    External font `jis at8.8711pt' loaded for size
-(Font)              <9> on input line 450.
+(Font)              <9> on input line 454.
 
 ! LaTeX Error: Lonely \item--perhaps a missing list environment.
 
@@ -585,7 +584,7 @@ See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.452 \bibitem{chen2020}
+l.456 \bibitem{chen2020}
                         
 Try typing  <return>  to proceed.
 If that doesn't work, type  X <return>  to quit.
@@ -593,7 +592,7 @@ If that doesn't work, type  X <return>  to quit.
 ! Undefined control sequence.
 <argument> \@listctr 
                      
-l.452 \bibitem{chen2020}
+l.456 \bibitem{chen2020}
                         
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
@@ -604,7 +603,7 @@ and I'll forget about whatever was undefined.
 ! You can't use `\relax' after \the.
 <recently read> \c@ 
                     
-l.452 \bibitem{chen2020}
+l.456 \bibitem{chen2020}
                         
 I'm forgetting what you said and using zero instead.
 
@@ -615,7 +614,7 @@ See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.455 \bibitem{yamamoto2021}
+l.459 \bibitem{yamamoto2021}
                             
 Try typing  <return>  to proceed.
 If that doesn't work, type  X <return>  to quit.
@@ -623,7 +622,7 @@ If that doesn't work, type  X <return>  to quit.
 ! Undefined control sequence.
 <argument> \@listctr 
                      
-l.455 \bibitem{yamamoto2021}
+l.459 \bibitem{yamamoto2021}
                             
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
@@ -634,22 +633,22 @@ and I'll forget about whatever was undefined.
 ! You can't use `\relax' after \the.
 <recently read> \c@ 
                     
-l.455 \bibitem{yamamoto2021}
+l.459 \bibitem{yamamoto2021}
                             
 I'm forgetting what you said and using zero instead.
+
+
 
 LaTeX Font Info:    Font shape `JT1/mc/m/it' in size <7> not available
-(Font)              Font shape `JT1/mc/m/n' tried instead on input line 460.
+(Font)              Font shape `JT1/mc/m/n' tried instead on input line 464.
 LaTeX Font Info:    External font `jis-v at7.3926pt' loaded for size
-(Font)              <7> on input line 460.
+(Font)              <7> on input line 464.
 LaTeX Font Info:    Font shape `JY1/mc/m/it' in size <7> not available
-(Font)              Font shape `JY1/mc/m/n' tried instead on input line 460.
+(Font)              Font shape `JY1/mc/m/n' tried instead on input line 464.
 LaTeX Font Info:    External font `jis at7.3926pt' loaded for size
-(Font)              <7> on input line 460.
-
-
+(Font)              <7> on input line 464.
 ! Misplaced alignment tab character &.
-l.475 ...pple A15 SoC Performance Review: Faster &
+l.479 ...pple A15 SoC Performance Review: Faster &
                                                    More Efficient,'' AnandTe...
 I can't figure out why you would want to use a tab mark
 here. If you just want an ampersand, the remedy is
@@ -659,7 +658,7 @@ you're probably due for more error messages, and you
 might try typing `S' now just to see what is salvageable.
 
 
-Overfull \hbox (75.98581pt too wide) in paragraph at lines 475--476
+Overfull \hbox (75.98581pt too wide) in paragraph at lines 479--480
 \OT1/cmr/m/n/7 2021. [On-line]. Avail-able: https://www.anandtech.com/show/1702
 4/apple-
  []
@@ -677,14 +676,21 @@ pLaTeX2e <2023-02-14>+1, based on
 LaTeX2e <2025-06-01> patch level 1
 L3 programming layer <2025-07-19>
  ***********
+
+
+LaTeX Warning: There were undefined references.
+
+
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+
  ) 
 Here is how much of TeX's memory you used:
- 5064 strings out of 468460
- 79087 string characters out of 5447603
+ 4900 strings out of 468460
+ 72590 string characters out of 5447603
  677520 words of memory out of 5000000
- 33634 multiletter control sequences out of 15000+600000
- 645467 words of font info for 132 fonts, out of 8000000 for 9000
+ 33469 multiletter control sequences out of 15000+600000
+ 645963 words of font info for 135 fonts, out of 8000000 for 9000
  929 hyphenation exceptions out of 8191
  57i,13n,65p,997b,368s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
-Output written on ieice_letter_complete.dvi (8 pages, 39440 bytes).
+Output written on ieice_letter_complete.dvi (8 pages, 40900 bytes).

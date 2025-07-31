@@ -66,20 +66,21 @@ def analyze_distribution_tails(results):
 
 """
     
-    for dataset, stats in results.items():
+    for dataset, result_stats in results.items():
         analysis += f"\n{dataset}データセット:\n"
-        analysis += f"  平均値: {stats['mean']:.6f}\n"
-        analysis += f"  中央値: {stats['median']:.6f}\n"
-        analysis += f"  95%タイル: {stats['p95']:.6f}\n"
-        analysis += f"  99%タイル: {stats['p99']:.6f}\n"
-        analysis += f"  99.9%タイル: {stats['p99_9']:.6f}\n"
-        analysis += f"  最大値: {stats['max']:.6f}\n"
-        analysis += f"  0.002超過率: {stats['outliers']:.2f}%\n"
+        analysis += f"  平均値: {result_stats['mean']:.6f}\n"
+        analysis += f"  中央値: {result_stats['median']:.6f}\n"
+        analysis += f"  95%タイル: {result_stats['p95']:.6f}\n"
+        analysis += f"  99%タイル: {result_stats['p99']:.6f}\n"
+        analysis += f"  99.9%タイル: {result_stats['p99_9']:.6f}\n"
+        analysis += f"  最大値: {result_stats['max']:.6f}\n"
+        analysis += f"  0.002超過率: {result_stats['outliers']:.2f}%\n"
         
         # 裾野の形状分析
-        data = stats['data']
-        skewness = stats.skew(data)
-        kurtosis = stats.kurtosis(data)
+        data = result_stats['data']
+        from scipy import stats as scipy_stats
+        skewness = scipy_stats.skew(data)
+        kurtosis = scipy_stats.kurtosis(data)
         
         analysis += f"  歪度: {skewness:.3f} ({'右裾が長い' if skewness > 0 else '左裾が長い'})\n"
         analysis += f"  尖度: {kurtosis:.3f} ({'正規分布より尖っている' if kurtosis > 0 else '正規分布より平坦'})\n"
@@ -88,8 +89,8 @@ def analyze_distribution_tails(results):
     analysis += "\n=== 理論上界との整合性 ===\n"
     theoretical_bound = 0.0019
     
-    for dataset, stats in results.items():
-        within_bound = (stats['data'] <= theoretical_bound).sum() / len(stats['data']) * 100
+    for dataset, result_stats in results.items():
+        within_bound = (result_stats['data'] <= theoretical_bound).sum() / len(result_stats['data']) * 100
         analysis += f"{dataset}: {within_bound:.1f}%が理論上界内\n"
     
     # ノイズ依存性の分析
@@ -106,18 +107,19 @@ def plot_error_distribution(results):
     
     fig, axes = plt.subplots(1, 3, figsize=(15, 5))
     
-    for idx, (dataset, stats) in enumerate(results.items()):
+    for idx, (dataset, result_stats) in enumerate(results.items()):
         ax = axes[idx]
-        data = stats['data']
+        data = result_stats['data']
         
         # ヒストグラム
         n, bins, patches = ax.hist(data, bins=100, density=True, 
                                   alpha=0.7, color='blue', edgecolor='black')
         
         # 正規分布フィット
-        mu, sigma = stats['mean'], stats['std']
+        mu, sigma = result_stats['mean'], result_stats['std']
         x = np.linspace(data.min(), data.max(), 100)
-        ax.plot(x, stats.norm.pdf(x, mu, sigma), 'r-', lw=2, 
+        from scipy import stats as scipy_stats
+        ax.plot(x, scipy_stats.norm.pdf(x, mu, sigma), 'r-', lw=2, 
                 label=f'正規分布\nμ={mu:.4f}\nσ={sigma:.4f}')
         
         # 理論上界
@@ -125,8 +127,8 @@ def plot_error_distribution(results):
                   label='理論上界(0.0019)')
         
         # パーセンタイル
-        ax.axvline(stats['p99'], color='orange', linestyle=':', lw=2,
-                  label=f'99%タイル({stats["p99"]:.4f})')
+        ax.axvline(result_stats['p99'], color='orange', linestyle=':', lw=2,
+                  label=f'99%タイル({result_stats["p99"]:.4f})')
         
         ax.set_xlabel('累積誤差 δd')
         ax.set_ylabel('確率密度')
@@ -147,10 +149,10 @@ def calculate_ks_test(results):
     # 実測RMSE値
     measured_rmse = 0.0019
     
-    for dataset, stats in results.items():
+    for dataset, result_stats in results.items():
         # 正規分布との比較
-        ks_stat, p_value = stats.kstest(stats['data'], 'norm', 
-                                       args=(stats['mean'], stats['std']))
+        ks_stat, p_value = stats.kstest(result_stats['data'], 'norm', 
+                                       args=(result_stats['mean'], result_stats['std']))
         
         ks_results += f"\n{dataset}:\n"
         ks_results += f"  KS統計量: {ks_stat:.4f}\n"
@@ -158,7 +160,7 @@ def calculate_ks_test(results):
         ks_results += f"  正規性: {'棄却されない' if p_value > 0.05 else '棄却される'}(α=0.05)\n"
         
         # 実測値との整合性
-        empirical_cdf = np.mean(stats['data'] <= measured_rmse)
+        empirical_cdf = np.mean(result_stats['data'] <= measured_rmse)
         ks_results += f"  実測RMSE以下の割合: {empirical_cdf:.1%}\n"
     
     return ks_results
