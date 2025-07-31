@@ -190,29 +190,30 @@ class AccuracyTester: ObservableObject {
         isRunning = true
         results = []
         
-        DispatchQueue.global(qos: .userInitiated).async {
+        let workItem = DispatchWorkItem { [weak self] in
+            guard let self = self else { return }
             // Generate known chaotic signal
             let testSignal = self.generateKnownChaoticSignal(size: dataSize)
             let referencelyapunov = self.calculateReferenceLyapunov(testSignal)
             
-            let implementations: [(String, ([Q15]) -> Float)] = [
-                ("Scalar", NonlinearDynamicsScalar.lyapunovExponentScalar),
-                ("SIMD Only", NonlinearDynamicsSIMDOnly.lyapunovExponentSIMDOnly),
-                ("Adaptive Only", NonlinearDynamicsAdaptiveOnly.lyapunovExponentAdaptive),
-                ("Proposed", NonlinearDynamics.lyapunovExponent)
+            let implementations: [(name: String, function: ([Q15]) -> Float)] = [
+                (name: "Scalar", function: NonlinearDynamicsScalar.lyapunovExponentScalar),
+                (name: "SIMD Only", function: NonlinearDynamicsSIMDOnly.lyapunovExponentSIMDOnly),
+                (name: "Adaptive Only", function: NonlinearDynamicsAdaptiveOnly.lyapunovExponentAdaptive),
+                (name: "Proposed", function: NonlinearDynamics.lyapunovExponent)
             ]
             
             var allResults: [AccuracyResult] = []
             var detailedData = DetailedAccuracyResults()
             
-            for (name, implementation) in implementations {
+            for impl in implementations {
                 // Run multiple times for stability
                 var lyapunovValues: [Float] = []
                 var processingTimes: [Double] = []
                 
                 for _ in 0..<5 {
                     let start = CFAbsoluteTimeGetCurrent()
-                    let lyapunov = implementation(testSignal)
+                    let lyapunov = impl.function(testSignal)
                     let time = (CFAbsoluteTimeGetCurrent() - start) * 1000
                     
                     lyapunovValues.append(lyapunov)
@@ -234,7 +235,7 @@ class AccuracyTester: ObservableObject {
                 let tradeoffScore = accuracy * (1.0 / (1.0 + normalizedTime)) * 100
                 
                 let result = AccuracyResult(
-                    implementation: name,
+                    implementation: impl.name,
                     processingTime: avgTime,
                     lyapunovExponent: avgLyapunov,
                     error: error,
@@ -247,7 +248,7 @@ class AccuracyTester: ObservableObject {
                 
                 // Store detailed data
                 detailedData.addMeasurement(
-                    implementation: name,
+                    implementation: impl.name,
                     values: lyapunovValues,
                     times: processingTimes,
                     reference: referencelyapunov
@@ -263,6 +264,8 @@ class AccuracyTester: ObservableObject {
                 self.saveAccuracyResults(allResults, dataSize: dataSize)
             }
         }
+        
+        DispatchQueue.global(qos: .userInitiated).async(execute: workItem)
     }
     
     private func generateKnownChaoticSignal(size: Int) -> [Q15] {
