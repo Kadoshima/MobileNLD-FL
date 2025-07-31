@@ -6,7 +6,7 @@ clear; clc; close all;
 
 %% 1. DVFSモデルの基本検証
 fprintf('=== STEP 1: DVFSモデル基本検証 ===\n');
-validate_model();
+a15_dvfs_validate_model();
 
 %% 2. 周波数-電力カーブの可視化と文献値比較
 fprintf('\n=== STEP 2: 周波数-電力関係の可視化 ===\n');

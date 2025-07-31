@@ -26,7 +26,7 @@ NUM_SCALES = 10;
 
 %% Validate DVFS model first
 fprintf('=== Validating A15 DVFS Model ===\n');
-a15_dvfs_model.validate_model();
+a15_dvfs_validate_model();
 fprintf('\n');
 
 %% Generate test signals (realistic gait-like signals)
@@ -199,7 +199,7 @@ grid on;
 
 % Subplot 5: DVFS operating points
 subplot(2, 3, 5);
-[freq_curve, power_curve] = a15_dvfs_model.get_dvfs_curve();
+[freq_curve, power_curve] = a15_dvfs_get_curve();
 plot(freq_curve, power_curve, '-', 'LineWidth', 2.5, 'Color', [0.1, 0.3, 0.7]);
 hold on;
 
