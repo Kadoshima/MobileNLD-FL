@@ -9,6 +9,37 @@ import Foundation
 
 struct ComprehensiveNLDTests {
     
+    // MARK: - Test Data Generation
+    
+    private static func generateTestSignal(length: Int) -> [Q15] {
+        // Generate chaotic signal similar to Lorenz system
+        var signal: [Q15] = []
+        var x: Double = 0.1
+        var y: Double = 0.1
+        var z: Double = 0.1
+        
+        let dt = 0.01
+        let sigma = 10.0
+        let rho = 28.0
+        let beta = 8.0 / 3.0
+        
+        for _ in 0..<length {
+            let dx = sigma * (y - x) * dt
+            let dy = (x * (rho - z) - y) * dt
+            let dz = (x * y - beta * z) * dt
+            
+            x += dx
+            y += dy
+            z += dz
+            
+            // Normalize and convert to Q15
+            let normalized = max(-1, min(1, x / 50.0))
+            signal.append(Q15(normalized * 32767))
+        }
+        
+        return signal
+    }
+    
     /// Run all comprehensive tests
     static func runAllTests() -> [TestResult] {
         var results: [TestResult] = []
@@ -86,8 +117,10 @@ struct ComprehensiveNLDTests {
         return TestResult(
             testName: "Dynamic Range Monitoring",
             passed: passed,
-            executionTime: 0,
-            rmse: Float(prediction.probability)
+            result: Float(prediction.probability),
+            reference: 0.5,  // Expected threshold
+            rmse: Float(prediction.probability),
+            executionTime: 0
         )
     }
     
@@ -129,8 +162,10 @@ struct ComprehensiveNLDTests {
         return TestResult(
             testName: "Adaptive Scaling",
             passed: passed,
-            executionTime: 0,
-            rmse: rmse
+            result: scaledRatio,
+            reference: 0.5,
+            rmse: rmse,
+            executionTime: 0
         )
     }
     
@@ -140,7 +175,7 @@ struct ComprehensiveNLDTests {
         let coordinator = CrossStageCoordinator()
         
         // Generate test signal
-        let testSignal = NonlinearDynamicsTests.generateLorenzTimeSeries(length: 500)
+        let testSignal = generateTestSignal(length: 500)
         
         // Define processing stages
         let stages: [ProcessingStage] = [
@@ -169,8 +204,10 @@ struct ComprehensiveNLDTests {
         return TestResult(
             testName: "Cross-stage Coordination",
             passed: passed,
-            executionTime: processingTime,
-            rmse: 1.0 - averageQuality
+            result: averageQuality,
+            reference: 0.8,
+            rmse: 1.0 - averageQuality,
+            executionTime: processingTime
         )
     }
     
@@ -180,7 +217,7 @@ struct ComprehensiveNLDTests {
         let comprehensiveNLD = ComprehensiveNonlinearDynamics()
         
         // Generate Lorenz attractor
-        let lorenzSignal = NonlinearDynamicsTests.generateLorenzTimeSeries(length: 1000)
+        let lorenzSignal = generateTestSignal(length: 1000)
         
         // Calculate with comprehensive system
         let startTime = CFAbsoluteTimeGetCurrent()
@@ -204,15 +241,17 @@ struct ComprehensiveNLDTests {
         return TestResult(
             testName: "Comprehensive Lyapunov",
             passed: passed,
-            executionTime: processingTime,
-            rmse: error
+            result: lyapunov,
+            reference: expectedLyapunov,
+            rmse: error,
+            executionTime: processingTime
         )
     }
     
     private static func testPerformanceComparison() -> TestResult {
         print("⚡ Testing Performance vs Original Implementation...")
         
-        let testSignal = NonlinearDynamicsTests.generateLorenzTimeSeries(length: 150)
+        let testSignal = generateTestSignal(length: 150)
         
         // Original implementation
         let originalStartTime = CFAbsoluteTimeGetCurrent()
@@ -242,8 +281,10 @@ struct ComprehensiveNLDTests {
         return TestResult(
             testName: "Performance Comparison",
             passed: passed,
-            executionTime: comprehensiveTime,
-            rmse: resultDifference
+            result: comprehensiveLyapunov,
+            reference: originalLyapunov,
+            rmse: resultDifference,
+            executionTime: comprehensiveTime
         )
     }
     
@@ -286,17 +327,19 @@ struct ComprehensiveNLDTests {
         return TestResult(
             testName: "4ms Constraint",
             passed: passed,
-            executionTime: averageTime,
-            rmse: Float(averageTime - 4.0) / 4.0
+            result: Float(averageTime),
+            reference: 4.0,
+            rmse: Float(abs(averageTime - 4.0)) / 4.0,
+            executionTime: averageTime
         )
     }
     
     // MARK: - Helper Methods
     
     private static func printTestSummary(_ results: [TestResult]) {
-        print("=" * 50)
+        print(String(repeating: "=", count: 50))
         print("📊 Comprehensive Test Summary")
-        print("=" * 50)
+        print(String(repeating: "=", count: 50))
         
         let passed = results.filter { $0.passed }.count
         let total = results.count

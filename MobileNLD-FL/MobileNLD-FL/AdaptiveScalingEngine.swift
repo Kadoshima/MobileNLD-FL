@@ -112,13 +112,17 @@ public class AdaptiveScalingEngine {
     private func analyzeSignalRange(_ signal: [Q15]) -> RangeStatus {
         guard !signal.isEmpty else { return .optimal(currentRange: 0) }
         
-        // Quick analysis using vDSP
-        var maxVal: Q15 = 0
-        var minVal: Q15 = 0
+        // Find min/max manually for Q15 data
+        var maxVal: Q15 = signal.first ?? 0
+        var minVal: Q15 = signal.first ?? 0
         
-        signal.withUnsafeBufferPointer { ptr in
-            vDSP_maxvi(ptr.baseAddress!, 1, &maxVal, nil, vDSP_Length(signal.count))
-            vDSP_minvi(ptr.baseAddress!, 1, &minVal, nil, vDSP_Length(signal.count))
+        for value in signal {
+            if value > maxVal {
+                maxVal = value
+            }
+            if value < minVal {
+                minVal = value
+            }
         }
         
         let peakValue = Float(max(abs(maxVal), abs(minVal))) / Float(FixedPointMath.Q15_SCALE)
@@ -248,7 +252,11 @@ public class AdaptiveScalingEngine {
         for signal in batch {
             let status = analyzeSignalRange(signal)
             switch status {
-            case .overflowRisk(let scale), .nearLimit(let range), .underflowRisk(let scale):
+            case .overflowRisk(let scale):
+                globalMax = max(globalMax, scale)
+            case .nearLimit(let range):
+                globalMax = max(globalMax, range)
+            case .underflowRisk(let scale):
                 globalMax = max(globalMax, scale)
             case .optimal(let range):
                 globalMax = max(globalMax, range)

@@ -187,10 +187,10 @@ public class DynamicRangeMonitor {
     private func extractRecentPeaks() -> [Float] {
         // Extract local peaks from recent samples
         var peaks: [Float] = []
-        let stride = windowSize / 8
+        let stepSize = windowSize / 8
         
-        for i in stride(from: 0, to: windowSize - stride, by: stride) {
-            let segment = Array(slidingWindow[i..<(i + stride)])
+        for i in Swift.stride(from: 0, to: windowSize - stepSize, by: stepSize) {
+            let segment = Array(slidingWindow[i..<(i + stepSize)])
             if let maxSample = segment.max() {
                 peaks.append(Float(abs(maxSample)) / Float(FixedPointMath.Q15_SCALE))
             }

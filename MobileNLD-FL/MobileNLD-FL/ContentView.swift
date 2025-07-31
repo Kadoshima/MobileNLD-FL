@@ -107,6 +107,19 @@ struct ContentView: View {
                     }
                     .disabled(isRunningTests)
                     
+                    // Experiment Comparison Button
+                    NavigationLink(destination: ExperimentView()) {
+                        HStack {
+                            Image(systemName: "chart.line.uptrend.xyaxis")
+                            Text("Run 4-Implementation Comparison")
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Color.orange)
+                        .foregroundColor(.white)
+                        .cornerRadius(10)
+                    }
+                    
                     if !testResults.isEmpty {
                         Button(action: { showResults.toggle() }) {
                             HStack {

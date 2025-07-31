@@ -1,0 +1,37 @@
+=== TASK LOG: 型変換エラー修正 ===
+Date: 2025-07-31 18:40
+Task: PerformanceMetrics型の不一致修正
+
+ERROR:
+- RealisticSIMDMeasurement.swift:191
+- Cannot convert return expression of type '(result: Float, metrics: AdaptivePerformanceMetrics)' 
+  to return type '(result: Float, metrics: PerformanceMetrics)'
+
+CAUSE:
+- NLDAdaptiveOptimizer.computeLyapunovAdaptiveがAdaptivePerformanceMetricsを返す
+- RealisticSIMDMeasurementではPerformanceMetrics（ComprehensiveNonlinearDynamicsで定義）を期待
+
+FIX:
+- measureWithInternalTiming関数内で型変換を実装
+- AdaptivePerformanceMetricsからPerformanceMetricsへマッピング
+
+IMPLEMENTATION:
+```swift
+let adaptiveResult = optimizer.computeLyapunovAdaptive(...)
+
+var metrics = PerformanceMetrics()
+metrics.totalProcessingTime = adaptiveResult.metrics.processingTimeMs / 1000.0
+metrics.processedSamples = 1
+metrics.successfulProcessing = adaptiveResult.result != 0 ? 1 : 0
+
+return (result: adaptiveResult.result, metrics: metrics)
+```
+
+NOTES:
+- 簡略化された変換（全フィールドが1対1対応しない）
+- processingTimeMsをsecに変換
+- 成功判定は結果が0でないかで判断
+
+STATUS:
+- 修正完了
+- 再ビルド待ち

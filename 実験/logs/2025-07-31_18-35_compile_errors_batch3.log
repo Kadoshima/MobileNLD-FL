@@ -1,0 +1,33 @@
+=== TASK LOG: コンパイルエラー修正（第3バッチ） ===
+Date: 2025-07-31 18:35
+Task: アクセス制御エラーの修正
+
+ERROR FIXED:
+
+ComprehensiveNonlinearDynamics.swift (行131, 134, 137)
+- エラー: 'globalOptimizationEnabled' is inaccessible due to 'private' protection level
+- 原因: CrossStageCoordinatorのglobalOptimizationEnabledプロパティがprivate
+- 修正箇所: CrossStageCoordinator.swift:26
+- 変更: private var → public var
+
+CHANGE DETAIL:
+```swift
+// Before:
+private var globalOptimizationEnabled = true
+
+// After:
+public var globalOptimizationEnabled = true
+```
+
+IMPACT:
+- ComprehensiveNonlinearDynamicsクラスから
+  coordinatorのglobalOptimizationEnabledプロパティにアクセス可能に
+- QualityMode設定時の動作制御が可能に
+
+STATUS:
+- エラー修正完了
+- 再ビルド待ち
+
+REMAINING TASKS:
+- 他のコンパイルエラーの確認
+- 実機での動作確認

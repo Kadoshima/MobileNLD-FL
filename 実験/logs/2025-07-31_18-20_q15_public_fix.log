@@ -1,0 +1,24 @@
+=== TASK LOG: Q15型のアクセスレベル修正 ===
+Date: 2025-07-31 18:20
+Task: public メソッドのパラメータ型エラー修正
+
+ERROR:
+- Method cannot be declared public because its parameter uses an internal type
+- 場所: NLDAdaptiveOptimizer.swift:122
+
+CAUSE:
+- Q15型がinternal（デフォルト）アクセスレベルで定義されていた
+- publicメソッドのパラメータにinternal型を使用できない
+
+FIX:
+- FixedPointMath.swift:12
+- 変更前: typealias Q15 = Int16
+- 変更後: public typealias Q15 = Int16
+
+IMPACT:
+- Q15型がプロジェクト全体でpublicとして使用可能に
+- NLDAdaptiveOptimizerのpublicメソッドがコンパイル可能に
+
+STATUS:
+- 修正完了
+- 再ビルド待ち

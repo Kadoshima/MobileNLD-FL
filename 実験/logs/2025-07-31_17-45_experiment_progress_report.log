@@ -1,0 +1,165 @@
+=== 実験進捗レポート ===
+Date: 2025-07-31 17:45
+Reporter: Claude
+
+## 全体進捗: 約25%完了
+
+## 完了項目と成果物
+
+### 1. 実験環境セットアップ (100%完了)
+**作成物:**
+- ディレクトリ構造:
+  ```
+  /Users/kadoshima/Documents/MobileNLD-FL/実験/
+  ├── raw_data/
+  │   └── rossler_data/
+  │       ├── rossler_x.csv
+  │       ├── rossler_y.csv
+  │       ├── rossler_z.csv
+  │       ├── rossler_q15.csv
+  │       └── normalization_params.json
+  ├── results/
+  │   └── 2025-08-01_6-23-22_basic_performance.json
+  ├── logs/
+  │   ├── 2025-07-31_17-00_experiment_setup.md
+  │   ├── 2025-07-31_17-23_basic_performance_test.log
+  │   └── 2025-07-31_17-36_performance_analysis.log
+  ├── figs/
+  │   └── performance_baseline_2025-08-01_06-36-24.png
+  └── scripts/
+      └── (後述のPythonスクリプト)
+  ```
+
+### 2. テストデータ生成 (100%完了)
+**使用スクリプト:** `/Users/kadoshima/Documents/MobileNLD-FL/scripts/generate_rossler.py`
+```python
+#!/usr/bin/env python3
+import numpy as np
+from scipy.integrate import odeint
+import pandas as pd
+import json
+
+def rossler_system(state, t, a=0.2, b=0.2, c=5.7):
+    x, y, z = state
+    dx = -y - z
+    dy = x + a * y
+    dz = b + z * (x - c)
+    return [dx, dy, dz]
+
+# Initial conditions
+initial_state = [1.0, 1.0, 1.0]
+t = np.linspace(0, 100, 10000)
+
+# Solve ODE
+solution = odeint(rossler_system, initial_state, t)
+
+# Skip transient (first 2000 points)
+x = solution[2000:2800, 0]
+y = solution[2000:2800, 1] 
+z = solution[2000:2800, 2]
+t_subset = t[2000:2800]
+
+# Normalize and convert to Q15
+def to_q15(data):
+    data_min, data_max = np.min(data), np.max(data)
+    normalized = 2 * (data - data_min) / (data_max - data_min) - 1
+    q15_values = np.round(normalized * 32767).astype(np.int16)
+    return q15_values, data_min, data_max
+
+x_q15, x_min, x_max = to_q15(x)
+y_q15, y_min, y_max = to_q15(y)
+z_q15, z_min, z_max = to_q15(z)
+
+# Save data
+output_dir = '/Users/kadoshima/Documents/MobileNLD-FL/実験/raw_data/rossler_data'
+# X, Y, Z個別ファイル保存
+# Q15統合ファイル保存
+# 正規化パラメータ保存
+```
+
+**生成データ:**
+- 800サンプル (100Hz, 8秒分)
+- Rösslerアトラクタの3次元カオス時系列
+- Q15形式 (Int16, -32768〜32767)
+- 正規化パラメータ付き
+
+### 3. 基本性能測定 (簡易版のみ完了: 50%)
+**使用スクリプト:** `/Users/kadoshima/Documents/MobileNLD-FL/実験/run_experiment.swift`
+```swift
+#!/usr/bin/env swift
+// 簡易版Lyapunov指数計算による基本性能測定
+// スカラー実装のみ（SIMD最適化なし）
+```
+
+**測定結果:** `/Users/kadoshima/Documents/MobileNLD-FL/実験/results/2025-08-01_6-23-22_basic_performance.json`
+```json
+{
+  "measurements": [
+    {"data_size": 50, "avg_time_ms": 0.00, ...},
+    {"data_size": 100, "avg_time_ms": 4.68, ...},
+    {"data_size": 200, "avg_time_ms": 6.94, ...},
+    {"data_size": 500, "avg_time_ms": 6.83, ...}
+  ]
+}
+```
+
+### 4. 性能可視化 (100%完了)
+**使用スクリプト:** `/Users/kadoshima/Documents/MobileNLD-FL/実験/plot_performance.py`
+```python
+#!/usr/bin/env python3
+import json
+import matplotlib.pyplot as plt
+import numpy as np
+
+# 結果読み込み
+with open('results/2025-08-01_6-23-22_basic_performance.json', 'r') as f:
+    data = json.load(f)
+
+# プロット作成（エラーバー付き）
+# O(n²)理論線との比較
+# スケーリング分析
+```
+
+**生成図:** `/Users/kadoshima/Documents/MobileNLD-FL/実験/figs/performance_baseline_2025-08-01_06-36-24.png`
+
+## 未完了項目（残り75%）
+
+### 1. Xcode内での4実装比較 (0%)
+- NonlinearDynamicsScalar.swift
+- NonlinearDynamicsSIMDOnly.swift  
+- NonlinearDynamicsAdaptiveOnly.swift
+- NonlinearDynamics.swift (提案手法)
+
+### 2. Instruments実測 (0%)
+- SIMD利用率
+- キャッシュヒット率
+- エネルギー消費
+
+### 3. 近似アルゴリズム評価 (0%)
+- Grid-based近似
+- LSH近似
+- 精度vs速度トレードオフ
+
+### 4. CMSIS-DSP比較 (0%)
+
+### 5. 理論解析 (0%)
+- Q15量子化誤差上限
+- 4ms保証機構
+
+## 重要な発見
+1. **NLDのスケーリング特性**: O(n²)ではなく、サブ二次（1.48倍@100→200）
+2. **アルゴリズム構造の影響**: 固定埋め込み次元が計算量を制限
+3. **SIMD最適化の限界**: 並列化可能部分は20-30%程度と推定
+
+## データ保存場所まとめ
+- 生データ: `/Users/kadoshima/Documents/MobileNLD-FL/実験/raw_data/rossler_data/`
+- 測定結果: `/Users/kadoshima/Documents/MobileNLD-FL/実験/results/`
+- ログ: `/Users/kadoshima/Documents/MobileNLD-FL/実験/logs/`
+- 図: `/Users/kadoshima/Documents/MobileNLD-FL/実験/figs/`
+- スクリプト: `/Users/kadoshima/Documents/MobileNLD-FL/scripts/` (データ生成)
+              `/Users/kadoshima/Documents/MobileNLD-FL/実験/` (実験実行・分析)
+
+## 次の必須アクション
+1. Xcodeプロジェクトを開いて4実装の比較実行
+2. iPhone実機またはシミュレータでInstrumentsプロファイリング
+3. 実測SIMD利用率の記録（推定値は使用禁止）

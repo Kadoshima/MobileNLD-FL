@@ -23,7 +23,7 @@ public class CrossStageCoordinator {
     
     /// Coordination state
     private var stageHistory: [StageTransition] = []
-    private var globalOptimizationEnabled = true
+    public var globalOptimizationEnabled = true
     
     /// Performance metrics
     private var stageMetrics: [ProcessingStage: StageMetrics] = [:]
@@ -317,12 +317,16 @@ public class CrossStageCoordinator {
     private func calculateRangeUtilization(_ signal: [Q15]) -> Float {
         guard !signal.isEmpty else { return 0 }
         
-        var maxVal: Q15 = 0
-        signal.withUnsafeBufferPointer { ptr in
-            vDSP_maxmgvi(ptr.baseAddress!, 1, &maxVal, nil, vDSP_Length(signal.count))
+        // Find maximum absolute value manually for Q15 data
+        var maxAbsVal: Q15 = 0
+        for value in signal {
+            let absVal = abs(value)
+            if absVal > maxAbsVal {
+                maxAbsVal = absVal
+            }
         }
         
-        return Float(maxVal) / Float(FixedPointMath.Q15_MAX)
+        return Float(maxAbsVal) / Float(FixedPointMath.Q15_MAX)
     }
     
     private func assessQuality(_ processed: [Q15], original: [Q15]) -> Float {

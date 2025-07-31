@@ -1,0 +1,48 @@
+=== TASK LOG: コンパイルエラー修正 ===
+Date: 2025-07-31 18:15
+Task: NLDAdaptiveOptimizer.swiftのコンパイルエラー対応
+
+ERRORS FIXED:
+
+1. 'PerformanceMetrics' is ambiguous for type lookup
+   - 原因: PerformanceMetrics構造体が複数箇所で定義されていた
+   - 修正: AdaptivePerformanceMetricsに名前変更
+   - 影響: 123行目と395行目
+
+2. Argument passed to call that takes no arguments (153行目)
+   - 原因: PerformanceMetrics構造体にイニシャライザが定義されていなかった
+   - 修正: 明示的なイニシャライザを追加
+
+3. Global function 'min' requires that 'AccuracyLevel' conform to 'Comparable' (345行目)
+   - 原因: AccuracyLevel enumがComparableプロトコルに準拠していなかった
+   - 修正: Int型のrawValueとComparableプロトコル準拠を追加
+
+4. Invalid redeclaration of 'PerformanceMetrics' (395行目)
+   - 原因: 同名の構造体が重複定義
+   - 修正: AdaptivePerformanceMetricsに改名
+
+CHANGES MADE:
+
+1. PerformanceMetrics → AdaptivePerformanceMetrics
+   - 構造体名の変更
+   - 戻り値の型注釈を更新
+   - イニシャライザの追加
+
+2. AccuracyLevel enumの改良
+   ```swift
+   public enum AccuracyLevel: Int, Comparable {
+       case full = 5
+       case high = 4
+       case medium = 3
+       case low = 2
+       case approximate = 1
+       
+       public static func < (lhs: AccuracyLevel, rhs: AccuracyLevel) -> Bool {
+           return lhs.rawValue < rhs.rawValue
+       }
+   }
+   ```
+
+STATUS: 
+- エラー修正完了
+- 再ビルド待ち

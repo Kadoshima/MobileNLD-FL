@@ -1,0 +1,41 @@
+=== TASK LOG: コンパイルエラー修正（第4バッチ） ===
+Date: 2025-07-31 18:50
+Task: 複数ファイルのコンパイルエラー修正
+
+ERRORS FIXED:
+
+1. CrossStageCoordinator.swift:322
+   - エラー: Cannot convert Q15 pointer to Float pointer for vDSP
+   - 修正: vDSP_maxmgviの代わりに手動ループで最大値を計算
+   - 理由: vDSPはFloat型専用、Q15(Int16)には直接使用不可
+
+2. DynamicRangeMonitor.swift:192
+   - エラー: Cannot call value of non-function type 'Int'
+   - 原因: 変数名strideが関数stride()と衝突
+   - 修正: 変数名をstepSizeに変更、Swift.stride()で明示的に呼び出し
+
+3. ExperimentalPerformanceMeasurement.swift:115,126
+   - エラー: Cannot convert String to StaticString
+   - 修正: StaticString定数を定義し、動的文字列は%sフォーマットで渡す
+   ```swift
+   let signpostName: StaticString = "Implementation"
+   os_signpost(.begin, log: log, name: signpostName, signpostID: signpostID, "%s", implementation.rawValue)
+   ```
+
+4. ExperimentalPerformanceMeasurement.swift:267
+   - エラー: Binary operator '*' cannot be applied to String and Int
+   - 修正: String(repeating: "-", count: 80)を使用
+
+5. ExperimentalPerformanceMeasurement.swift:348-349
+   - エラー: Initializer for conditional binding must have Optional type
+   - 原因: filter()は配列を返す（Optional型ではない）
+   - 修正: if letの代わりにisEmpty チェックを使用
+
+IMPLEMENTATION DETAILS:
+- Q15データ処理にvDSP APIが使えない場合は手動実装
+- os_signpostはStaticStringを要求するためフォーマット文字列を使用
+- Swift標準ライブラリ関数との名前衝突は明示的な名前空間指定で解決
+
+STATUS:
+- 全エラー修正完了
+- 再ビルド待ち

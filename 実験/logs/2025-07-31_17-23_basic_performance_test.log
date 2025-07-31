@@ -1,0 +1,43 @@
+=== TASK LOG: Basic Performance Measurement Test ===
+Date: 2025-07-31 17:23
+Task: Initial performance measurement with simplified baseline
+
+FILES CREATED:
+- /Users/kadoshima/Documents/MobileNLD-FL/実験/run_experiment.swift (simplified test runner)
+- /Users/kadoshima/Documents/MobileNLD-FL/実験/results/2025-08-01_6-23-22_basic_performance.json
+
+EXPERIMENT SUMMARY:
+Successfully executed basic performance measurements using a simplified Lyapunov exponent implementation.
+
+RESULTS:
+Data Size | Avg Time (ms) | Min Time (ms) | Max Time (ms)
+----------|---------------|---------------|---------------
+50        | 0.00         | 0.00         | 0.00
+100       | 4.68         | 4.61         | 4.78  
+200       | 6.94         | 6.75         | 7.10
+500       | 6.83         | 6.74         | 6.96
+1000      | (not tested - only 800 samples available)
+
+OBSERVATIONS:
+1. 50 samples is too small to measure accurately (0ms)
+2. Processing time doesn't scale linearly with data size
+3. 100→200 samples shows increase, but 200→500 shows slight decrease
+4. This suggests cache effects or algorithm overhead dominating at small sizes
+
+ISSUES ENCOUNTERED:
+1. Cannot run full Swift implementation outside Xcode project context
+2. Need to compile within Xcode to access all implementation variants
+3. Type definitions (Q15, etc.) need to be included in standalone scripts
+
+NEXT STEPS:
+1. Open Xcode project and run RunExperiment.swift properly
+2. Use Instruments for SIMD utilization measurement
+3. Compare all 4 implementations (scalar, SIMD-only, adaptive-only, proposed)
+4. Measure actual SIMD utilization rates
+
+NOTE:
+This simplified test provides baseline measurements but doesn't include:
+- SIMD optimizations
+- Adaptive scaling engine
+- Approximate nearest neighbor algorithms
+- Actual implementation variants comparison

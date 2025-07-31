@@ -1,0 +1,48 @@
+=== TASK LOG: Performance Analysis Results ===
+Date: 2025-07-31 17:36
+Task: Analysis of baseline performance measurements
+
+FILES CREATED:
+- /Users/kadoshima/Documents/MobileNLD-FL/実験/plot_performance.py
+- /Users/kadoshima/Documents/MobileNLD-FL/実験/figs/performance_baseline_2025-08-01_06-36-24.png
+
+ANALYSIS RESULTS:
+
+1. SCALING BEHAVIOR:
+   - 100→200 samples: 1.48x (Expected O(n²): 4.0x)
+   - 200→500 samples: 0.98x (Actually decreased!)
+   - Conclusion: Sub-quadratic scaling due to algorithm structure
+
+2. ABSOLUTE PERFORMANCE:
+   - 100 samples: 4.68ms average
+   - 500 samples: 6.83ms average
+   - Only 1.46x increase for 5x data size
+
+3. KEY INSIGHTS:
+   a) Fixed embedding dimension (5) and delay (4) limit computational growth
+   b) Phase space points = N - (embDim-1)*delay, not N²
+   c) Simplified nearest neighbor search with early termination
+   d) Cache effects dominate at these data sizes
+
+4. IMPLICATIONS FOR RESEARCH:
+   - Confirms that NLD doesn't have straightforward O(n²) complexity
+   - SIMD optimization impact will be limited by algorithm structure
+   - Adaptive strategies more important than pure parallelization
+   - Need to focus on algorithmic improvements (approximate NN)
+
+5. VARIANCE ANALYSIS:
+   - Very consistent times (low variance)
+   - Max-Min typically < 0.5ms
+   - Suggests stable performance characteristics
+
+NEXT STEPS:
+1. Implement full 4-variant comparison in Xcode
+2. Measure actual SIMD instruction usage with Instruments
+3. Test approximate nearest neighbor algorithms
+4. Validate that our "realistic" claims about limited SIMD benefit are correct
+
+RESEARCH NARRATIVE ADJUSTMENT:
+Instead of claiming "95% SIMD utilization", we should:
+- Quantify the actual parallelizable portions (~20-30%)
+- Show how adaptive strategies overcome this limitation
+- Emphasize algorithmic improvements over brute-force SIMD

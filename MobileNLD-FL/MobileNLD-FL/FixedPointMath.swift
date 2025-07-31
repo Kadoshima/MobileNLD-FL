@@ -9,7 +9,7 @@
 import Foundation
 import Accelerate
 
-typealias Q15 = Int16
+public typealias Q15 = Int16
 
 struct FixedPointMath {
     

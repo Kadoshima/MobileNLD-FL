@@ -1,0 +1,31 @@
+=== TASK LOG: コンパイルエラー修正（第2バッチ） ===
+Date: 2025-07-31 18:30
+Task: 複数ファイルのコンパイルエラー対応
+
+ERRORS FIXED:
+
+1. ApproximateNearestNeighbor.swift
+   - エラー: Static property 'balanced' is internal and cannot be referenced from a default argument value
+   - 原因: SearchParametersの静的プロパティがinternalだった
+   - 修正: fast, balanced, accurateをpublicに変更
+   - 影響行: 38, 44, 50
+
+2. RunExperiment.swift (行157)
+   - エラー: Type 'RealisticSIMDMeasurement' has no member 'measureConfigurations'
+   - 原因: プロパティ名の誤り
+   - 修正: measureConfigurations → measurementConfigs
+
+3. RunExperiment.swift (行312)
+   - エラー: Invalid redeclaration of 'experimentTimestamp'
+   - 原因: DateFormatter拡張がExperimentView.swiftと重複
+   - 修正: RunExperiment.swiftから削除
+
+CHANGES SUMMARY:
+- 3つのファイルで計5箇所の修正
+- アクセスレベルの調整
+- プロパティ名の修正
+- 重複定義の削除
+
+STATUS:
+- エラー修正完了
+- 再ビルド待ち

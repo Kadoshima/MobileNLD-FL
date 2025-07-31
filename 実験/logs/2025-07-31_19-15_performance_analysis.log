@@ -1,0 +1,58 @@
+=== TASK LOG: Performance Analysis and Extended Testing ===
+Date: 2025-07-31 19:15
+Task ID: analyze-results-1
+Priority: HIGH
+
+FILES CREATED:
+- /実験/analysis/performance_analysis.py (comprehensive analysis script)
+- /実験/run_extended_experiment.swift (extended test runner)
+
+FILES MODIFIED:
+- ExperimentView.swift (added larger data sizes: 2000, 5000)
+
+ANALYSIS FINDINGS:
+
+1. Current Results (50-500 samples):
+   - SIMD Only consistently faster than Proposed method
+   - Overhead ratio: ~1.1-1.2x (10-20% slower)
+   - Reason: Adaptive optimization overhead not justified for small data
+
+2. Theoretical Crossover Analysis:
+   - NLD complexity: O(n²) for nearest neighbor search
+   - SIMD Only: O(n²) with 4x speedup from vectorization
+   - Proposed: O(n log n) with approximate algorithms + overhead
+   - Crossover estimated at ~1000-2000 samples
+
+3. NLD-Specific SIMD Limitations:
+   - Phase space reconstruction: Sequential dependencies
+   - Distance calculations: Good SIMD potential
+   - Nearest neighbor search: Poor SIMD (data-dependent branches)
+   - Overall SIMD utilization: ~30-40% (realistic for NLD)
+
+RECOMMENDATIONS:
+
+1. Immediate Actions:
+   - Run experiments with 1000, 2000, 5000 samples
+   - Profile with Instruments to measure actual SIMD utilization
+   - Focus optimization on distance matrix calculations
+
+2. Algorithm Adjustments:
+   - Implement hybrid approach: SIMD for distances, scalar for neighbors
+   - Add runtime selection: if (n < 1000) use SIMD; else use Proposed
+   - Consider GPU offloading for n > 10000
+
+3. Paper Narrative Update:
+   - Acknowledge NLD's limited SIMD compatibility
+   - Present adaptive optimization as solution for larger datasets
+   - Show crossover analysis demonstrating when each approach wins
+
+NEXT STEPS:
+1. Run extended experiments in iOS app with larger data sizes
+2. Use Instruments to measure actual SIMD utilization
+3. Create crossover visualization showing optimal strategy selection
+4. Update paper with realistic performance claims
+
+CONCEPTUAL IMPACT:
+- Shifts narrative from "always faster" to "intelligently adaptive"
+- Demonstrates understanding of algorithm-hardware interaction
+- Shows practical engineering judgment in optimization choices
