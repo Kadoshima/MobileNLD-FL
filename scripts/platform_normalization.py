@@ -80,8 +80,12 @@ def estimate_cross_platform_performance():
         p1 = platforms[from_platform]
         p2 = platforms[to_platform]
         
-        # CPU性能比（Geekbench基準）
-        cpu_factor = p2['geekbench_single'] / p1['geekbench_single']
+        # CPU性能比（周波数基準 - Geekbenchが無い場合）
+        if 'geekbench_single' in p1 and 'geekbench_single' in p2:
+            cpu_factor = p2['geekbench_single'] / p1['geekbench_single']
+        else:
+            # 周波数とコア数から推定
+            cpu_factor = (p2['freq_ghz'] * p2.get('cores', 4)) / (p1['freq_ghz'] * p1.get('cores', 4))
         
         # メモリ帯域比
         memory_factor = p2['memory_bandwidth_gbps'] / p1['memory_bandwidth_gbps']
@@ -108,7 +112,8 @@ def estimate_cross_platform_performance():
         results += f"\n{name}:\n"
         results += f"  CPU: {spec['cpu']}\n"
         results += f"  周波数: {spec['freq_ghz']} GHz\n"
-        results += f"  Geekbench: {spec['geekbench_single']} (single)\n"
+        if 'geekbench_single' in spec:
+            results += f"  Geekbench: {spec['geekbench_single']} (single)\n"
         results += f"  メモリ帯域: {spec['memory_bandwidth_gbps']} GB/s\n"
     
     results += "\n2. 正規化性能比較:\n"
