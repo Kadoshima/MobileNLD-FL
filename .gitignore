@@ -1,4 +1,59 @@
-venv/*
-data/*
-figs/*
-docs/レター内容/*
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+*.egg-info/
+dist/
+build/
+
+# Data
+data/uci_har/
+data/custom/
+*.csv
+*.txt
+*.log
+
+# Models
+*.h5
+*.tflite
+*.pb
+*.ckpt
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# iOS
+*.xcuserstate
+xcuserdata/
+DerivedData/
+*.pbxuser
+*.mode1v3
+*.mode2v3
+*.perspectivev3
+
+# Arduino
+*.hex
+*.elf
+
+# Results
+results/
+figures/
+*.png
+*.jpg
+*.pdf
+
+# Temporary files
+*.tmp
+*.bak
+~*
+
+# Archive
+MobileNLD-FL-old/

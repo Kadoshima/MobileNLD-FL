@@ -148,10 +148,10 @@ MobileNLD-FL/              # Repository root (keeping original name)
 ## Experiment Tracking
 
 ### Key Metrics
-- **Power Consumption**: Target 60% reduction
-- **Accuracy**: Maintain >92% for 8-class
-- **Latency**: <100ms end-to-end
-- **Battery Life**: 2.5× improvement
+- **Power Consumption**: Target 40-60% reduction
+- **Accuracy**: 85-92% for 8-class (target range)
+- **Latency**: <150ms end-to-end (acceptable)
+- **Battery Life**: 1.5-2× improvement (target)
 
 ### Data Collection Protocol
 1. Collect data from 3 participants
@@ -196,8 +196,8 @@ MobileNLD-FL/              # Repository root (keeping original name)
 ### Technical Goals
 - ✅ 3-device BLE network functional
 - ✅ TFLite Micro models <50KB
-- ✅ Real-time inference <100ms
-- ✅ Power reduction >60%
+- ✅ Real-time inference <150ms
+- ✅ Power reduction 40-60%
 
 ### Research Goals
 - ✅ Novel distributed edge HAR system

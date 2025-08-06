@@ -1,112 +1,135 @@
-# MobileNLD-FL: Mobile Nonlinear Dynamics with Federated Learning
+# EdgeHAR - Distributed Edge Computing for Human Activity Recognition
 
-スマートフォン上での非線形歩行動力学解析と個人化連合オートエンコーダによる疲労異常検知
+## 🎯 Research Project
+**Dynamic Load Balancing for Energy-Efficient Human Activity Recognition on Edge Devices**
 
-## 概要
+This project implements a distributed edge computing system using multiple M5Stack Core2 devices for energy-efficient Human Activity Recognition (HAR) with adaptive accuracy control.
 
-本研究では，スマートフォン単体で歩行の非線形動力学指標（リアプノフ指数，DFA）と心拍変動を実時間計算し，疲労状態を異常検知する手法を提案する．固定小数点演算により3秒窓の処理を8.38ミリ秒で実現し，Lyapunov指数で7.1倍，DFAで15,580倍の高速化を達成した．さらに，個人化連合オートエンコーダを用いることで，プライバシーを保護しつつ非IIDデータに対応し，通常の連合学習比でAUC 0.13向上，通信量38%削減を実証した．
-
-## 主な特徴
-
-- **リアルタイム処理**: iPhone13上で3秒窓を8.38ミリ秒で処理
-- **非線形動力学指標**: リアプノフ指数（LyE）とDetrended Fluctuation Analysis（DFA）
-- **心拍変動解析**: RMSSD, LF/HF比
-- **連合学習**: 個人化連合オートエンコーダ（PFL-AE）による異常検知
-- **プライバシー保護**: すべての処理をエッジデバイスで完結
-
-## プロジェクト構成
+## 📊 System Architecture
 
 ```
-MobileNLD-FL/
-├── data/
-│   ├── raw/          # MHEALTH生データ
-│   └── processed/    # 前処理済みデータ
-├── MobileNLD-FL/     # iOS実装（Swift）
-│   └── MobileNLD-FL/ # Xcodeプロジェクト
-├── ml/               # 機械学習実装
-├── scripts/          # データ処理スクリプト
-├── logs/             # 実験ログ
-├── reports/          # テストレポート
-└── docs/             # ドキュメント
+[M5Stack_1: Sensor Node] → IMU Data Collection → BLE Transmission
+                ↓
+[M5Stack_2: Light Inference] → 2-class Classification (Active/Idle)
+                ↓
+[M5Stack_3: Detailed Inference] → 8-class Activity Recognition
+                ↓
+[iPhone: Coordinator] → System Orchestration & Visualization
 ```
 
-## 新規性
+## 🚀 Key Features
 
-1. **N1**: スマートフォン単体でLyEとDFAをリアルタイム計算（3秒窓を8.38ms、固定小数Q15実装）
-2. **N2**: NLD＋HRVを組み合わせた特徴が歩行疲労の異常検知に有効であることを定量化（AUC +0.09）
-3. **N3**: 共有エンコーダ／ローカルデコーダ構成の個人化連合オートエンコーダを歩行解析へ適用
-4. **N4**: 被験者1名でも「セッション分割×非IIDシミュレーション」により連合学習を評価可能
+- **Distributed Processing**: 3× M5Stack devices working collaboratively
+- **Dynamic Load Balancing**: Battery-aware task redistribution
+- **Adaptive Accuracy**: Context-based switching between simple and detailed models
+- **Energy Efficiency**: Target 40-60% power reduction vs single-device approach
+- **Real-time Performance**: <150ms end-to-end latency
 
-## 最新のテスト結果（2025-07-31）
+## 📁 Project Structure
 
-全6テストがPASSし、以下の性能を達成：
+```
+MobileNLD-FL/                    # Repository root
+├── M5Stack/                     # M5Stack firmware
+│   ├── sensor_node/            # Device 1: IMU data collection
+│   ├── light_inference/        # Device 2: 2-class model
+│   └── detailed_inference/     # Device 3: 8-class model
+├── iOS/                        # iPhone application
+│   └── EdgeHAR/               # Swift coordinator app
+├── scripts/                    # Python utilities
+│   ├── download_uci_har.py   # Dataset download
+│   ├── train_2class_model.py # Lightweight model training
+│   └── train_8class_model.py # Detailed model training
+├── models/                     # Trained TFLite models
+├── data/                      # Datasets
+│   └── uci_har/              # UCI HAR dataset
+├── results/                   # Experiment results
+└── docs/                      # Documentation
+```
 
-- **Q15演算**: 最大誤差 9.8e-06（高精度）
-- **Lyapunov指数**: 7.1倍高速化（60.81ms → 8.58ms）
-- **DFA**: 15,580倍高速化（タイムアウト → 0.32ms）
-- **高次元距離計算**: Q15飽和問題を解決（error 55% → 0%）
-- **累積和オーバーフロー**: 1000サンプルまで安定動作
-- **SIMD利用率**: 100%達成
+## 🛠️ Setup Instructions
 
-詳細は[テスト成功レポート](reports/2025-07-31_test_success_report.md)を参照．
+### Prerequisites
 
-## セットアップ
+- 3× M5Stack Core2 devices
+- iPhone with iOS 15+
+- Arduino IDE 2.0+
+- Python 3.9+
+- TensorFlow 2.x
 
-### 必要環境
-- Python 3.11+
-- Xcode 15+
-- iOS 17+ (iPhone 13)
-- Flower 1.6
+### Quick Start
 
-### インストール
+1. **Clone Repository**
+```bash
+git clone https://github.com/yourusername/MobileNLD-FL.git
+cd MobileNLD-FL
+```
+
+2. **Setup Python Environment**
 ```bash
 pip install -r requirements.txt
 ```
 
-### データ取得
+3. **Download Dataset**
 ```bash
-bash scripts/00_download.sh
+cd scripts
+python download_uci_har.py
 ```
 
-## 実行方法
-
-### 1. データ前処理
+4. **Train Models**
 ```bash
-python scripts/01_preprocess.py
+python train_2class_model.py  # Generates 2class_model.tflite
+python train_8class_model.py  # Generates 8class_model.tflite
 ```
 
-### 2. iOS実装のビルド
-Xcodeで`MobileNLD-FL/MobileNLD-FL.xcodeproj`を開き、実機でビルド
+5. **Deploy to M5Stack**
+- Open Arduino IDE
+- Install M5Core2 library
+- Upload firmware from `M5Stack/` directories
 
-### 3. 連合学習の実行
-```bash
-python ml/train_federated.py --algo pflae
-```
+6. **Build iOS App**
+- Open `iOS/EdgeHAR` in Xcode
+- Build and deploy to iPhone
 
-## 主な結果
+## 📈 Performance Targets
 
-- **計算誤差**: LyE RMSE 0.151, DFA誤差 0.6%（理論値基準）
-- **処理性能**: 
-  - Lyapunov指数: 60.81ms → 8.58ms（7.1倍高速化）
-  - DFA: タイムアウト → 0.32ms（15,580倍高速化）
-  - SIMD利用率: 100%達成
-- **疲労異常検知**:
-  - 統計特徴＋FedAvg-AE: AUC 0.71
-  - 統計＋NLD/HRV＋FedAvg-AE: AUC 0.75
-  - 統計＋NLD/HRV＋PFL-AE: AUC 0.84
-- **通信量**: 提案PFL-AEはFedAvgの0.62倍
+| Metric | Target | Status |
+|--------|--------|--------|
+| Power Reduction | 40-60% | 🟡 In Progress |
+| Accuracy (8-class) | 85-92% | 🟡 In Progress |
+| Latency | <150ms | 🟡 In Progress |
+| Model Size | <50KB | ✅ Achieved |
 
-## ライセンス
+## 🔬 Experiment Tracking
 
-MIT License
+See `docs/実験進捗トラッカー.md` for detailed experiment logs and results.
 
-## 引用
+## 📝 Research Timeline
 
-```
-@article{mobilenld2024,
-  title={スマートフォン上での非線形歩行動力学解析と個人化連合オートエンコーダによる疲労異常検知},
-  author={著者名},
-  journal={IEICE Transactions on Information and Systems},
-  year={2024}
-}
-```
+- **Week 1** (Dec 10-16): System Implementation
+- **Week 2** (Dec 17-23): Experiments & Validation
+- **Week 3** (Dec 24-30): Paper Writing
+- **Target**: IEICE Letter submission by Jan 31, 2025
+
+## 📚 Documentation
+
+- [Research Overview](docs/研究概要_EdgeHAR.md) (Japanese)
+- [Implementation Plan](docs/実装計画_1ヶ月スプリント.md) (Japanese)
+- [Experiment Tracker](docs/実験進捗トラッカー.md) (Japanese)
+
+## 🤝 Contributing
+
+This is an active research project. For collaboration inquiries, please contact the maintainer.
+
+## 📄 License
+
+This project is part of academic research. Please cite appropriately if using any part of this work.
+
+## 🏆 Acknowledgments
+
+- UCI Machine Learning Repository for the HAR dataset
+- M5Stack community for hardware support
+- TensorFlow Lite team for embedded ML tools
+
+---
+*Project Status: Active Development*  
+*Last Updated: December 10, 2024*
