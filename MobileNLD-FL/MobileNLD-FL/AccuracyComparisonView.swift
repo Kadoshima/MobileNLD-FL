@@ -197,10 +197,10 @@ class AccuracyTester: ObservableObject {
             let referencelyapunov = self.calculateReferenceLyapunov(testSignal)
             
             let implementations: [(name: String, function: ([Q15]) -> Float)] = [
-                (name: "Scalar", function: NonlinearDynamicsScalar.lyapunovExponentScalar),
-                (name: "SIMD Only", function: NonlinearDynamicsSIMDOnly.lyapunovExponentSIMDOnly),
-                (name: "Adaptive Only", function: NonlinearDynamicsAdaptiveOnly.lyapunovExponentAdaptive),
-                (name: "Proposed", function: NonlinearDynamics.lyapunovExponent)
+                ("Scalar", { data in NonlinearDynamicsScalar.lyapunovExponentScalar(data) }),
+                ("SIMD Only", { data in NonlinearDynamicsSIMDOnly.lyapunovExponentSIMDOnly(data) }),
+                ("Adaptive Only", { data in NonlinearDynamicsAdaptiveOnly.lyapunovExponentAdaptive(data) }),
+                ("Proposed", { data in NonlinearDynamics.lyapunovExponent(data) })
             ]
             
             var allResults: [AccuracyResult] = []
@@ -232,7 +232,8 @@ class AccuracyTester: ObservableObject {
                 
                 // Trade-off score: accuracy * (1 / (1 + normalized_time))
                 let normalizedTime = avgTime / 10.0  // Normalize to ~10ms baseline
-                let tradeoffScore = accuracy * (1.0 / (1.0 + normalizedTime)) * 100
+                let inverseTerm = 1.0 / (1.0 + normalizedTime)
+                let tradeoffScore = Float(accuracy) * Float(inverseTerm) * 100.0
                 
                 let result = AccuracyResult(
                     implementation: impl.name,
@@ -290,7 +291,7 @@ class AccuracyTester: ObservableObject {
             z += dz * dt
             
             // Normalize to Q15 range
-            let normalized = tanh(x / 10.0)  // Smooth normalization
+            let normalized = Darwin.tanh(x / 10.0)  // Smooth normalization
             signal.append(FixedPointMath.floatToQ15(Float(normalized)))
         }
         

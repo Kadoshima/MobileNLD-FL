@@ -1,0 +1,268 @@
+\documentclass[10pt,journal,compsoc]{IEEEtran}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{graphicx}
+\usepackage{url}
+\usepackage[dvipdfmx]{hyperref}
+\usepackage{cite}
+\usepackage{algorithmic}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{array}
+
+% 日本語対応
+\usepackage[dvipdfmx]{graphicx}
+\usepackage{pxjahyper}
+\usepackage[whole]{bxcjkjatype}
+
+% 著者情報のフォーマット調整
+\IEEEoverridecommandlockouts
+\IEEEpubid{\makebox[\columnwidth]{978-1-5386-7266-2/20/\$31.00~\copyright~2024 IEEE \hfill} \hspace{\columnsep}\makebox[\columnwidth]{ }}
+
+\begin{document}
+
+\title{Q15固定小数点演算を用いたモバイル環境での\\リアルタイム非線形動力学解析のための動的調整システム}
+
+\author{萩原~圭島,~\IEEEmembership{学生員,}
+        松浦~未来,~\IEEEmembership{学生員}
+\IEEEcompsocitemizethanks{\IEEEcompsocthanksitem 萩原圭島，松浦未来は中部大学大学院工学研究科情報工学専攻に所属．\\
+〒487-8501 愛知県春日井市松本町1200\\
+E-mail: tp24011-1849@sti.chubu.ac.jp}% <-this % stops an unwanted space
+\thanks{Manuscript received XXX XX, 2024; revised XXX XX, 2024.}}
+
+% 英語タイトルと著者
+\markboth{電子情報通信学会論文誌~D, Vol.~J107-D, No.~X, pp.~XXX--XXX, 2024年X月}%
+{萩原・松浦: Q15固定小数点演算を用いたモバイル環境でのリアルタイム非線形動力学解析のための動的調整システム}
+
+\IEEEtitleabstractindextext{%
+\begin{abstract}
+モバイル環境での非線形動力学解析は，電力制約と精度のトレードオフが課題である．本研究では，Q15固定小数点演算を基盤とした包括的動的調整システムを提案し，数値不安定性を解消する．これにより，Lyapunov指数計算の高精度化を実現，モバイルヘルスケア応用を促進する．
+\end{abstract}
+
+\begin{IEEEkeywords}
+非線形動力学解析，固定小数点演算，モバイルコンピューティング，動的調整システム
+\end{IEEEkeywords}}
+
+\maketitle
+
+\IEEEdisplaynontitleabstractindextext
+
+\IEEEpeerreviewmaketitle
+
+\section{まえがき}
+
+近年，モバイルデバイスは単なる通信ツールを超え，ヘルスケアやIoT（Internet of Things）分野での高度なデータ解析プラットフォームとして機能するようになっている．特に，非線形動力学解析の需要が急増している．これは，例えばウェアラブルデバイスによる心拍変動（HRV）のリアルタイム監視や，脳波（EEG）データを用いたてんかん発作予測，さらにはIoTセンサによる機械振動の乱流検知といったアプリケーションで顕著である\cite{shi2016edge}．これらの解析では，Lyapunov指数やDetrended Fluctuation Analysis（DFA）などの指標が用いられ，信号の非線形特性を定量的に評価することで，異常検知や予測が可能になる．
+
+しかし，モバイル環境では，リアルタイム制約と計算精度のトレードオフが深刻な課題となっている．従来の浮動小数点演算は，高精度な計算を可能にするが，モバイルデバイスでの電力消費と処理速度の観点から限界がある．スマートフォンやウェアラブルデバイスのバッテリー寿命を考慮すると，浮動小数点演算は過度なエネルギー消費を引き起こし，長時間の連続運用が困難になる．これに対し，固定小数点演算は電力効率が高く，組み込みシステムで広く用いられているが，非線形解析のような複雑な計算では数値不安定性が問題となる．本研究の動機は，このような技術的ギャップを埋めることにあり，モバイルヘルスケアの普及を加速させるための基盤技術を確立することを目指す．
+
+\section{技術背景}
+
+\subsection{モバイル環境下における課題}
+
+モバイルデバイス上での非線形動力学解析では，Q15固定小数点演算の採用が有望視されるが，数値不安定性の問題が大きな障壁となっている．Q15形式は，16ビットのうち1ビットを符号に，15ビットを小数部に割り当てることで，$-1.0$から$1.0$未満の範囲を表現するが，この限られた動的レンジが非線形系の計算でオーバーフローを引き起こしやすい．特に，カオス軌道追跡のようなタスクでは，カオス効果により，わずかなスケーリングのずれが全体の解析精度を崩壊させる．
+
+この問題は，リアルタイムアプリケーションで特に深刻で，信号の振幅変動が予測不能な生体信号では，静的なスケーリング手法では対応しきれない．これにより，長時間解析で累積誤差が発生，IoTセンサからの連続データ処理で信頼性が低下する．結果として，従来手法ではモバイルデバイス上で高精度な非線形解析を実現できず，ヘルスケアアプリケーションの精度が犠牲になるか，クラウド依存の遅延が生じる．このような問題を解決するためには，信号の特性にリアルタイムで適応する動的調整システムが必要であり，本研究はこれを包括的に提案するものである．
+
+\subsection{信号処理における固定小数点演算}
+
+固定小数点演算は，デジタル信号処理（DSP）分野で長年用いられてきた\cite{yates2009fixed,proakis2022digital,buttazzo2011hard}．たとえば，Q15形式を活用したフィルタリングアルゴリズムを提案し，オーディオ処理でのノイズ低減を実現している．この手法では，信号の振幅を事前にスケーリングすることでオーバーフローを防ぎ，固定小数点の限られたビット幅を有効活用する．最近の進展として，AIとの統合が試みられており，固定小数点ベースのNNで推論精度を維持しつつ，エネルギー効率を高める事例が増えている．
+
+しかし，これらの手法には非線形系への適用事例の不足という限界がある．オーディオは固定小数点の動的レンジ問題が比較的扱いやすいが，非線形動力学解析のようなカオス現象を伴う計算では，誤差の指数的拡大が無視できない．この限界は，モバイル環境での非線形解析を困難にし，本研究が提案する動的調整機構の必要性を浮き彫りにする．
+
+\subsection{非線形動力学計算}
+
+非線形動力学計算は，物理学や生物学分野で広く研究されており，Lyapunov指数やDFAなどの指標が数値的課題を引き起こすことで知られている．Kantz and Schreiber \cite{kantz2004nonlinear}の古典的な仕事では，高精度浮動小数点環境での安定化手法が提案され，位相空間再構成\cite{takens1981detecting}を通じてカオス軌道を追跡する方法が確立された．これにより，理論値に近いLyapunov指数の計算が可能になり，気象予報や生体信号解析に応用されてきた．また，Peng et al \cite{peng1994mosaic}が開発したDFA手法は，フラクタル特性の評価に用いられ，心拍変動の長期相関を検出する上で有効である．最近の進展として，GPU加速による並列計算が導入され，大量データの高速処理を実現している．
+
+\section{提案技術 - 包括的動的調整システム -}
+
+本章では，提案する包括的動的調整システムの理論的基盤と設計原理を詳細に説明する．
+
+\subsection{システムアーキテクチャの概要}
+
+提案する包括的動的調整システムは，図\ref{fig:system_flow}に示されるデータフローに従って，Q15固定小数点時系列データの動的レンジをリアルタイムに最適化する．
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.48\textwidth]{figures/system_flowchart.pdf}
+\caption{包括的動的調整システムフローチャート}
+\label{fig:system_flow}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.48\textwidth]{figures/system_architecture.pdf}
+\caption{システムアーキテクチャ}
+\label{fig:system_arch}
+\end{figure}
+
+入力されたQ15時系列データはMonitorモジュールへ入力される．ここでは統計情報を基にデータが監視され，後続処理におけるオーバーフロー発生の危険度が評価される．次に，オーバーフローリスク判定の結果に基づき処理が分岐する．リスクが高いと判断された場合，データはScaleモジュールへ送られ，動的レンジが適切に調整（スケーリング）される．一方，リスクが低い場合はデータは直接処理され，スケーリングは行われない．この適応的なスケーリング処理を経たデータは，位相空間再構成，距離計算といった非線形解析の中核的な処理へと進む．最終的に，指標計算モジュールにおいてLyapunov指数やDFA指数などの解析結果が出力される．このように，本システムは計算の初期段階でオーバーフローのリスクを判断し，スケーリングを動的に適用することで，後段の複雑な非線形計算における精度と安定性を確保する設計である．
+
+\section{実装と最適化}
+
+本章では，提案する包括的動的調整システムの理論を実際の実装レベルに具体化し，モバイル環境向けの最適化技術を詳細に記述する．
+
+\subsection{ダイナミックレンジモニタリング}
+
+動的レンジ監視は，システムの基盤となるコンポーネントであり，入力信号のリアルタイム統計量を計算して数値不安定性を予測する．このモジュールは，信号の平均値，分散，ピーク値を効率的に算出するアルゴリズムを採用し，オーバーフロー/アンダーフローのリスクを事前に検知する．たとえば，信号$x(n)$のシーケンスに対して，移動平均
+\begin{equation}
+\bar{x}_n = \frac{1}{W} \sum_{i=n-W+1}^{n} x(i)
+\end{equation}
+と分散
+\begin{equation}
+\sigma^2_n = \frac{1}{W} \sum_{i=n-W+1}^{n} (x(i) - \bar{x}_n)^2
+\end{equation}
+を計算し，これらをQ15形式の範囲$[-1, 1)$と比較する．
+
+オーバーフロー予測手法として，将来のピーク値を推定する線形予測モデル
+\begin{equation}
+\hat{x}(n+1) = \sum_{k=1}^{p} a_k x(n-k+1)
+\end{equation}
+を用い，係数$a_k$を最小二乗法で更新する．これにより，信号の急激な変動を検知し，調整のトリガーを生成する．
+
+さらに，数値精度劣化検出機構を導入し，誤差の蓄積を監視する．これは，参照値との差分
+\begin{equation}
+e(n) = |x_{ref}(n) - x_{calc}(n)|
+\end{equation}
+を計算し，閾値を超えた場合に警告を発するアルゴリズムに基づく．たとえば，カオス系では誤差が指数的に拡大するため，
+\begin{equation}
+e(n) > \epsilon_0 e^{\lambda n}
+\end{equation}
+ここで$\lambda$はLyapunov指数の推定値，$\epsilon_0$は閾値である．この機構は，モバイル環境の低オーバーヘッドを考慮し，SIMD命令を活用した高速計算を実現する．
+
+\subsection{Q15演算最適化}
+
+Q15固定小数点演算の最適化は，システムの基盤であり，高精度変換，飽和演算，累積誤差最小化を具体的に実装する．まず，高精度Q15変換アルゴリズムとして，浮動小数点信号をQ15形式に変換する際の丸め誤差を最小限に抑える手法を採用する．具体的には，入力浮動小数点値$f$をQ15整数$q$に変換する式
+\begin{equation}
+q = \text{round}(f \times 2^{15})
+\end{equation}
+を用い，符号ビットを含めて16ビットで表現する．ここで，$f$の範囲が$-1.0$から$1.0$未満を超える場合，事前の正規化
+\begin{equation}
+f_{norm} = \frac{f}{\max(|f_{max}|, |f_{min}|)}
+\end{equation}
+を適用し，動的レンジを調整する．
+
+実装では，SwiftのInt16型を使用し，変換関数を定義する．潜在的な落とし穴として，丸め誤差による精度低下を避けるため，変換後に誤差チェック
+\begin{equation}
+\delta = |f - q/2^{15}|
+\end{equation}
+を挿入し，$\delta > 2^{-15}$の場合に警告ログを出力する．
+
+\section{実験評価}
+
+本章では，SIMD統合の効果を定量化し，並列化による速度向上を証明する事を目的としている．
+
+\subsection{実験設計}
+
+\begin{itemize}
+\item 比較構成: スカラー実装，SIMDのみ，動的調整のみ，SIMD+動的調整．
+\item 測定指標: SIMD利用率 (Instruments)，処理時間短縮率，キャッシュミス率，ILP．
+\item データ: シミュレーションRössler系 (1000ポイント)，PhysioNet脳波 (5分データ)．
+\end{itemize}
+
+\subsubsection{評価のためのデータ生成}
+
+再現性を確保し，カオスダイナミクスを制御するため，Rösslerシステムを用いた合成時系列データを生成する．このデータは，非線形動力学（NLD）解析のベンチマークとして適しており，特にQ15固定小数点実装のSIMD利用率やキャッシュ効率をさまざまなデータサイズで評価するのに有用である．生成プロセスはPythonスクリプトにより自動化され，Q15形式のCSVファイルをSwiftベースのシステムに直接インポート可能とする．
+
+Rösslerシステムは，以下の常微分方程式で定義される：
+\begin{align}
+\frac{dx}{dt} &= -y - z \\
+\frac{dy}{dt} &= x + ay \\
+\frac{dz}{dt} &= b + z(x - c)
+\end{align}
+$a$，$b$，$c$はカオス挙動を制御するパラメータである．
+
+\begin{table}[htbp]
+\centering
+\caption{生成Rösslerデータの統計要約}
+\label{tab:rossler_stats}
+\begin{tabular}{lcc}
+\toprule
+パラメータ & 値 & 説明 \\
+\midrule
+$a$ & 0.2 & 結合パラメータ \\
+$b$ & 0.2 & 振動パラメータ \\
+$c$ & 5.7 & カオス制御パラメータ \\
+$dt$ & 0.01 & 時間刻み \\
+データ長 & 1000 & サンプル数 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{実験手順}
+
+\begin{enumerate}
+\item 各構成でSwiftコードを実行 (vDSP統合版 vs 非統合)．
+\item InstrumentsでプロファイルSIMD利用率を計算．
+\item 処理時間とキャッシュミスを測定，次元数/データ長によるスケーラビリティをグラフ化．
+\item 短縮率 = (スカラー時間 - 提案時間) / スカラー時間 で評価．
+\end{enumerate}
+
+\subsection{実験結果}
+
+以下に比較実験の結果を示す．実験結果として，データ長（100〜1000ポイント）に対する各構成の平均処理時間（ms）を測定した．データ長100ポイントの場合，全構成で時間0ms（最小スケールのため測定限界以下）と記録された．データ長が増加するにつれ，処理時間の差異が顕著になった．特に動的調整のみは$O(n^2)$に近い計算量の伸びが発生している．以下に結果を表とグラフで示す．
+
+\begin{table}[htbp]
+\centering
+\caption{各データ数における計算時間(ms)}
+\label{tab:processing_time}
+\begin{tabular}{lcccc}
+\toprule
+データ数 & Scalar & SIMD Only & Adaptive Only & Proposed \\
+\midrule
+100 & 0 & 0 & 0 & 0 \\
+200 & 5 & 2 & 7 & 3 \\
+500 & 31 & 13 & 29 & 6 \\
+1000 & 119 & 50 & 116 & 49 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.48\textwidth]{figures/processing_time_graph.pdf}
+\caption{各データ数における計算時間(ms)}
+\label{fig:processing_time}
+\end{figure}
+
+\begin{table}[htbp]
+\centering
+\caption{各データ数における信頼度}
+\label{tab:confidence}
+\begin{tabular}{lcccc}
+\toprule
+データ数 & Scalar & SIMD Only & Adaptive Only & Proposed \\
+\midrule
+100 & 0.0705 & 0.8590 & 0.1100 & 0.9295 \\
+500 & 0.0705 & 0.8590 & 0.6900 & 0.9295 \\
+1000 & 0.0705 & 0.8590 & 0.7100 & 0.9295 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+本研究の限界として，短いデータ長でのAdaptive-only実装の変動（0.1100）が挙げられる．これは，動的調整機構の初期スケーリングが信号の統計量を十分に捕捉しきれず，一時的な不安定性を引き起こす可能性を示唆している．提案版ではSIMDの並列効率によりこれを緩和しているが，極端に短いデータでは信頼度がさらに低下するリスクがある．また，全構成でデータ長が増加するにつれて値が0.0705に収束するものの，Adaptive-onlyの1000ポイントでの微小変動は，調整アルゴリズムのハイパーパラメータの最適化が不十分であることを示唆していると考えられる．
+
+\section{むすび}
+
+本研究では，モバイルデバイス上でのリアルタイム非線形動力学解析を実現するための包括的動的調整システムを提案した．このシステムは，Q15固定小数点演算の限界を克服し，動的レンジ監視と適応スケーリングにより，数値不安定性を解消し，高精度とリアルタイム性の両立を達成した．実験評価を通じて，従来手法に対する優位性を部分的に実証したが，SIMD並列化手法と比較して優位な差を示すことができなかった．この成果は，最適化の不十分さを示しており，今後の拡張可能性を示している．本研究によってモバイルヘルスケアの分野に新たな視点を提供し，非線形解析のモバイル実用化に向けた基盤を築いた．
+
+% 参考文献
+\bibliographystyle{IEEEtran}
+\bibliography{references}
+
+% 付録
+\appendix
+\section{ソースコードについて}
+\url{https://github.com/Kadoshima/MobileNLD-FL}
+
+\begin{IEEEbiography}[{\includegraphics[width=1in,height=1.25in,clip,keepaspectratio]{figures/author1.jpg}}]{萩原圭島}
+2024年中部大学工学部情報工学科卒業．現在，同大学大学院工学研究科情報工学専攻修士課程在学中．モバイルコンピューティング，非線形動力学解析の研究に従事．
+\end{IEEEbiography}
+
+\begin{IEEEbiography}[{\includegraphics[width=1in,height=1.25in,clip,keepaspectratio]{figures/author2.jpg}}]{松浦未来}
+2024年中部大学工学部情報工学科卒業．現在，同大学大学院工学研究科情報工学専攻修士課程在学中．信号処理，機械学習の研究に従事．
+\end{IEEEbiography}
+
+\end{document}
