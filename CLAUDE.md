@@ -4,49 +4,42 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-**Edge-HAR** is a research project for **Adaptive Human Activity Recognition Using Distributed Edge Computing**. The project implements a multi-device collaborative system using M5Stack Core2 devices and iPhone for energy-efficient real-time activity recognition with dynamic load balancing.
+**Context-Uncertainty-Driven Adaptive BLE Advertising for Ultra-Low-Power Wearable HAR** is a research project implementing adaptive BLE advertising interval control based on HAR (Human Activity Recognition) uncertainty metrics for significant power reduction in wearable devices.
 
 ## Research Focus
 
-### Current Research (2024-12-10 onwards)
-**Title**: "Dynamic Load Balancing for Energy-Efficient Human Activity Recognition on Edge Devices"
-**Target**: IEICE Transactions Letter (4 pages, submission deadline: 2025-01-31)
+### Current Research (2024-12-17 onwards)
+**Title**: "Context-Uncertainty-Driven Adaptive BLE Advertising for Ultra-Low-Power Wearable HAR"
+**Target**: IEICE Communications Express (ComEX) - 4 pages, submission target: 2025
 
 ### Key Innovation
-- **Distributed Edge Computing**: 3× M5Stack Core2 devices working collaboratively
-- **Dynamic Load Balancing**: Battery-aware task redistribution
-- **Adaptive Accuracy Control**: Context-based switching between 2-class and 8-class models
-- **Energy Efficiency**: 60% power reduction compared to single-device approach
+- **Adaptive BLE Advertising**: Dynamic adjustment of advertising intervals (100-2000ms) based on HAR uncertainty
+- **Composite Context Score**: Combined metric of classification uncertainty and temporal volatility
+- **Power Optimization**: ≥40% reduction in average current consumption vs fixed 100ms intervals
+- **Real-world Validation**: On-device implementation with actual power measurements using PPK2
 
 ## System Architecture
 
 ### Hardware Configuration
 ```
-[M5Stack_1] - Sensor Hub
-  ├─ MPU6886 (6-axis IMU)
-  ├─ Data preprocessing
-  └─ BLE transmission
+[nRF52 MCU] - Wearable Device
+  ├─ 6-axis IMU sensor
+  ├─ On-device HAR inference
+  ├─ Uncertainty calculation
+  └─ Adaptive BLE advertising
 
-[M5Stack_2] - Light Inference
-  ├─ 2-class classifier (Active/Idle)
-  ├─ TensorFlow Lite Micro
-  └─ Quick decision making
-
-[M5Stack_3] - Detailed Inference  
-  ├─ 8-class classifier
-  ├─ Complex activity recognition
-  └─ Power-intensive processing
-
-[iPhone] - Coordinator
-  ├─ System orchestration
-  ├─ Load balancing decisions
-  └─ Real-time visualization
+[Android Phone] - Receiver & Logger
+  ├─ BLE packet reception
+  ├─ Timestamp logging
+  ├─ CSV export
+  └─ Real-time monitoring
 ```
 
 ### Software Stack
-- **M5Stack Firmware**: Arduino/PlatformIO, TFLite Micro, FreeRTOS
-- **iPhone App**: Swift 5.0+, Core Bluetooth, Core ML
-- **ML Training**: Python, TensorFlow, scikit-learn
+- **MCU Firmware**: Zephyr RTOS / nRF SDK
+- **HAR Model**: TensorFlow Lite Micro (2-class: Active/Idle)
+- **Android App**: Kotlin, BLE Scanner, CSV Logger
+- **Analysis**: Python, pandas, matplotlib
 
 ## Common Commands
 
@@ -64,74 +57,87 @@ pip install tensorflow scikit-learn pandas numpy matplotlib
 # Download UCI HAR dataset
 python scripts/download_uci_har.py
 
-# Generate synthetic test data
-python scripts/generate_test_data.py
+# Preprocess for 2-class (Active/Idle)
+python scripts/prepare_binary_dataset.py
 
-# Process and split dataset
-python scripts/prepare_dataset.py
+# Generate train/val/test splits
+python scripts/split_dataset.py
 ```
 
 ### Model Training
 ```bash
-# Train 2-class lightweight model
-python scripts/train_2class_model.py
-
-# Train 8-class detailed model  
-python scripts/train_8class_model.py
+# Train 2-class HAR model
+python scripts/train_har_model.py
 
 # Quantize for TFLite Micro
-python scripts/quantize_models.py
+python scripts/quantize_model.py
+
+# Convert to C header
+xxd -i model.tflite > model_data.h
 ```
 
 ### Performance Analysis
 ```bash
-# Analyze power consumption logs
-python scripts/analyze_power.py
+# Parse PPK2 power measurements
+python scripts/parse_ppk2_csv.py
 
-# Generate accuracy reports
-python scripts/evaluate_models.py
+# Analyze BLE packet logs from Android
+python scripts/analyze_packet_logs.py
 
-# Create paper figures
-python scripts/generate_figures.py
+# Calculate power reduction metrics
+python scripts/calculate_power_reduction.py
+
+# Generate latency distribution (p50/p95)
+python scripts/latency_analysis.py
+
+# Comparative analysis (Fixed vs Adaptive)
+python scripts/compare_strategies.py
 ```
 
 ## File Organization
 
 ```
-MobileNLD-FL/              # Repository root (keeping original name)
+MobileNLD-FL/              # Repository root
 ├── docs/
-│   ├── 研究概要_EdgeHAR.md         # Research overview
-│   ├── 実装計画_1ヶ月スプリント.md    # Implementation plan
-│   ├── 実験進捗トラッカー.md         # Experiment tracker
-│   └── archive_NLD-FL/            # Archived NLD research
-├── M5Stack/                       # M5Stack firmware
-│   ├── sensor_node/              # M5Stack_1 code
-│   ├── light_inference/          # M5Stack_2 code
-│   └── detailed_inference/       # M5Stack_3 code
-├── iOS/                          # iPhone application
-│   └── EdgeHAR/                 # Swift project
-├── scripts/                      # Python utilities
-│   ├── train_*.py               # Model training
-│   ├── evaluate_*.py            # Evaluation
-│   └── analyze_*.py             # Analysis
-├── models/                       # Trained models
-│   ├── 2class_model.tflite
-│   └── 8class_model.tflite
-├── data/                        # Datasets
-│   ├── uci_har/                # UCI HAR dataset
-│   └── custom/                  # Custom collected data
-└── results/                     # Experiment results
-    ├── power_logs/
-    ├── accuracy_results/
-    └── figures/
+│   ├── 研究概要_BLE適応制御.md     # Research overview
+│   ├── 実装計画.md                # Implementation plan
+│   ├── 実験手順書.md              # Experiment procedures
+│   ├── archive_NLD-FL/           # Archived NLD research
+│   └── EdgeHARv0/               # Previous EdgeHAR project
+├── firmware/                    # MCU firmware
+│   ├── src/
+│   │   ├── main.c              # Main application
+│   │   ├── har_model.c         # HAR inference
+│   │   ├── uncertainty.c       # Uncertainty calculation
+│   │   └── ble_adaptive.c     # Adaptive BLE control
+│   ├── include/
+│   └── CMakeLists.txt
+├── android/                     # Android logger app
+│   └── BLELogger/
+│       ├── app/src/main/
+│       └── build.gradle
+├── scripts/                     # Python analysis
+│   ├── train_har_model.py
+│   ├── parse_ppk2_csv.py
+│   ├── analyze_packet_logs.py
+│   └── generate_figures.py
+├── models/
+│   └── har_2class.tflite      # Quantized model
+├── data/
+│   ├── uci_har/               # UCI HAR dataset
+│   ├── power_measurements/    # PPK2 CSV files
+│   └── packet_logs/           # Android BLE logs
+└── results/
+    ├── figures/               # Generated plots
+    └── analysis/              # Analysis results
 ```
 
 ## Development Guidelines
 
 ### Code Style
-- **C++ (M5Stack)**: Arduino style, clear comments
-- **Swift (iOS)**: SwiftUI, MVVM pattern
-- **Python**: PEP 8, type hints
+- **C (nRF52)**: Zephyr coding style, detailed comments
+- **Kotlin (Android)**: Android style guide, MVVM pattern
+- **Python**: PEP 8, type hints, docstrings
 
 ### Git Workflow
 - Branch naming: `feature/description`, `fix/issue`
@@ -147,86 +153,106 @@ MobileNLD-FL/              # Repository root (keeping original name)
 
 ## Experiment Tracking
 
-### Key Metrics
-- **Power Consumption**: Target 40-60% reduction
-- **Accuracy**: 85-92% for 8-class (target range)
-- **Latency**: <150ms end-to-end (acceptable)
-- **Battery Life**: 1.5-2× improvement (target)
+### Key Metrics (Priority Order)
+1. **Average Current**: ≥40% reduction vs fixed 100ms (PRIMARY)
+   - Measured with Nordic PPK2
+   - Report mean, std, and energy/minute
+2. **p95 Latency**: ≤300ms (BLE advertising-based)
+   - Packet reception intervals from Android logs
+3. **F1 Score**: Degradation ≤1.5 points
+   - 2-class (Active/Idle) classification
+4. **Packet Loss**: <1% under normal conditions
 
-### Data Collection Protocol
-1. Collect data from 3 participants
-2. 8 activity classes × 100 samples each
-3. 10-fold cross-validation
-4. Statistical significance testing (p<0.05)
+### Experiment Conditions
+1. **Baseline**: Fixed intervals (100ms, 200ms, 500ms)
+2. **Proposed**: Adaptive (100-2000ms based on uncertainty)
+3. **Duration**: 20 minutes per condition
+4. **Subjects**: 3-5 participants
+5. **Activities**: Walking, sitting, standing, stairs
 
 ## Paper Writing Guidelines
 
-### IEICE Letter Format
-- 4 pages maximum
-- 2-column format
-- Abstract: 150 words
-- 15-20 references
+### IEICE ComEX Format
+- 4 pages maximum (strict limit)
+- Monthly publication, continuous submission
+- Expected acceptance rate: 40-60%
 
-### Section Allocation
-- Introduction: 0.5 pages
-- Related Work: 0.5 pages  
-- Proposed Method: 1.5 pages
-- Experiments: 1.0 pages
-- Results & Conclusion: 0.5 pages
+### Optimized Section Allocation
+- Introduction: 0.5 pages (emphasize adaptive BLE, uncertainty-driven, power reduction)
+- Related Work: 0.3 pages (BLE optimization, HAR uncertainty, adaptive systems)
+- Proposed Method: 1.2 pages (uncertainty metrics, adaptation algorithm, implementation)
+- Experiments: 1.5 pages (power measurements, latency analysis, comparison)
+- Conclusion: 0.5 pages
 
-## Timeline (Critical Path)
+### Key References
+- BLE power optimization in wearables
+- Uncertainty quantification in HAR
+- Adaptive communication protocols
+- Context-aware systems
 
-### Week 1 (Dec 10-16): Implementation
-- Day 1-2: BLE communication setup
-- Day 3-4: TFLite Micro integration
-- Day 5-7: Distributed system integration
+## Timeline (6-Week Sprint)
 
-### Week 2 (Dec 17-23): Experiments
-- Day 8-10: Data collection
-- Day 11-12: Power measurements
-- Day 13-14: Accuracy evaluation
+### Week 1-2: Implementation
+- nRF52 firmware development
+- HAR model integration (TFLite Micro)
+- Uncertainty calculation implementation
+- Adaptive BLE control logic
 
-### Week 3 (Dec 24-30): Paper Writing
-- Day 15-17: Draft writing
-- Day 18-19: Figure generation
-- Day 20-21: Review and submission prep
+### Week 3-4: Android App & Testing
+- BLE scanner app development
+- CSV logging functionality
+- System integration testing
+- Debug and optimization
+
+### Week 5: Experiments
+- Power measurements with PPK2
+- 3-5 subjects × 4 conditions × 20 min
+- Data collection and validation
+
+### Week 6: Analysis & Writing
+- Data analysis and visualization
+- Statistical significance testing
+- Paper draft (4 pages)
+- Internal review and submission prep
 
 ## Success Criteria
 
 ### Technical Goals
-- ✅ 3-device BLE network functional
-- ✅ TFLite Micro models <50KB
-- ✅ Real-time inference <150ms
-- ✅ Power reduction 40-60%
+- ✅ Adaptive BLE advertising implementation
+- ✅ TFLite Micro model <20KB
+- ✅ Real-time uncertainty calculation
+- ✅ Power reduction ≥40% vs fixed 100ms
 
 ### Research Goals
-- ✅ Novel distributed edge HAR system
-- ✅ Quantitative evaluation complete
-- ✅ Paper ready for submission
-- ✅ Reproducible results
+- ✅ Novel uncertainty-driven adaptation
+- ✅ Real-world power measurements
+- ✅ Statistical validation
+- ✅ Reproducible implementation
 
 ## Troubleshooting
 
 ### Common Issues
-1. **BLE Connection Drops**: Reduce transmission rate, implement retry logic
-2. **Memory Overflow**: Optimize model size, reduce buffer sizes
-3. **Power Measurement Noise**: Use averaging, multiple trials
-4. **Model Accuracy Low**: Increase training data, tune hyperparameters
+1. **BLE Advertising Conflicts**: Ensure proper interval timing
+2. **PPK2 Measurement Drift**: Calibrate before each session
+3. **Packet Loss**: Check Android scanner buffer size
+4. **Uncertainty Calculation Overhead**: Optimize computation
 
 ## Resources
 
 ### Documentation
-- [M5Stack Core2 Guide](https://docs.m5stack.com/en/core/core2)
+- [nRF52 SDK](https://developer.nordicsemi.com/)
+- [Zephyr RTOS](https://zephyrproject.org/)
 - [TensorFlow Lite Micro](https://www.tensorflow.org/lite/microcontrollers)
 - [UCI HAR Dataset](https://archive.ics.uci.edu/ml/datasets/human+activity+recognition+using+smartphones)
 
 ### Tools
-- Arduino IDE 2.0+
-- Xcode 15+
+- nRF Connect SDK
+- Android Studio
+- Nordic PPK2
 - Python 3.9+
-- USB Power Meter
 
 ---
 *Project Status: Active Development*
-*Last Updated: 2024-12-10*
-*Deadline: 2025-01-31 (IEICE Submission)*
+*Last Updated: 2024-12-17*
+*Target: IEICE ComEX (2025)*
+*Focus: Adaptive BLE advertising for power reduction*
