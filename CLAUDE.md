@@ -20,25 +20,37 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## System Architecture
 
-### Hardware Configuration
+### Hardware Configuration (PIVOT: M5StickC Plus2)
 ```
-[nRF52 MCU] - Wearable Device
-  ├─ 6-axis IMU sensor
+[M5StickC Plus2] - Wearable Device
+  ├─ ESP32-PICO-V3-02 MCU (520KB RAM)
+  ├─ MPU6886 6-axis IMU (内蔵)
+  ├─ AXP192 Power Management IC
+  ├─ 135mAh Battery
   ├─ On-device HAR inference
   ├─ Uncertainty calculation
   └─ Adaptive BLE advertising
 
-[Android Phone] - Receiver & Logger
+[iPhone/Galaxy] - Receiver & Logger
   ├─ BLE packet reception
   ├─ Timestamp logging
   ├─ CSV export
   └─ Real-time monitoring
 ```
 
+### Available Hardware
+- **M5StickC Plus2**: 3台 (ESP32-based)
+- **iPhone**: 13, 15
+- **Android**: Galaxy S9
+- **PPK2**: なし (AXP192で代替)
+- **nRF52**: なし
+
 ### Software Stack
-- **MCU Firmware**: Zephyr RTOS / nRF SDK
+- **MCU Firmware**: Arduino IDE / ESP-IDF
 - **HAR Model**: TensorFlow Lite Micro (2-class: Active/Idle)
-- **Android App**: Kotlin, BLE Scanner, CSV Logger
+- **Mobile App**: 
+  - iOS: Swift/CoreBluetooth or nRF Connect
+  - Android: Kotlin/BLE Scanner or nRF Connect
 - **Analysis**: Python, pandas, matplotlib
 
 ## Common Commands
@@ -48,8 +60,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 # Python environment for ML training
 pip install tensorflow scikit-learn pandas numpy matplotlib
 
-# Arduino IDE setup for M5Stack
-# Install: M5Core2 library, TensorFlow Lite Micro
+# Arduino IDE setup for M5StickC Plus2
+# Install: M5StickCPlus2 library, TensorFlow Lite ESP32
 ```
 
 ### Data Preparation
@@ -94,43 +106,145 @@ python scripts/latency_analysis.py
 python scripts/compare_strategies.py
 ```
 
-## File Organization
+## File Organization (STRICT)
 
 ```
-MobileNLD-FL/              # Repository root
-├── docs/
-│   ├── 研究概要_BLE適応制御.md     # Research overview
-│   ├── 実装計画.md                # Implementation plan
-│   ├── 実験手順書.md              # Experiment procedures
-│   ├── archive_NLD-FL/           # Archived NLD research
-│   └── EdgeHARv0/               # Previous EdgeHAR project
+MobileNLD-FL/                    # Repository root
 ├── firmware/                    # MCU firmware
 │   ├── src/
-│   │   ├── main.c              # Main application
-│   │   ├── har_model.c         # HAR inference
-│   │   ├── uncertainty.c       # Uncertainty calculation
-│   │   └── ble_adaptive.c     # Adaptive BLE control
-│   ├── include/
-│   └── CMakeLists.txt
-├── android/                     # Android logger app
-│   └── BLELogger/
-│       ├── app/src/main/
-│       └── build.gradle
-├── scripts/                     # Python analysis
-│   ├── train_har_model.py
-│   ├── parse_ppk2_csv.py
-│   ├── analyze_packet_logs.py
-│   └── generate_figures.py
-├── models/
-│   └── har_2class.tflite      # Quantized model
-├── data/
-│   ├── uci_har/               # UCI HAR dataset
-│   ├── power_measurements/    # PPK2 CSV files
-│   └── packet_logs/           # Android BLE logs
-└── results/
-    ├── figures/               # Generated plots
-    └── analysis/              # Analysis results
+│   └── include/
+├── android_logger/              # Android app
+│   └── app/
+├── analysis/                    # Analysis scripts
+│   ├── notebooks/              # Reproducible notebooks
+│   └── requirements.txt        # Python dependencies
+├── scripts/                     # Automation scripts
+│   ├── new_run.sh              # Run ID generation
+│   ├── ingest_run.py           # Data ingestion
+│   ├── qc_run.py               # Quality check
+│   └── rebuild_all.sh          # Complete regeneration
+├── data/                        # ⚠️ APPEND-ONLY
+│   ├── raw/                    # 🔒 READ-ONLY after save
+│   │   └── YYYYMMDD/           # Date folders
+│   │       └── subject_id/     # Subject folders
+│   │           └── condition/  # Condition folders
+│   │               ├── ppk2_*.csv
+│   │               ├── phone_*.csv
+│   │               ├── uart_*.log
+│   │               ├── meta_*.json
+│   │               └── manifest_*.txt
+│   ├── processed/              # Intermediate files
+│   └── releases/               # Publication snapshots
+├── results/                     # Analysis outputs
+│   ├── summary_by_run.csv
+│   ├── summary_by_condition.csv
+│   └── table_paper.csv
+├── figs/                        # Generated figures
+├── logs/                        # Execution logs
+├── configs/                     # Experiment configs
+├── docs/
+│   ├── templates/              # Document templates
+│   ├── adr/                    # Architecture decisions
+│   ├── meetings/               # Meeting notes
+│   ├── audit/                  # Weekly audits
+│   └── governance.md           # THIS RULEBOOK
+└── catalog.csv                  # Master index of all runs
 ```
+
+## 🔴 CRITICAL: Research Execution Rules
+
+### 1. Basic Principles (5 COMMANDMENTS)
+1. **Append-only**: Raw data is IMMUTABLE. Never overwrite.
+2. **Traceable**: Every artifact linked by run_id/commit hash.
+3. **UTC-only**: All timestamps in UTC milliseconds, ISO8601.
+4. **Automated**: Manual entry minimized. Scripts regenerate all.
+5. **Double-backup**: Immediate checksum + dual backup.
+
+### 2. Naming Convention (REGEX)
+```
+subject_id:  S[0-9]{2}              (e.g., S01)
+device_id:   [A-Za-z0-9_-]{1,16}    (e.g., devA01)
+session_id:  16-bit random          (per device boot)
+condition:   Fixed-100ms|Fixed-200ms|Fixed-500ms|Adaptive
+run_id:      YYYYMMDD_HHMMSSZ_{subject}_{condition}_{seq3}
+             (e.g., 20250901_043015Z_S01_Adaptive_001)
+filename:    {type}_{run_id}.{ext}  (ppk2_*, phone_*, uart_*, meta_*)
+```
+**FORBIDDEN**: Spaces, non-ASCII, uppercase extensions
+
+### 3. Metadata Schema (meta_{run_id}.json)
+```json
+{
+  "run_id": "required",
+  "subject_id": "required",
+  "device_id": "required",
+  "condition": "required",
+  "distance_m": "required",
+  "fw_commit": "required",
+  "app_commit": "required",
+  "thresholds": {
+    "theta_q_in": 0.3,
+    "theta_q_out": 0.2,
+    "theta_a_in": 0.7,
+    "theta_a_out": 0.6
+  },
+  "start_iso8601_utc": "required",
+  "end_iso8601_utc": "required",
+  "qc_status": "planned|passed|failed|excluded",
+  "qc_reason_code": [],
+  "posthoc_patch": []
+}
+```
+
+### 4. Execution SOP (MANDATORY)
+
+#### Pre-Run Checklist
+- [ ] NTP sync (PC & Android)
+- [ ] Run ID generated (`scripts/new_run.sh`)
+- [ ] Meta template created
+- [ ] FW/App commit recorded
+- [ ] PPK2 calibrated
+
+#### During Run
+- [ ] SYNC sequence (3 sec, LED×3)
+- [ ] 20-minute measurement
+- [ ] PPK2 + Phone + UART simultaneous
+- [ ] Distance/environment noted
+
+#### Post-Run (WITHIN 5 MIN)
+- [ ] Save to `data/raw/YYYYMMDD/...`
+- [ ] Generate SHA256 checksums
+- [ ] Create manifest
+- [ ] Set raw/ to READ-ONLY
+- [ ] Light QC (loss<10%, files OK)
+- [ ] Update catalog.csv
+- [ ] Backup to cloud/external
+
+### 5. Quality Control Rules
+
+#### Light QC (Immediate)
+- Packet loss < 10%
+- p95 interval < 2× configured max
+- All files present
+- I_avg > 0
+
+#### Full QC (Post-Analysis)
+- Power reduction ≥ 40%
+- p95 latency ≤ 300ms
+- F1 degradation ≤ 1.5 points
+- Packet loss ≤ 5%
+
+#### Exclusion Codes
+- **R1**: Reception gap >1 min
+- **R2**: PPK2 overrange/disconnect
+- **R3**: Protocol deviation
+- **R4**: Excessive interference
+
+### 6. Git & Change Management
+- Commits: `feat:`, `fix:`, `docs:` prefixes
+- Experiments require Issue + PR
+- ADR for design decisions in `docs/adr/`
+- Config changes in UART → meta.posthoc_patch
 
 ## Development Guidelines
 
@@ -139,11 +253,6 @@ MobileNLD-FL/              # Repository root
 - **Kotlin (Android)**: Android style guide, MVVM pattern
 - **Python**: PEP 8, type hints, docstrings
 
-### Git Workflow
-- Branch naming: `feature/description`, `fix/issue`
-- Commit messages: Clear and descriptive
-- Daily commits with progress updates
-
 ### Testing Protocol
 1. Unit tests for each component
 2. Integration tests for BLE communication
@@ -151,24 +260,43 @@ MobileNLD-FL/              # Repository root
 4. Power consumption measurements
 5. Accuracy validation
 
-## Experiment Tracking
+## Experiment Execution & Tracking
+
+### Automation Scripts (REQUIRED)
+```bash
+# Start new experiment run
+scripts/new_run.sh                 # Generates run_id, creates templates
+
+# After data collection
+scripts/ingest_run.py --run_id XXX # Moves files, generates checksums
+scripts/qc_run.py --run_id XXX     # Performs light QC
+
+# Regenerate all results
+scripts/rebuild_all.sh              # Complete analysis regeneration
+```
 
 ### Key Metrics (Priority Order)
-1. **Average Current**: ≥40% reduction vs fixed 100ms (PRIMARY)
-   - Measured with Nordic PPK2
-   - Report mean, std, and energy/minute
+1. **Average Current**: ≥30% reduction vs fixed 100ms (ADJUSTED)
+   - Measured with AXP192 @ 1Hz (M5StickC内蔵)
+   - Report mean, std, and battery life estimation
 2. **p95 Latency**: ≤300ms (BLE advertising-based)
    - Packet reception intervals from Android logs
 3. **F1 Score**: Degradation ≤1.5 points
    - 2-class (Active/Idle) classification
-4. **Packet Loss**: <1% under normal conditions
+4. **Packet Loss**: <5% under normal conditions
 
 ### Experiment Conditions
-1. **Baseline**: Fixed intervals (100ms, 200ms, 500ms)
+1. **Baseline**: Fixed-100ms, Fixed-200ms, Fixed-500ms
 2. **Proposed**: Adaptive (100-2000ms based on uncertainty)
 3. **Duration**: 20 minutes per condition
-4. **Subjects**: 3-5 participants
+4. **Subjects**: 3-5 participants (S01-S05)
 5. **Activities**: Walking, sitting, standing, stairs
+
+### Data Integrity
+- **Checksums**: SHA256 for all raw files
+- **Backup**: Local + Cloud within same day
+- **Versioning**: Git tags for paper submissions
+- **Audit**: Weekly integrity checks in `docs/audit/`
 
 ## Paper Writing Guidelines
 
@@ -192,22 +320,23 @@ MobileNLD-FL/              # Repository root
 
 ## Timeline (6-Week Sprint)
 
-### Week 1-2: Implementation
-- nRF52 firmware development
-- HAR model integration (TFLite Micro)
-- Uncertainty calculation implementation
-- Adaptive BLE control logic
+### Week 1: M5StickC Implementation (PIVOT)
+- ESP32 Arduino環境セットアップ
+- BLE広告テスト（固定100ms）
+- IMUデータ取得（MPU6886, 50Hz）
+- AXP192電力測定
 
-### Week 3-4: Android App & Testing
-- BLE scanner app development
-- CSV logging functionality
-- System integration testing
-- Debug and optimization
+### Week 2: Adaptive Control & Apps
+- HAR簡易モデル実装（閾値ベース）
+- BLE適応制御（3状態）
+- Phone側ロガー（Galaxy S9メイン）
+- 統合テスト
 
-### Week 5: Experiments
-- Power measurements with PPK2
-- 3-5 subjects × 4 conditions × 20 min
-- Data collection and validation
+### Week 3: Experiments & Analysis
+- M5StickC 3台同時測定
+- Fixed vs Adaptive比較
+- 電力削減率算出（AXP192ベース）
+- Nordic調達判断
 
 ### Week 6: Analysis & Writing
 - Data analysis and visualization
@@ -229,6 +358,40 @@ MobileNLD-FL/              # Repository root
 - ✅ Statistical validation
 - ✅ Reproducible implementation
 
+## Critical Checklists
+
+### Pre-Experiment Checklist
+```
+□ NTP time sync completed
+□ Run ID generated (scripts/new_run.sh)
+□ Meta template filled
+□ FW/App commits recorded
+□ PPK2 zero calibrated
+□ Android location permission ON
+□ SYNC sequence ready (3 sec)
+```
+
+### Post-Experiment Checklist
+```
+□ Files saved to data/raw/YYYYMMDD/...
+□ SHA256 checksums generated
+□ Manifest created
+□ Raw folder set to READ-ONLY
+□ Light QC passed (loss<10%)
+□ catalog.csv updated
+□ Cloud backup completed
+□ Issue comment posted
+```
+
+### Weekly Audit Checklist
+```
+□ Catalog integrity verified
+□ All manifests validated
+□ Backup integrity tested
+□ Random run reproducibility check
+□ Audit log saved to docs/audit/YYYYWW.md
+```
+
 ## Troubleshooting
 
 ### Common Issues
@@ -237,22 +400,49 @@ MobileNLD-FL/              # Repository root
 3. **Packet Loss**: Check Android scanner buffer size
 4. **Uncertainty Calculation Overhead**: Optimize computation
 
+### Incident Reporting
+Any deviation from SOP requires:
+1. Create `docs/incidents/YYYYMMDD_incident.md`
+2. Record in meta.posthoc_patch
+3. File GitHub Issue with `incident` label
+
 ## Resources
 
 ### Documentation
-- [nRF52 SDK](https://developer.nordicsemi.com/)
-- [Zephyr RTOS](https://zephyrproject.org/)
-- [TensorFlow Lite Micro](https://www.tensorflow.org/lite/microcontrollers)
+- [M5StickC Plus2](https://docs.m5stack.com/en/core/M5StickC%20PLUS2)
+- [ESP32 Arduino Core](https://github.com/espressif/arduino-esp32)
+- [TensorFlow Lite Micro ESP32](https://github.com/tanakamasayuki/Arduino_TensorFlowLite_ESP32)
 - [UCI HAR Dataset](https://archive.ics.uci.edu/ml/datasets/human+activity+recognition+using+smartphones)
 
 ### Tools
-- nRF Connect SDK
-- Android Studio
-- Nordic PPK2
+- Arduino IDE 2.x
+- ESP-IDF (optional)
+- Android Studio / Xcode
+- M5StickC Plus2 × 3
 - Python 3.9+
+
+## Prohibited Actions (VIOLATIONS)
+
+❌ **NEVER**:
+- Overwrite or delete raw data files
+- Mix timezones (use UTC only)
+- Change configs without recording in UART log
+- Use custom naming conventions
+- Submit non-reproducible results
+- Skip checksums or manifests
+- Modify analysis notebooks manually
+
+## Templates Location
+
+All templates in `docs/templates/`:
+- `daily_log.md` - Daily experiment log
+- `run_log.md` - Per-run recording
+- `change_log.md` - Change tracking
+- `adr_template.md` - Architecture decisions
+- `incident_report.md` - Incident documentation
 
 ---
 *Project Status: Active Development*
 *Last Updated: 2024-12-17*
 *Target: IEICE ComEX (2025)*
-*Focus: Adaptive BLE advertising for power reduction*
+*Governance: STRICT APPEND-ONLY DATA POLICY*
