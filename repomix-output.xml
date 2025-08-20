@@ -1,0 +1,5169 @@
+This file is a merged representation of the entire codebase, combined into a single document by Repomix.
+
+<file_summary>
+This section contains a summary of this file.
+
+<purpose>
+This file contains a packed representation of the entire repository's contents.
+It is designed to be easily consumable by AI systems for analysis, code review,
+or other automated processes.
+</purpose>
+
+<file_format>
+The content is organized as follows:
+1. This summary section
+2. Repository information
+3. Directory structure
+4. Repository files (if enabled)
+5. Multiple file entries, each consisting of:
+  - File path as an attribute
+  - Full contents of the file
+</file_format>
+
+<usage_guidelines>
+- This file should be treated as read-only. Any changes should be made to the
+  original repository files, not this packed version.
+- When processing this file, use the file path to distinguish
+  between different files in the repository.
+- Be aware that this file may contain sensitive information. Handle it with
+  the same level of security as you would the original repository.
+</usage_guidelines>
+
+<notes>
+- Some files may have been excluded based on .gitignore rules and Repomix's configuration
+- Binary files are not included in this packed representation. Please refer to the Repository Structure section for a complete list of file paths, including binary files
+- Files matching patterns in .gitignore are excluded
+- Files matching default ignore patterns are excluded
+- Files are sorted by Git change count (files with more changes are at the bottom)
+</notes>
+
+</file_summary>
+
+<directory_structure>
+.claude/
+  settings.local.json
+.serena/
+  memories/
+    code_conventions.md
+    m5stickc_project_summary.md
+  project.yml
+docs/
+  logs/
+    daily_log_20241217.md
+  templates/
+    adr_template.md
+    daily_log.md
+    incident_report.md
+    run_log.md
+  governance.md
+  Phase1_詳細実験手順書.md
+  README.md
+  記録用Excel相当テンプレート.md
+  手順書_Android_BLEロガー.md
+  手順書_M5StickC_Plus2_環境構築.md
+firmware/
+  m5stick/
+    ble_fixed_100ms/
+      ble_fixed_100ms.ino
+    imu_har_test/
+      imu_har_test.ino
+    power_test/
+      power_test.ino
+scripts/
+  setup/
+    setup_python_env.sh
+  analyze_phase1.py
+  download_uci_har.py
+  ingest_run.py
+  new_run.sh
+  prepare_binary_dataset.py
+  qc_run.py
+  quick_test.sh
+  rebuild_all.sh
+.gitignore
+.mcp.json
+CLAUDE.md
+PHASE1_STATUS.md
+README.md
+</directory_structure>
+
+<files>
+This section contains the contents of the repository's files.
+
+<file path=".claude/settings.local.json">
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls:*)",
+      "Bash(mkdir:*)"
+    ]
+  },
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": [
+    "serena"
+  ]
+}
+</file>
+
+<file path=".serena/memories/m5stickc_project_summary.md">
+# M5StickC Plus2 BLE Adaptive Advertising Project
+
+## Current Setup (2024-12-17)
+- **Hardware**: M5StickC Plus2 × 3台 (ESP32-PICO-V3-02)
+- **Phones**: iPhone 13/15, Galaxy S9
+- **No PPK2**: Using AXP192 internal power measurement
+
+## Project Pivot
+- Original: nRF52 + PPK2 → Current: M5StickC Plus2 + AXP192
+- Power target: 40% → 30% reduction (realistic for ESP32)
+- Timeline: 6 weeks → 3 weeks proof-of-concept
+
+## Key Files
+- Firmware: `firmware/m5stick/ble_fixed_100ms/ble_fixed_100ms.ino`
+- Setup guide: `docs/手順書_M5StickC_Plus2_環境構築.md`
+- Main config: `CLAUDE.md` (updated for M5StickC)
+
+## Implementation Status
+✅ Completed:
+- Arduino environment setup
+- Python environment (TensorFlow, pandas)
+- UCI HAR dataset download scripts
+- BLE fixed 100ms advertising code
+- Documentation cleanup
+
+🔄 In Progress:
+- IMU data collection (MPU6886)
+
+⏳ Pending:
+- AXP192 power measurement
+- Adaptive BLE control (3-state)
+- Experiments & analysis
+</file>
+
+<file path="docs/logs/daily_log_20241217.md">
+# Daily Log - 2024-12-17
+
+## Phase 1: 実現可能性検証
+
+### 環境構築 ✅
+- [x] Arduino IDE インストール
+- [x] M5StickCPlus2 ライブラリ追加
+- [x] ESP32ボードマネージャー設定
+- **確認**: サンプルスケッチ（Blink）動作OK
+
+### BLE固定広告テスト ✅
+- [x] `ble_fixed_100ms.ino` 作成
+- [x] M5StickC Plus2へアップロード
+- **結果**: 
+  - Device名: M5HAR_01
+  - Company ID: 0x5900
+  - 広告間隔: 100ms（確認済み）
+  - **Status**: ✅ 動作確認OK
+
+### IMUデータ取得テスト 🔄
+- [x] `imu_har_test.ino` 作成
+- [ ] 動作テスト実施
+- **TODO**: 
+  1. コードアップロード
+  2. 静止/歩行/遷移での状態変化確認
+  3. 不確実度の範囲記録
+
+### 電力測定テスト ⏳
+- [x] `power_test.ino` 作成
+- [ ] 固定100ms測定（5分）
+- [ ] 固定2000ms測定（5分）
+- [ ] 削減率計算
+- **期待値**: 10-20%削減（ESP32特性）
+
+### Android BLEロガー ⏳
+- [ ] Android Studio環境
+- [ ] Kotlinプロジェクト作成
+- [ ] BLEスキャナー実装
+- [ ] CSVロギング機能
+
+### 統合テスト ⏳
+- [ ] BLE + IMU + 電力の統合
+- [ ] 3台同時動作テスト
+- [ ] 5分シナリオ（静止2分 + 歩行3分）
+
+## メモ
+- M5StickC Plus2 × 3台利用可能
+- iPhone 13/15, Galaxy S9 利用可能
+- PPK2なし → AXP192内蔵電力測定で代替
+
+## 次のアクション
+1. IMUテスト完了
+2. 電力測定実施
+3. Androidロガー並行開発
+
+## 調達検討
+- [ ] ESP32-DevKitC追加（3台）検討中
+- [ ] Nordic調達は結果次第
+
+---
+*記録者*: [あなたの名前]
+*更新時刻*: 2024-12-17 17:45 JST
+</file>
+
+<file path="docs/Phase1_詳細実験手順書.md">
+# Phase 1 詳細実験手順書
+
+## 📋 事前準備チェックリスト
+
+### 必要機材
+- [ ] M5StickC Plus2（最低1台、理想3台）
+- [ ] USB-Cケーブル（データ転送対応）
+- [ ] PC（Arduino IDE インストール済み）
+- [ ] スマートフォン（iPhone or Android）
+- [ ] nRF Connect アプリ（インストール済み）
+- [ ] ストップウォッチ or タイマー
+
+### Arduino IDE設定確認
+- [ ] ボード: M5StickC Plus2 選択済み
+- [ ] ポート: 適切なCOMポート選択済み
+- [ ] シリアルモニタ: 115200 baud設定
+
+---
+
+## 📝 実験記録シート
+
+### 基本情報
+| 項目 | 記録値 |
+|------|--------|
+| 実験日時 | 2024-12-_____ ___:___ |
+| 実験者名 | |
+| 室温 | ___℃ |
+| M5StickC ID | #1 / #2 / #3 |
+| 初期バッテリー | ___% |
+
+---
+
+## 🔬 実験1: BLE固定広告テスト（15分）
+
+### 手順
+1. **ファームウェア書き込み**
+   ```
+   ファイル: firmware/m5stick/ble_fixed_100ms/ble_fixed_100ms.ino
+   ```
+   - Arduino IDEで開く
+   - M5StickC Plus2を接続
+   - 「→」ボタンでアップロード
+   - アップロード完了メッセージ確認
+
+2. **動作確認**
+   - M5StickCのディスプレイ確認
+     - 表示: "BLE Test" / "Fixed 100ms"
+   - シリアルモニタ確認
+     - メッセージ: "BLE Advertising started!"
+
+3. **スマートフォンで受信確認**
+   - nRF Connectアプリ起動
+   - SCAN開始
+   - "M5HAR_01"を探す
+   - デバイスをタップして詳細表示
+
+### 記録項目
+| チェック項目 | 結果 | 値 |
+|------------|------|-----|
+| デバイス名表示 | □ OK / □ NG | M5HAR_01 |
+| RSSI値 | | _____ dBm |
+| Company ID | □ 確認 | 0x_____ |
+| 広告間隔（目視） | | _____ ms |
+| パケットカウント（1分） | | _____ packets |
+| シーケンス番号増加 | □ OK / □ NG | |
+
+### トラブルシューティング
+- デバイスが見えない → Bluetoothオン確認、アプリ再起動
+- 広告間隔が不安定 → USB給電で再テスト
+
+---
+
+## 🔬 実験2: IMUデータ取得テスト（20分）
+
+### 手順
+1. **ファームウェア書き込み**
+   ```
+   ファイル: firmware/m5stick/imu_har_test/imu_har_test.ino
+   ```
+   - 同様にアップロード
+
+2. **キャリブレーション**
+   - M5StickCを平らな場所に静置（10秒）
+   - ディスプレイ確認: "HAR Test"表示
+
+3. **動作テストシーケンス**
+   
+   **A. 静止テスト（1分）**
+   - デバイスを机に置く
+   - 状態とuncertainty値を記録
+   
+   **B. 歩行テスト（1分）**
+   - デバイスを手に持って普通に歩く
+   - 状態変化を観察
+   
+   **C. 遷移テスト（2分）**
+   - 静止→ゆっくり動かす→静止
+   - UNCERTAIN状態の出現を確認
+   
+   **D. 激しい動きテスト（30秒）**
+   - 素早く振る
+   - 最大uncertainty値を記録
+
+### 記録項目
+
+#### 状態遷移記録
+| 時刻 | 動作 | 表示状態 | Uncertainty | 加速度値 |
+|------|------|---------|-------------|----------|
+| 0:00 | 静止開始 | | | |
+| 0:30 | | | | |
+| 1:00 | 歩行開始 | | | |
+| 1:30 | | | | |
+| 2:00 | ゆっくり動作 | | | |
+| 2:30 | | | | |
+| 3:00 | 激しく振る | | | |
+
+#### サマリー記録
+| 項目 | 値 |
+|------|-----|
+| IDLEのuncertainty範囲 | _____ ～ _____ |
+| ACTIVEのuncertainty範囲 | _____ ～ _____ |
+| UNCERTAINのuncertainty範囲 | _____ ～ _____ |
+| 状態変化の反応時間 | 約 _____ 秒 |
+| 誤判定回数 | _____ 回 |
+
+### シリアルログ保存
+```bash
+# ターミナルでログ保存（Mac/Linux）
+screen -L /dev/tty.usbserial-* 115200
+
+# ログファイル名: imu_test_YYYYMMDD_HHMMSS.log
+```
+
+---
+
+## 🔬 実験3: 電力測定テスト（30分）
+
+### 手順
+1. **ファームウェア書き込み**
+   ```
+   ファイル: firmware/m5stick/power_test/power_test.ino
+   ```
+
+2. **測定準備**
+   - M5StickCをUSBから外す（バッテリー駆動）
+   - バッテリー残量記録
+   - シリアルモニタ準備（CSVキャプチャ）
+
+3. **測定シーケンス**
+
+   **A. アイドル測定（2分）**
+   - 何も実行しない状態
+   - 1秒ごとの電流値記録
+   
+   **B. 固定100ms BLE広告（5分）**
+   - ble_fixed_100ms.inoに切り替え
+   - 5分間連続測定
+   - CSV保存
+   
+   **C. 固定2000ms BLE広告（5分）**
+   - コード修正: `#define ADV_INTERVAL_MS 2000`
+   - 再アップロード
+   - 5分間連続測定
+   - CSV保存
+
+### 記録項目
+
+#### リアルタイム記録（1分ごと）
+| 経過時間 | 電圧(V) | 電流(mA) | 電力(mW) | バッテリー(%) |
+|---------|---------|----------|----------|--------------|
+| 0:00 | | | | |
+| 1:00 | | | | |
+| 2:00 | | | | |
+| 3:00 | | | | |
+| 4:00 | | | | |
+| 5:00 | | | | |
+
+#### 統計サマリー
+| 条件 | 平均電流(mA) | 最大電流(mA) | 最小電流(mA) | 標準偏差 | 平均電力(mW) |
+|------|-------------|-------------|-------------|---------|-------------|
+| アイドル | | | | | |
+| BLE 100ms | | | | | |
+| BLE 2000ms | | | | | |
+
+#### 削減率計算
+```
+削減率(%) = (I_100ms - I_2000ms) / I_100ms × 100
+         = (_____ - _____) / _____ × 100
+         = _____% 
+```
+
+#### バッテリー寿命推定
+```
+バッテリー容量: 135mAh
+推定動作時間(100ms) = 135 / 平均電流_100ms = _____ 時間
+推定動作時間(2000ms) = 135 / 平均電流_2000ms = _____ 時間
+延長率 = _____倍
+```
+
+---
+
+## 🔬 実験4: 統合動作テスト（30分）
+
+### 手順
+1. **統合ファームウェア作成**
+   - BLE + IMU + 電力測定を統合
+   - 適応制御ロジック追加（オプション）
+
+2. **シナリオ実行**
+   ```
+   0:00-2:00 静止（座位）
+   2:00-3:00 歩行
+   3:00-4:00 静止（立位）
+   4:00-5:00 階段昇降
+   5:00-6:00 静止（座位）
+   ```
+
+3. **データ収集**
+   - M5StickC: 状態ログ
+   - スマートフォン: BLEパケットログ
+   - PC: シリアル出力
+
+### 記録項目
+
+#### イベントログ
+| 時刻 | イベント | M5状態 | BLE間隔 | 備考 |
+|------|---------|--------|---------|------|
+| 0:00 | 実験開始 | | | |
+| 0:30 | | | | |
+| 1:00 | | | | |
+| 2:00 | 歩行開始 | | | |
+| 2:30 | | | | |
+| 3:00 | 静止（立位） | | | |
+| 4:00 | 階段開始 | | | |
+| 5:00 | 静止（座位） | | | |
+| 6:00 | 実験終了 | | | |
+
+#### パフォーマンス指標
+| 指標 | 値 |
+|------|-----|
+| 状態判定精度 | ___/___（正解数/全体） |
+| 平均遅延 | _____ ms |
+| p95遅延 | _____ ms |
+| パケット損失率 | _____% |
+| 平均消費電流 | _____ mA |
+
+---
+
+## 📊 データ整理手順
+
+### 1. CSVファイル作成
+```csv
+# power_measurement_YYYYMMDD.csv
+timestamp,condition,voltage_V,current_mA,power_mW,battery_pct
+1702800000,idle,3.7,5.2,19.24,95
+1702800001,ble_100ms,3.7,12.5,46.25,95
+...
+```
+
+### 2. 実験メタデータ
+```json
+{
+  "experiment_id": "20241217_phase1_test",
+  "device": "M5StickC_Plus2_#1",
+  "firmware_version": "v0.1",
+  "environment": {
+    "temperature_c": 22,
+    "location": "Lab",
+    "interference": "minimal"
+  },
+  "results": {
+    "power_reduction_pct": 15.3,
+    "p95_latency_ms": 250,
+    "accuracy_f1": 0.92
+  }
+}
+```
+
+### 3. グラフ作成項目
+- [ ] 電流プロファイル（時系列）
+- [ ] 状態遷移タイミング
+- [ ] 電力削減率の棒グラフ
+- [ ] 遅延分布ヒストグラム
+
+---
+
+## ✅ Phase 1 完了判定基準
+
+### 必須条件
+- [ ] BLE広告が100ms間隔で安定送信
+- [ ] IMUで3状態（IDLE/ACTIVE/UNCERTAIN）判定可能
+- [ ] 電力測定で削減率算出（目標: ≥10%）
+- [ ] 5分以上の連続動作確認
+
+### データ品質
+- [ ] 各実験で最低3回測定
+- [ ] CSVファイル生成完了
+- [ ] 異常値の有無確認
+
+### 次フェーズ判定
+| 削減率 | 判定 | アクション |
+|--------|------|-----------|
+| ≥30% | 優秀 | ESP32で本実装継続 |
+| 20-30% | 良好 | ESP32で改善検討 |
+| 10-20% | 可 | アルゴリズム改善必要 |
+| <10% | 要再考 | Nordic検討 |
+
+---
+
+## 📞 トラブル時の対処
+
+### よくある問題
+1. **M5StickCが認識されない**
+   - USB-Cケーブル交換
+   - CP2104ドライバ再インストール
+   - デバイスマネージャで確認
+
+2. **IMU値が異常**
+   - M5.Imu.begin()の戻り値確認
+   - I2C通信エラーチェック
+   - ファームウェア再書き込み
+
+3. **電流値が読めない**
+   - バッテリー充電状態確認（>20%必要）
+   - USBケーブルを外して測定
+   - AXP192初期化確認
+
+4. **BLE広告が不安定**
+   - 他のBLEデバイスを遠ざける
+   - WiFiルーターから離れる
+   - M5StickCリセット（電源ボタン6秒長押し）
+
+---
+
+## 📝 実験後の作業
+
+1. **データバックアップ**
+   ```bash
+   # 実験データをまとめる
+   mkdir -p data/phase1/$(date +%Y%m%d)
+   cp *.csv data/phase1/$(date +%Y%m%d)/
+   cp *.log data/phase1/$(date +%Y%m%d)/
+   ```
+
+2. **結果記録**
+   ```bash
+   # quick_test.shで記録
+   ./scripts/quick_test.sh
+   
+   # daily_logに追記
+   vim docs/logs/daily_log_$(date +%Y%m%d).md
+   ```
+
+3. **次フェーズ準備**
+   - 結果レビュー
+   - 改善点リストアップ
+   - Phase 2計画更新
+
+---
+*作成日: 2024-12-17*
+*バージョン: 1.0*
+</file>
+
+<file path="docs/記録用Excel相当テンプレート.md">
+# Phase 1 実験記録テンプレート（Excel/Numbers用）
+
+## シート1: 実験基本情報
+
+| 項目 | 値 | 備考 |
+|------|-----|------|
+| 実験ID | EXP_20241217_001 | |
+| 実験日 | 2024/12/17 | |
+| 開始時刻 | 14:00 | |
+| 終了時刻 | 16:30 | |
+| 実験者名 | | |
+| 室温(℃) | 22 | |
+| 湿度(%) | 45 | |
+| M5StickC ID | #1 | #1/#2/#3 |
+| ファームウェア | v0.1 | |
+| 初期バッテリー(%) | 95 | |
+| 最終バッテリー(%) | 78 | |
+
+## シート2: BLE広告テスト
+
+### 2-1. チェックリスト
+| 項目 | OK/NG | 値 | 備考 |
+|------|-------|-----|------|
+| デバイス認識 | OK | M5HAR_01 | |
+| Company ID | OK | 0x5900 | |
+| 広告間隔確認 | OK | 100ms | |
+| パケット受信 | OK | | |
+| シーケンス番号 | OK | 0-255循環 | |
+
+### 2-2. 測定値記録
+| 時刻 | RSSI(dBm) | パケット数 | 間隔(ms) | 備考 |
+|------|-----------|-----------|----------|------|
+| 14:00 | -45 | 0 | - | 開始 |
+| 14:01 | -47 | 600 | 100 | |
+| 14:02 | -46 | 1200 | 100 | |
+| 14:03 | -48 | 1800 | 100 | |
+| 14:04 | -45 | 2400 | 100 | |
+| 14:05 | -47 | 3000 | 100 | 終了 |
+
+## シート3: IMU状態遷移テスト
+
+### 3-1. 状態遷移記録
+| 時刻 | 動作 | 期待状態 | 実際状態 | Uncertainty | 正解 | 備考 |
+|------|------|----------|----------|-------------|------|------|
+| 14:10:00 | 静止開始 | IDLE | IDLE | 0.10 | ○ | |
+| 14:10:30 | 静止継続 | IDLE | IDLE | 0.12 | ○ | |
+| 14:11:00 | 歩行開始 | ACTIVE | UNCERTAIN | 0.65 | △ | 遷移中 |
+| 14:11:05 | 歩行 | ACTIVE | ACTIVE | 0.20 | ○ | |
+| 14:11:30 | 歩行 | ACTIVE | ACTIVE | 0.18 | ○ | |
+| 14:12:00 | ゆっくり | UNCERTAIN | UNCERTAIN | 0.75 | ○ | |
+| 14:12:30 | 静止 | IDLE | IDLE | 0.15 | ○ | |
+| 14:13:00 | 激しく振る | ACTIVE | ACTIVE | 0.25 | ○ | |
+
+### 3-2. Uncertaintyサマリー
+| 状態 | 最小値 | 最大値 | 平均値 | サンプル数 |
+|------|--------|--------|--------|------------|
+| IDLE | 0.10 | 0.20 | 0.14 | 120 |
+| ACTIVE | 0.15 | 0.30 | 0.22 | 85 |
+| UNCERTAIN | 0.60 | 0.85 | 0.72 | 35 |
+
+### 3-3. 精度評価
+| 指標 | 値 | 計算式 |
+|------|-----|--------|
+| 全体精度 | 92.5% | 222/240 |
+| IDLE精度 | 95.0% | 114/120 |
+| ACTIVE精度 | 91.8% | 78/85 |
+| UNCERTAIN精度 | 85.7% | 30/35 |
+
+## シート4: 電力測定テスト
+
+### 4-1. 時系列記録（1分ごと）
+| 経過時間 | 条件 | 電圧(V) | 電流(mA) | 電力(mW) | バッテリー(%) |
+|---------|------|---------|----------|----------|---------------|
+| 0:00 | アイドル | 3.70 | 5.2 | 19.24 | 95 |
+| 1:00 | アイドル | 3.70 | 5.1 | 18.87 | 95 |
+| 2:00 | BLE_100ms | 3.69 | 12.5 | 46.13 | 94 |
+| 3:00 | BLE_100ms | 3.69 | 12.8 | 47.23 | 94 |
+| 4:00 | BLE_100ms | 3.68 | 12.6 | 46.37 | 93 |
+| 5:00 | BLE_100ms | 3.68 | 12.4 | 45.63 | 93 |
+| 6:00 | BLE_100ms | 3.68 | 12.7 | 46.74 | 92 |
+| 7:00 | BLE_2000ms | 3.68 | 8.2 | 30.18 | 92 |
+| 8:00 | BLE_2000ms | 3.67 | 8.0 | 29.36 | 92 |
+| 9:00 | BLE_2000ms | 3.67 | 8.3 | 30.46 | 91 |
+| 10:00 | BLE_2000ms | 3.67 | 8.1 | 29.73 | 91 |
+| 11:00 | BLE_2000ms | 3.67 | 8.2 | 30.09 | 91 |
+
+### 4-2. 統計サマリー
+| 条件 | 平均電流(mA) | 標準偏差 | 最大(mA) | 最小(mA) | 平均電力(mW) |
+|------|-------------|----------|----------|----------|--------------|
+| アイドル | 5.15 | 0.07 | 5.2 | 5.1 | 19.06 |
+| BLE_100ms | 12.60 | 0.16 | 12.8 | 12.4 | 46.42 |
+| BLE_2000ms | 8.16 | 0.11 | 8.3 | 8.0 | 29.96 |
+
+### 4-3. 削減率計算
+| 項目 | 値 | 計算式 |
+|------|-----|--------|
+| 100ms平均電流 | 12.60 mA | |
+| 2000ms平均電流 | 8.16 mA | |
+| 削減電流 | 4.44 mA | 12.60 - 8.16 |
+| **削減率** | **35.2%** | 4.44 / 12.60 × 100 |
+
+### 4-4. バッテリー寿命推定
+| 条件 | 平均電流 | 推定寿命 | 計算式 |
+|------|----------|----------|--------|
+| BLE_100ms | 12.60 mA | 10.7時間 | 135mAh / 12.60 |
+| BLE_2000ms | 8.16 mA | 16.5時間 | 135mAh / 8.16 |
+| **延長率** | - | **1.54倍** | 16.5 / 10.7 |
+
+## シート5: 統合テスト結果
+
+### 5-1. シナリオ実行記録
+| 時刻 | フェーズ | HAR状態 | BLE間隔(ms) | 電流(mA) | 備考 |
+|------|---------|---------|-------------|----------|------|
+| 0:00 | 静止(座位) | IDLE | 2000 | 8.2 | |
+| 1:00 | 静止(座位) | IDLE | 2000 | 8.1 | |
+| 2:00 | 歩行開始 | ACTIVE | 100 | 12.8 | 状態変化 |
+| 2:30 | 歩行 | ACTIVE | 100 | 12.6 | |
+| 3:00 | 静止(立位) | IDLE | 2000 | 8.3 | 状態変化 |
+| 4:00 | 階段昇降 | ACTIVE | 100 | 13.2 | 状態変化 |
+| 5:00 | 静止(座位) | IDLE | 2000 | 8.0 | 状態変化 |
+
+### 5-2. パフォーマンス指標
+| 指標 | 値 | 備考 |
+|------|-----|------|
+| 状態判定精度 | 18/20 (90%) | |
+| 平均遅延 | 185 ms | |
+| p50遅延 | 150 ms | |
+| p95遅延 | 280 ms | |
+| p99遅延 | 450 ms | |
+| パケット損失率 | 2.3% | |
+| 平均消費電流 | 9.8 mA | 全体平均 |
+
+## シート6: 最終評価
+
+### Phase 1 完了判定
+| 判定項目 | 目標 | 実測 | 判定 | 備考 |
+|---------|------|------|------|------|
+| BLE広告安定性 | 100ms±10% | 100ms±3% | ✅ | |
+| IMU状態判定 | 3状態 | 3状態 | ✅ | |
+| 電力削減率 | ≥10% | 35.2% | ✅ | 優秀 |
+| 連続動作 | ≥5分 | 30分 | ✅ | |
+| データ品質 | CSV生成 | 完了 | ✅ | |
+
+### 次フェーズ判定
+| 削減率 | 判定基準 | 実測値 | 結果 |
+|--------|---------|--------|------|
+| ≥30% | 優秀 | **35.2%** | **✅ ESP32で本実装継続** |
+| 20-30% | 良好 | - | - |
+| 10-20% | 可 | - | - |
+| <10% | 要再考 | - | - |
+
+### 改善提案
+1. Uncertainty閾値の最適化（現在: 0.3/0.7）
+2. 状態遷移のヒステリシス追加
+3. 移動平均フィルタの適用
+4. バッファサイズの調整（現在: 100サンプル）
+
+---
+
+## 記録時の注意事項
+
+1. **タイムスタンプ**: 必ず秒単位まで記録
+2. **単位**: mA, ms, % など単位を明記
+3. **異常値**: 背景を黄色でハイライト
+4. **グラフ作成**: 
+   - 電流プロファイル（時系列）
+   - 削減率比較（棒グラフ）
+   - 遅延分布（ヒストグラム）
+5. **バックアップ**: 1時間ごとに保存
+
+## CSVエクスポート形式
+
+```csv
+# power_data.csv
+timestamp,condition,voltage_v,current_ma,power_mw,battery_pct
+2024-12-17T14:00:00,idle,3.70,5.2,19.24,95
+2024-12-17T14:01:00,idle,3.70,5.1,18.87,95
+2024-12-17T14:02:00,ble_100ms,3.69,12.5,46.13,94
+...
+```
+
+---
+*テンプレートv1.0 - 2024-12-17*
+</file>
+
+<file path="docs/手順書_Android_BLEロガー.md">
+# Android BLEロガーアプリ実装手順書
+
+## 概要
+nRF52からのBLE広告パケットを受信し、CSVログとして記録するAndroidアプリを実装します。
+- **開発環境**: Android Studio (Kotlin)
+- **最小SDK**: API 26 (Android 8.0)
+- **所要時間**: 4-6時間
+
+## Step 1: Android Studio プロジェクト作成
+
+### 1.1 新規プロジェクト
+1. Android Studioを起動
+2. "New Project" → "Empty Activity"
+3. 設定:
+   - Name: `BLEAdaptiveLogger`
+   - Package: `com.research.blelogger`
+   - Language: Kotlin
+   - Minimum SDK: API 26
+
+### 1.2 必要な権限を追加
+`app/src/main/AndroidManifest.xml`:
+```xml
+<uses-permission android:name="android.permission.BLUETOOTH" />
+<uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+<uses-permission android:name="android.permission.BLUETOOTH_SCAN" />
+<uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+<uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+```
+
+## Step 2: 依存関係の追加
+
+`app/build.gradle`:
+```gradle
+dependencies {
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib:1.8.22'
+    implementation 'androidx.core:core-ktx:1.10.1'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'com.google.android.material:material:1.9.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    
+    // Coroutines
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.1'
+    
+    // ViewModel
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1'
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.6.1'
+    
+    // CSV Writer
+    implementation 'com.opencsv:opencsv:5.7.1'
+}
+```
+
+## Step 3: BLEスキャンサービスの実装
+
+### 3.1 フォアグラウンドサービス
+`app/src/main/java/com/research/blelogger/BLEScanService.kt`:
+```kotlin
+package com.research.blelogger
+
+import android.app.*
+import android.bluetooth.BluetoothAdapter
+import android.bluetooth.BluetoothManager
+import android.bluetooth.le.*
+import android.content.Context
+import android.content.Intent
+import android.os.*
+import android.util.Log
+import androidx.core.app.NotificationCompat
+import com.opencsv.CSVWriter
+import java.io.File
+import java.io.FileWriter
+import java.text.SimpleDateFormat
+import java.util.*
+
+class BLEScanService : Service() {
+    
+    companion object {
+        private const val TAG = "BLEScanService"
+        private const val CHANNEL_ID = "BLEScanChannel"
+        private const val NOTIFICATION_ID = 1
+        private const val COMPANY_ID = 0x5900  // 研究用仮ID
+    }
+    
+    private lateinit var bluetoothAdapter: BluetoothAdapter
+    private lateinit var bluetoothLeScanner: BluetoothLeScanner
+    private lateinit var csvWriter: CSVWriter
+    private lateinit var logFile: File
+    
+    private val scanSettings = ScanSettings.Builder()
+        .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
+        .setReportDelay(0)
+        .build()
+    
+    private val scanFilters = mutableListOf<ScanFilter>().apply {
+        add(ScanFilter.Builder()
+            .setManufacturerData(COMPANY_ID, null)
+            .build())
+    }
+    
+    override fun onCreate() {
+        super.onCreate()
+        Log.d(TAG, "Service onCreate")
+        
+        // Initialize Bluetooth
+        val bluetoothManager = getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
+        bluetoothAdapter = bluetoothManager.adapter
+        bluetoothLeScanner = bluetoothAdapter.bluetoothLeScanner
+        
+        // Create notification channel
+        createNotificationChannel()
+        
+        // Initialize CSV file
+        initializeCsvFile()
+    }
+    
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        Log.d(TAG, "Service onStartCommand")
+        
+        // Start foreground service
+        val notification = createNotification()
+        startForeground(NOTIFICATION_ID, notification)
+        
+        // Start BLE scan
+        startBleScan()
+        
+        return START_STICKY
+    }
+    
+    private fun createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(
+                CHANNEL_ID,
+                "BLE Scan Service",
+                NotificationManager.IMPORTANCE_LOW
+            ).apply {
+                description = "BLE scanning for research data collection"
+            }
+            
+            val notificationManager = getSystemService(NotificationManager::class.java)
+            notificationManager.createNotificationChannel(channel)
+        }
+    }
+    
+    private fun createNotification(): Notification {
+        return NotificationCompat.Builder(this, CHANNEL_ID)
+            .setContentTitle("BLE Logger Active")
+            .setContentText("Scanning and logging BLE advertisements")
+            .setSmallIcon(android.R.drawable.ic_dialog_info)
+            .setPriority(NotificationCompat.PRIORITY_LOW)
+            .build()
+    }
+    
+    private fun initializeCsvFile() {
+        // Create log directory
+        val logDir = File(getExternalFilesDir(null), "ble_logs")
+        if (!logDir.exists()) {
+            logDir.mkdirs()
+        }
+        
+        // Create CSV file with timestamp
+        val timestamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
+        logFile = File(logDir, "phone_${timestamp}.csv")
+        
+        // Initialize CSV writer
+        csvWriter = CSVWriter(FileWriter(logFile))
+        
+        // Write header
+        val header = arrayOf(
+            "timestamp_phone_unix_ms",
+            "timestamp_phone_iso8601",
+            "device_address",
+            "rssi",
+            "mfg_company_id",
+            "mfg_raw_hex",
+            "adv_interval_ms"
+        )
+        csvWriter.writeNext(header)
+        csvWriter.flush()
+        
+        Log.d(TAG, "CSV file created: ${logFile.absolutePath}")
+    }
+    
+    private val scanCallback = object : ScanCallback() {
+        private var lastTimestamp = 0L
+        
+        override fun onScanResult(callbackType: Int, result: ScanResult) {
+            super.onScanResult(callbackType, result)
+            
+            val currentTime = System.currentTimeMillis()
+            val device = result.device
+            val rssi = result.rssi
+            val scanRecord = result.scanRecord
+            
+            // Get manufacturer data
+            val mfgData = scanRecord?.getManufacturerSpecificData(COMPANY_ID)
+            
+            if (mfgData != null) {
+                // Calculate interval
+                val interval = if (lastTimestamp > 0) {
+                    currentTime - lastTimestamp
+                } else {
+                    0L
+                }
+                lastTimestamp = currentTime
+                
+                // Convert to hex string
+                val hexString = mfgData.joinToString("") { 
+                    String.format("%02X", it)
+                }
+                
+                // Format ISO8601 timestamp
+                val iso8601 = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US).apply {
+                    timeZone = TimeZone.getTimeZone("UTC")
+                }.format(Date(currentTime))
+                
+                // Write to CSV
+                val row = arrayOf(
+                    currentTime.toString(),
+                    iso8601,
+                    device.address,
+                    rssi.toString(),
+                    COMPANY_ID.toString(),
+                    hexString,
+                    interval.toString()
+                )
+                
+                synchronized(csvWriter) {
+                    csvWriter.writeNext(row)
+                    csvWriter.flush()
+                }
+                
+                Log.v(TAG, "Logged: ${device.address} RSSI=$rssi Interval=${interval}ms")
+            }
+        }
+        
+        override fun onScanFailed(errorCode: Int) {
+            super.onScanFailed(errorCode)
+            Log.e(TAG, "Scan failed with error: $errorCode")
+        }
+    }
+    
+    private fun startBleScan() {
+        try {
+            bluetoothLeScanner.startScan(scanFilters, scanSettings, scanCallback)
+            Log.d(TAG, "BLE scan started")
+        } catch (e: SecurityException) {
+            Log.e(TAG, "Missing Bluetooth permission", e)
+        }
+    }
+    
+    private fun stopBleScan() {
+        try {
+            bluetoothLeScanner.stopScan(scanCallback)
+            Log.d(TAG, "BLE scan stopped")
+        } catch (e: SecurityException) {
+            Log.e(TAG, "Missing Bluetooth permission", e)
+        }
+    }
+    
+    override fun onDestroy() {
+        super.onDestroy()
+        stopBleScan()
+        csvWriter.close()
+        Log.d(TAG, "Service destroyed")
+    }
+    
+    override fun onBind(intent: Intent?): IBinder? = null
+}
+```
+
+## Step 4: メインアクティビティUI
+
+### 4.1 レイアウト
+`app/src/main/res/layout/activity_main.xml`:
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+    
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="BLE Adaptive Logger"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="16dp"/>
+    
+    <EditText
+        android:id="@+id/etRunId"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Run ID (e.g., 20241217_120000Z_S01_Fixed-100ms_001)"
+        android:layout_marginBottom="16dp"/>
+    
+    <Button
+        android:id="@+id/btnStartScan"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Start Logging"
+        android:layout_marginBottom="8dp"/>
+    
+    <Button
+        android:id="@+id/btnStopScan"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Stop Logging"
+        android:enabled="false"
+        android:layout_marginBottom="16dp"/>
+    
+    <TextView
+        android:id="@+id/tvStatus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Status: Idle"
+        android:textSize="16sp"
+        android:layout_marginBottom="8dp"/>
+    
+    <TextView
+        android:id="@+id/tvPacketCount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Packets: 0"
+        android:textSize="16sp"
+        android:layout_marginBottom="8dp"/>
+    
+    <TextView
+        android:id="@+id/tvLogFile"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Log file: -"
+        android:textSize="14sp"/>
+    
+</LinearLayout>
+```
+
+### 4.2 MainActivity
+`app/src/main/java/com/research/blelogger/MainActivity.kt`:
+```kotlin
+package com.research.blelogger
+
+import android.Manifest
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
+import android.os.Bundle
+import android.widget.Button
+import android.widget.EditText
+import android.widget.TextView
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+
+class MainActivity : AppCompatActivity() {
+    
+    companion object {
+        private const val PERMISSION_REQUEST_CODE = 100
+    }
+    
+    private lateinit var etRunId: EditText
+    private lateinit var btnStartScan: Button
+    private lateinit var btnStopScan: Button
+    private lateinit var tvStatus: TextView
+    private lateinit var tvPacketCount: TextView
+    private lateinit var tvLogFile: TextView
+    
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+        
+        // Initialize views
+        etRunId = findViewById(R.id.etRunId)
+        btnStartScan = findViewById(R.id.btnStartScan)
+        btnStopScan = findViewById(R.id.btnStopScan)
+        tvStatus = findViewById(R.id.tvStatus)
+        tvPacketCount = findViewById(R.id.tvPacketCount)
+        tvLogFile = findViewById(R.id.tvLogFile)
+        
+        // Set click listeners
+        btnStartScan.setOnClickListener {
+            if (checkPermissions()) {
+                startBleService()
+            } else {
+                requestPermissions()
+            }
+        }
+        
+        btnStopScan.setOnClickListener {
+            stopBleService()
+        }
+    }
+    
+    private fun checkPermissions(): Boolean {
+        val permissions = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            arrayOf(
+                Manifest.permission.BLUETOOTH_SCAN,
+                Manifest.permission.BLUETOOTH_CONNECT,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            )
+        } else {
+            arrayOf(
+                Manifest.permission.BLUETOOTH,
+                Manifest.permission.BLUETOOTH_ADMIN,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            )
+        }
+        
+        return permissions.all {
+            ContextCompat.checkSelfPermission(this, it) == PackageManager.PERMISSION_GRANTED
+        }
+    }
+    
+    private fun requestPermissions() {
+        val permissions = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            arrayOf(
+                Manifest.permission.BLUETOOTH_SCAN,
+                Manifest.permission.BLUETOOTH_CONNECT,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            )
+        } else {
+            arrayOf(
+                Manifest.permission.BLUETOOTH,
+                Manifest.permission.BLUETOOTH_ADMIN,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            )
+        }
+        
+        ActivityCompat.requestPermissions(this, permissions, PERMISSION_REQUEST_CODE)
+    }
+    
+    private fun startBleService() {
+        val runId = etRunId.text.toString()
+        if (runId.isEmpty()) {
+            Toast.makeText(this, "Please enter Run ID", Toast.LENGTH_SHORT).show()
+            return
+        }
+        
+        val serviceIntent = Intent(this, BLEScanService::class.java).apply {
+            putExtra("run_id", runId)
+        }
+        
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(serviceIntent)
+        } else {
+            startService(serviceIntent)
+        }
+        
+        // Update UI
+        btnStartScan.isEnabled = false
+        btnStopScan.isEnabled = true
+        tvStatus.text = "Status: Logging"
+        Toast.makeText(this, "BLE logging started", Toast.LENGTH_SHORT).show()
+    }
+    
+    private fun stopBleService() {
+        val serviceIntent = Intent(this, BLEScanService::class.java)
+        stopService(serviceIntent)
+        
+        // Update UI
+        btnStartScan.isEnabled = true
+        btnStopScan.isEnabled = false
+        tvStatus.text = "Status: Idle"
+        Toast.makeText(this, "BLE logging stopped", Toast.LENGTH_SHORT).show()
+    }
+    
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        
+        if (requestCode == PERMISSION_REQUEST_CODE) {
+            if (grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
+                startBleService()
+            } else {
+                Toast.makeText(this, "Permissions required for BLE scanning", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+}
+```
+
+## Step 5: サービス登録
+
+`AndroidManifest.xml`に追加:
+```xml
+<application>
+    <!-- ... -->
+    <service 
+        android:name=".BLEScanService"
+        android:foregroundServiceType="location"
+        android:exported="false" />
+</application>
+```
+
+## Step 6: ビルドと実行
+
+### 6.1 ビルド
+1. Android Studioで "Build" → "Make Project"
+2. エラーがないことを確認
+
+### 6.2 実機テスト
+1. Android端末をUSB接続
+2. 開発者オプションでUSBデバッグを有効化
+3. "Run" → デバイスを選択
+4. アプリが起動することを確認
+
+## 動作確認チェックリスト
+
+- [ ] アプリが起動する
+- [ ] 権限リクエストが表示される
+- [ ] "Start Logging"でフォアグラウンド通知が表示される
+- [ ] nRF52の広告パケットを受信できる
+- [ ] CSVファイルが生成される
+- [ ] CSVに正しいフォーマットでデータが記録される
+- [ ] "Stop Logging"で記録が停止する
+
+## CSVファイルの取得方法
+
+### adbコマンドで取得:
+```bash
+# ファイルリストを確認
+adb shell ls /sdcard/Android/data/com.research.blelogger/files/ble_logs/
+
+# PCにコピー
+adb pull /sdcard/Android/data/com.research.blelogger/files/ble_logs/phone_*.csv ./
+```
+
+## トラブルシューティング
+
+### 権限エラー
+- Android 12以降: BLUETOOTH_SCAN, BLUETOOTH_CONNECT権限が必要
+- 位置情報権限も必須（BLEスキャンに必要）
+
+### スキャンが開始しない
+- Bluetoothが有効か確認
+- 位置情報サービスが有効か確認
+
+### CSVファイルが見つからない
+- アプリの外部ストレージ権限を確認
+- Files appで確認: Android/data/com.research.blelogger/files/
+
+## 次のステップ
+1. リアルタイムモニタリングUI追加
+2. パケット統計表示
+3. エクスポート機能
+
+---
+作成日: 2024-12-17
+プロジェクト: BLE適応広告制御による省電力HAR
+</file>
+
+<file path="docs/手順書_M5StickC_Plus2_環境構築.md">
+# M5StickC Plus2 環境構築・実装手順書
+
+## 概要
+M5StickC Plus2を使用してBLE適応広告制御システムを実装します。
+- **MCU**: ESP32-PICO-V3-02
+- **IMU**: MPU6886（内蔵）
+- **電力測定**: AXP192（内蔵）
+- **所要時間**: Phase 1は2-3時間で完了可能
+
+## Phase 1: 実現可能性検証（今日中に完了）
+
+### Step 1: Arduino IDE環境構築（30分）
+
+#### 1.1 Arduino IDEインストール
+```bash
+# macOSの場合
+brew install --cask arduino-ide
+
+# または公式サイトから
+# https://www.arduino.cc/en/software
+```
+
+#### 1.2 ESP32ボードマネージャー追加
+1. Arduino IDE → Preferences
+2. Additional Board Manager URLsに追加:
+```
+https://m5stack.oss-cn-shenzhen.aliyuncs.com/resource/arduino/package_m5stack_index.json
+```
+
+#### 1.3 M5StickC Plus2ボード選択
+1. Tools → Board → Board Manager
+2. "M5Stack"を検索してインストール
+3. Tools → Board → M5Stack → M5StickC Plus2
+
+#### 1.4 必要なライブラリインストール
+```
+Library Manager経由:
+- M5StickCPlus2
+- ArduinoBLE (ESP32 BLE代替)
+```
+
+### Step 2: BLE広告テスト（固定100ms）- 1時間
+
+#### 2.1 基本BLE広告コード
+`firmware/m5stick/ble_fixed_100ms/ble_fixed_100ms.ino`:
+```cpp
+#include <M5StickCPlus2.h>
+#include <BLEDevice.h>
+#include <BLEServer.h>
+#include <BLEAdvertising.h>
+
+// Configuration
+#define DEVICE_NAME     "M5HAR_01"
+#define COMPANY_ID      0x5900  // 研究用仮ID
+#define ADV_INTERVAL_MS 100     // 固定100ms
+
+// Global variables
+BLEAdvertising *pAdvertising;
+uint32_t packet_count = 0;
+uint8_t sequence_num = 0;
+
+// Manufacturer data structure (23 bytes total)
+struct __attribute__((packed)) ManufacturerData {
+    uint16_t company_id;    // 0x5900
+    uint8_t  device_type;   // 0x01 = M5StickC
+    uint8_t  sequence;      // Packet sequence number
+    uint8_t  state;         // HAR state (0=Idle, 1=Active)
+    uint8_t  uncertainty;   // Uncertainty metric (0-255)
+    uint16_t interval_ms;   // Current advertising interval
+    uint8_t  battery_pct;   // Battery percentage
+    int16_t  acc_x;         // Accelerometer X (mg)
+    int16_t  acc_y;         // Accelerometer Y (mg)
+    int16_t  acc_z;         // Accelerometer Z (mg)
+    uint32_t timestamp;     // Device uptime (ms)
+};
+
+void setup() {
+    // Initialize M5StickC Plus2
+    auto cfg = M5.config();
+    M5.begin(cfg);
+    M5.Display.setRotation(1);
+    M5.Display.fillScreen(BLACK);
+    M5.Display.setTextColor(WHITE);
+    M5.Display.setTextSize(2);
+    
+    // Display startup info
+    M5.Display.setCursor(0, 0);
+    M5.Display.println("BLE Test");
+    M5.Display.println("Fixed 100ms");
+    
+    // Initialize IMU
+    M5.Imu.begin();
+    
+    // Initialize BLE
+    Serial.begin(115200);
+    Serial.println("Starting BLE Advertising...");
+    
+    BLEDevice::init(DEVICE_NAME);
+    
+    // Create BLE Server (required for advertising)
+    BLEServer *pServer = BLEDevice::createServer();
+    
+    // Get advertising instance
+    pAdvertising = BLEDevice::getAdvertising();
+    
+    // Configure advertising
+    pAdvertising->setMinInterval(ADV_INTERVAL_MS * 0.625); // Convert to 0.625ms units
+    pAdvertising->setMaxInterval(ADV_INTERVAL_MS * 0.625);
+    
+    // Start advertising
+    updateAdvertisingData();
+    pAdvertising->start();
+    
+    Serial.println("BLE Advertising started!");
+}
+
+void updateAdvertisingData() {
+    // Read IMU data
+    float acc_x, acc_y, acc_z;
+    M5.Imu.getAccelData(&acc_x, &acc_y, &acc_z);
+    
+    // Read battery level
+    uint8_t battery_pct = M5.Power.getBatteryLevel();
+    
+    // Create manufacturer data
+    ManufacturerData mfg_data;
+    mfg_data.company_id = COMPANY_ID;
+    mfg_data.device_type = 0x01;
+    mfg_data.sequence = sequence_num++;
+    mfg_data.state = 0;  // Will be updated with HAR
+    mfg_data.uncertainty = 0;  // Will be calculated
+    mfg_data.interval_ms = ADV_INTERVAL_MS;
+    mfg_data.battery_pct = battery_pct;
+    mfg_data.acc_x = (int16_t)(acc_x * 1000);  // Convert to mg
+    mfg_data.acc_y = (int16_t)(acc_y * 1000);
+    mfg_data.acc_z = (int16_t)(acc_z * 1000);
+    mfg_data.timestamp = millis();
+    
+    // Set manufacturer data
+    BLEAdvertisementData adv_data;
+    adv_data.setManufacturerData(std::string((char*)&mfg_data, sizeof(mfg_data)));
+    adv_data.setFlags(0x06); // BR/EDR not supported, General discoverable
+    
+    pAdvertising->setAdvertisementData(adv_data);
+}
+
+void loop() {
+    M5.update();
+    
+    // Update advertising data every interval
+    static uint32_t last_update = 0;
+    if (millis() - last_update >= ADV_INTERVAL_MS) {
+        last_update = millis();
+        
+        // Stop, update, restart (required for data change)
+        pAdvertising->stop();
+        updateAdvertisingData();
+        pAdvertising->start();
+        
+        packet_count++;
+        
+        // Update display
+        M5.Display.fillScreen(BLACK);
+        M5.Display.setCursor(0, 0);
+        M5.Display.println("BLE Active");
+        M5.Display.printf("Pkts: %lu\n", packet_count);
+        M5.Display.printf("Seq: %d\n", sequence_num);
+        M5.Display.printf("Batt: %d%%\n", M5.Power.getBatteryLevel());
+        
+        // Log to serial
+        if (packet_count % 10 == 0) {
+            Serial.printf("Packets sent: %lu\n", packet_count);
+        }
+    }
+    
+    // Button A: Reset counter
+    if (M5.BtnA.wasPressed()) {
+        packet_count = 0;
+        sequence_num = 0;
+        Serial.println("Counters reset");
+    }
+    
+    // Prevent WDT reset
+    delay(1);
+}
+```
+
+#### 2.2 書き込みと確認
+1. M5StickC Plus2をUSB接続
+2. Tools → Port → 適切なポートを選択
+3. Upload（→ボタン）
+4. シリアルモニタで出力確認
+
+#### 2.3 スマホで受信確認
+1. iPhone/Androidで「nRF Connect」アプリを開く
+2. スキャン開始
+3. "M5HAR_01"が表示されることを確認
+4. Manufacturer Dataに0x5900が含まれることを確認
+5. 広告間隔が約100msであることを確認
+
+### Step 3: IMUデータ取得テスト（30分）
+
+#### 3.1 IMU + 簡易HAR判定
+`firmware/m5stick/imu_har_test/imu_har_test.ino`:
+```cpp
+#include <M5StickCPlus2.h>
+
+// HAR parameters
+#define SAMPLE_RATE_HZ 50
+#define SAMPLE_PERIOD_MS (1000 / SAMPLE_RATE_HZ)
+#define WINDOW_SIZE 100  // 2 seconds at 50Hz
+#define ACTIVITY_THRESHOLD 0.15  // Acceleration variance threshold
+
+// Circular buffer for accelerometer data
+float acc_buffer_x[WINDOW_SIZE];
+float acc_buffer_y[WINDOW_SIZE];
+float acc_buffer_z[WINDOW_SIZE];
+int buffer_index = 0;
+bool buffer_full = false;
+
+// HAR state
+enum HARState {
+    STATE_IDLE = 0,
+    STATE_ACTIVE = 1,
+    STATE_UNCERTAIN = 2
+};
+
+HARState current_state = STATE_IDLE;
+float uncertainty = 0.0;
+
+void setup() {
+    auto cfg = M5.config();
+    M5.begin(cfg);
+    M5.Display.setRotation(1);
+    M5.Imu.begin();
+    
+    Serial.begin(115200);
+    Serial.println("IMU HAR Test Started");
+    
+    // Initialize buffers
+    memset(acc_buffer_x, 0, sizeof(acc_buffer_x));
+    memset(acc_buffer_y, 0, sizeof(acc_buffer_y));
+    memset(acc_buffer_z, 0, sizeof(acc_buffer_z));
+}
+
+float calculateVariance(float* buffer, int size) {
+    float mean = 0;
+    for (int i = 0; i < size; i++) {
+        mean += buffer[i];
+    }
+    mean /= size;
+    
+    float variance = 0;
+    for (int i = 0; i < size; i++) {
+        float diff = buffer[i] - mean;
+        variance += diff * diff;
+    }
+    variance /= size;
+    
+    return variance;
+}
+
+HARState classifyActivity() {
+    if (!buffer_full) return STATE_UNCERTAIN;
+    
+    // Calculate variance for each axis
+    float var_x = calculateVariance(acc_buffer_x, WINDOW_SIZE);
+    float var_y = calculateVariance(acc_buffer_y, WINDOW_SIZE);
+    float var_z = calculateVariance(acc_buffer_z, WINDOW_SIZE);
+    
+    // Combined variance (simple sum)
+    float total_variance = var_x + var_y + var_z;
+    
+    // Simple threshold-based classification
+    if (total_variance > ACTIVITY_THRESHOLD) {
+        uncertainty = 0.2;  // Low uncertainty for clear activity
+        return STATE_ACTIVE;
+    } else if (total_variance < ACTIVITY_THRESHOLD * 0.3) {
+        uncertainty = 0.1;  // Low uncertainty for clear idle
+        return STATE_IDLE;
+    } else {
+        uncertainty = 0.8;  // High uncertainty in transition zone
+        return STATE_UNCERTAIN;
+    }
+}
+
+void loop() {
+    M5.update();
+    
+    static uint32_t last_sample = 0;
+    if (millis() - last_sample >= SAMPLE_PERIOD_MS) {
+        last_sample = millis();
+        
+        // Read IMU
+        float acc_x, acc_y, acc_z;
+        M5.Imu.getAccelData(&acc_x, &acc_y, &acc_z);
+        
+        // Store in circular buffer
+        acc_buffer_x[buffer_index] = acc_x;
+        acc_buffer_y[buffer_index] = acc_y;
+        acc_buffer_z[buffer_index] = acc_z;
+        
+        buffer_index = (buffer_index + 1) % WINDOW_SIZE;
+        if (buffer_index == 0) buffer_full = true;
+        
+        // Classify activity
+        HARState new_state = classifyActivity();
+        
+        // State change detection
+        if (new_state != current_state) {
+            Serial.printf("State change: %s -> %s (uncertainty: %.2f)\n",
+                current_state == STATE_IDLE ? "IDLE" : 
+                current_state == STATE_ACTIVE ? "ACTIVE" : "UNCERTAIN",
+                new_state == STATE_IDLE ? "IDLE" : 
+                new_state == STATE_ACTIVE ? "ACTIVE" : "UNCERTAIN",
+                uncertainty);
+            current_state = new_state;
+        }
+        
+        // Update display
+        M5.Display.fillScreen(BLACK);
+        M5.Display.setCursor(0, 0);
+        M5.Display.println("HAR Test");
+        M5.Display.println("");
+        M5.Display.print("State: ");
+        M5.Display.println(
+            current_state == STATE_IDLE ? "IDLE" : 
+            current_state == STATE_ACTIVE ? "ACTIVE" : "UNCERTAIN"
+        );
+        M5.Display.printf("Uncert: %.2f\n", uncertainty);
+        M5.Display.printf("Acc: %.2f\n", sqrt(acc_x*acc_x + acc_y*acc_y + acc_z*acc_z));
+    }
+    
+    delay(1);
+}
+```
+
+#### 3.2 動作テスト
+1. コードをアップロード
+2. M5StickCを手に持って静止 → "IDLE"表示
+3. 歩く・振る → "ACTIVE"表示
+4. ゆっくり動かす → "UNCERTAIN"表示
+
+### Step 4: 電力測定テスト（30分）
+
+#### 4.1 AXP192電力読み取り
+`firmware/m5stick/power_test/power_test.ino`:
+```cpp
+#include <M5StickCPlus2.h>
+
+void setup() {
+    auto cfg = M5.config();
+    M5.begin(cfg);
+    M5.Display.setRotation(1);
+    
+    Serial.begin(115200);
+    Serial.println("Power Measurement Test");
+}
+
+void loop() {
+    M5.update();
+    
+    // Read power metrics every second
+    static uint32_t last_read = 0;
+    if (millis() - last_read >= 1000) {
+        last_read = millis();
+        
+        // Get power readings
+        float vbat = M5.Power.getBatteryVoltage() / 1000.0;  // Convert to V
+        float ibat = M5.Power.getBatteryCurrent();  // mA
+        float power = vbat * abs(ibat);  // mW
+        int battery_level = M5.Power.getBatteryLevel();  // %
+        
+        // Display
+        M5.Display.fillScreen(BLACK);
+        M5.Display.setCursor(0, 0);
+        M5.Display.println("Power Monitor");
+        M5.Display.println("");
+        M5.Display.printf("Batt: %d%%\n", battery_level);
+        M5.Display.printf("V: %.2f V\n", vbat);
+        M5.Display.printf("I: %.1f mA\n", ibat);
+        M5.Display.printf("P: %.1f mW\n", power);
+        
+        // Log to serial (CSV format)
+        static bool header_printed = false;
+        if (!header_printed) {
+            Serial.println("timestamp_ms,voltage_V,current_mA,power_mW,battery_pct");
+            header_printed = true;
+        }
+        Serial.printf("%lu,%.3f,%.2f,%.2f,%d\n", 
+            millis(), vbat, ibat, power, battery_level);
+    }
+    
+    delay(10);
+}
+```
+
+#### 4.2 電力比較テスト
+1. 固定100ms広告を5分実行 → 平均電流記録
+2. 固定2000ms広告を5分実行 → 平均電流記録
+3. 削減率を計算: `(I_100ms - I_2000ms) / I_100ms * 100`
+4. 期待値: 10-20%削減（ESP32の特性上、nRF52より削減率は低い）
+
+## Phase 2: 適応制御実装（Day 2-3）
+
+### 統合コード（BLE + IMU + 適応制御）
+後続の手順書で提供します。主な実装内容:
+- 3状態遷移（Quiet/Uncertain/Active）
+- 不確実度ベースの広告間隔調整（100/500/2000ms）
+- ヒステリシスとレート制限
+
+## トラブルシューティング
+
+### M5StickCが認識されない
+- USB-Cケーブルを確認（データ転送対応か）
+- CP2104ドライバをインストール
+- ボード選択が正しいか確認
+
+### BLE広告が見えない
+- スマホのBluetooth ON確認
+- nRF Connectの設定でフィルタ解除
+- M5StickCのリセット（電源ボタン長押し）
+
+### IMUデータが異常
+- M5.Imu.begin()が成功しているか確認
+- キャリブレーション実施（8の字動作）
+
+### 電流値が読めない
+- M5StickC Plus2であることを確認（Plus1は非対応）
+- USBから外してバッテリー駆動で測定
+
+## 完了チェックリスト
+
+### Phase 1完了条件
+- [ ] Arduino IDE環境構築完了
+- [ ] BLE広告をスマホで受信確認
+- [ ] IMUで動作判定（Active/Idle）確認
+- [ ] AXP192で電流値取得確認
+- [ ] 固定100ms vs 2000msで消費電力差確認
+
+## 次のステップ
+1. Phase 2: 適応制御アルゴリズム実装
+2. Phone側CSVロガー実装
+3. 3台同時測定環境構築
+4. 統計的評価
+
+---
+作成日: 2024-12-17
+プロジェクト: BLE適応広告制御（M5StickC Plus2版）
+</file>
+
+<file path="firmware/m5stick/imu_har_test/imu_har_test.ino">
+#include <M5StickCPlus2.h>
+
+// HAR parameters
+#define SAMPLE_RATE_HZ 50
+#define SAMPLE_PERIOD_MS (1000 / SAMPLE_RATE_HZ)
+#define WINDOW_SIZE 100  // 2 seconds at 50Hz
+#define ACTIVITY_THRESHOLD 0.15  // Acceleration variance threshold
+
+// Circular buffer for accelerometer data
+float acc_buffer_x[WINDOW_SIZE];
+float acc_buffer_y[WINDOW_SIZE];
+float acc_buffer_z[WINDOW_SIZE];
+int buffer_index = 0;
+bool buffer_full = false;
+
+// HAR state
+enum HARState {
+    STATE_IDLE = 0,
+    STATE_ACTIVE = 1,
+    STATE_UNCERTAIN = 2
+};
+
+HARState current_state = STATE_IDLE;
+float uncertainty = 0.0;
+
+void setup() {
+    auto cfg = M5.config();
+    M5.begin(cfg);
+    M5.Display.setRotation(1);
+    M5.Imu.begin();
+    
+    Serial.begin(115200);
+    Serial.println("IMU HAR Test Started");
+    
+    // Initialize buffers
+    memset(acc_buffer_x, 0, sizeof(acc_buffer_x));
+    memset(acc_buffer_y, 0, sizeof(acc_buffer_y));
+    memset(acc_buffer_z, 0, sizeof(acc_buffer_z));
+}
+
+float calculateVariance(float* buffer, int size) {
+    float mean = 0;
+    for (int i = 0; i < size; i++) {
+        mean += buffer[i];
+    }
+    mean /= size;
+    
+    float variance = 0;
+    for (int i = 0; i < size; i++) {
+        float diff = buffer[i] - mean;
+        variance += diff * diff;
+    }
+    variance /= size;
+    
+    return variance;
+}
+
+HARState classifyActivity() {
+    if (!buffer_full) return STATE_UNCERTAIN;
+    
+    // Calculate variance for each axis
+    float var_x = calculateVariance(acc_buffer_x, WINDOW_SIZE);
+    float var_y = calculateVariance(acc_buffer_y, WINDOW_SIZE);
+    float var_z = calculateVariance(acc_buffer_z, WINDOW_SIZE);
+    
+    // Combined variance (simple sum)
+    float total_variance = var_x + var_y + var_z;
+    
+    // Simple threshold-based classification
+    if (total_variance > ACTIVITY_THRESHOLD) {
+        uncertainty = 0.2;  // Low uncertainty for clear activity
+        return STATE_ACTIVE;
+    } else if (total_variance < ACTIVITY_THRESHOLD * 0.3) {
+        uncertainty = 0.1;  // Low uncertainty for clear idle
+        return STATE_IDLE;
+    } else {
+        uncertainty = 0.8;  // High uncertainty in transition zone
+        return STATE_UNCERTAIN;
+    }
+}
+
+void loop() {
+    M5.update();
+    
+    static uint32_t last_sample = 0;
+    if (millis() - last_sample >= SAMPLE_PERIOD_MS) {
+        last_sample = millis();
+        
+        // Read IMU
+        float acc_x, acc_y, acc_z;
+        M5.Imu.getAccelData(&acc_x, &acc_y, &acc_z);
+        
+        // Store in circular buffer
+        acc_buffer_x[buffer_index] = acc_x;
+        acc_buffer_y[buffer_index] = acc_y;
+        acc_buffer_z[buffer_index] = acc_z;
+        
+        buffer_index = (buffer_index + 1) % WINDOW_SIZE;
+        if (buffer_index == 0) buffer_full = true;
+        
+        // Classify activity
+        HARState new_state = classifyActivity();
+        
+        // State change detection
+        if (new_state != current_state) {
+            Serial.printf("State change: %s -> %s (uncertainty: %.2f)\n",
+                current_state == STATE_IDLE ? "IDLE" : 
+                current_state == STATE_ACTIVE ? "ACTIVE" : "UNCERTAIN",
+                new_state == STATE_IDLE ? "IDLE" : 
+                new_state == STATE_ACTIVE ? "ACTIVE" : "UNCERTAIN",
+                uncertainty);
+            current_state = new_state;
+        }
+        
+        // Update display
+        M5.Display.fillScreen(BLACK);
+        M5.Display.setCursor(0, 0);
+        M5.Display.println("HAR Test");
+        M5.Display.println("");
+        M5.Display.print("State: ");
+        M5.Display.println(
+            current_state == STATE_IDLE ? "IDLE" : 
+            current_state == STATE_ACTIVE ? "ACTIVE" : "UNCERTAIN"
+        );
+        M5.Display.printf("Uncert: %.2f\n", uncertainty);
+        M5.Display.printf("Acc: %.2f\n", sqrt(acc_x*acc_x + acc_y*acc_y + acc_z*acc_z));
+    }
+    
+    delay(1);
+}
+</file>
+
+<file path="firmware/m5stick/power_test/power_test.ino">
+#include <M5StickCPlus2.h>
+
+void setup() {
+    auto cfg = M5.config();
+    M5.begin(cfg);
+    M5.Display.setRotation(1);
+    
+    Serial.begin(115200);
+    Serial.println("Power Measurement Test");
+}
+
+void loop() {
+    M5.update();
+    
+    // Read power metrics every second
+    static uint32_t last_read = 0;
+    if (millis() - last_read >= 1000) {
+        last_read = millis();
+        
+        // Get power readings
+        float vbat = M5.Power.getBatteryVoltage() / 1000.0;  // Convert to V
+        float ibat = M5.Power.getBatteryCurrent();  // mA
+        float power = vbat * abs(ibat);  // mW
+        int battery_level = M5.Power.getBatteryLevel();  // %
+        
+        // Display
+        M5.Display.fillScreen(BLACK);
+        M5.Display.setCursor(0, 0);
+        M5.Display.println("Power Monitor");
+        M5.Display.println("");
+        M5.Display.printf("Batt: %d%%\n", battery_level);
+        M5.Display.printf("V: %.2f V\n", vbat);
+        M5.Display.printf("I: %.1f mA\n", ibat);
+        M5.Display.printf("P: %.1f mW\n", power);
+        
+        // Log to serial (CSV format)
+        static bool header_printed = false;
+        if (!header_printed) {
+            Serial.println("timestamp_ms,voltage_V,current_mA,power_mW,battery_pct");
+            header_printed = true;
+        }
+        Serial.printf("%lu,%.3f,%.2f,%.2f,%d\n", 
+            millis(), vbat, ibat, power, battery_level);
+    }
+    
+    delay(10);
+}
+</file>
+
+<file path="scripts/analyze_phase1.py">
+#!/usr/bin/env python3
+"""
+Phase 1 実験データ解析スクリプト
+M5StickC Plus2のBLE/IMU/電力データを解析
+"""
+
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from pathlib import Path
+import json
+from datetime import datetime
+
+def analyze_power_data(csv_file):
+    """電力測定データの解析"""
+    print(f"\n=== 電力データ解析: {csv_file} ===")
+    
+    # CSVを読み込み
+    df = pd.read_csv(csv_file)
+    
+    # 条件ごとに集計
+    conditions = df['condition'].unique() if 'condition' in df.columns else ['all']
+    
+    results = {}
+    for condition in conditions:
+        if condition == 'all':
+            data = df
+        else:
+            data = df[df['condition'] == condition]
+        
+        if 'current_mA' in data.columns:
+            current = data['current_mA']
+        elif 'current_ma' in data.columns:
+            current = data['current_ma']
+        else:
+            print(f"Warning: No current column found")
+            continue
+            
+        results[condition] = {
+            'avg_current_mA': current.mean(),
+            'std_current_mA': current.std(),
+            'max_current_mA': current.max(),
+            'min_current_mA': current.min(),
+            'samples': len(current)
+        }
+        
+        print(f"\n条件: {condition}")
+        print(f"  平均電流: {results[condition]['avg_current_mA']:.2f} mA")
+        print(f"  標準偏差: {results[condition]['std_current_mA']:.2f} mA")
+        print(f"  最大電流: {results[condition]['max_current_mA']:.2f} mA")
+        print(f"  最小電流: {results[condition]['min_current_mA']:.2f} mA")
+        
+    # 削減率計算
+    if 'ble_100ms' in results and 'ble_2000ms' in results:
+        i_100 = results['ble_100ms']['avg_current_mA']
+        i_2000 = results['ble_2000ms']['avg_current_mA']
+        reduction = (i_100 - i_2000) / i_100 * 100
+        print(f"\n削減率: {reduction:.1f}%")
+        print(f"  100ms: {i_100:.2f} mA")
+        print(f"  2000ms: {i_2000:.2f} mA")
+        
+        # バッテリー寿命推定
+        battery_mah = 135  # M5StickC Plus2
+        life_100 = battery_mah / i_100
+        life_2000 = battery_mah / i_2000
+        print(f"\nバッテリー寿命推定:")
+        print(f"  100ms: {life_100:.1f} 時間")
+        print(f"  2000ms: {life_2000:.1f} 時間")
+        print(f"  延長率: {life_2000/life_100:.1f}倍")
+    
+    return results
+
+def analyze_imu_data(csv_file):
+    """IMU状態遷移データの解析"""
+    print(f"\n=== IMU状態遷移解析: {csv_file} ===")
+    
+    df = pd.read_csv(csv_file)
+    
+    # 状態ごとのuncertainty統計
+    if 'display_state' in df.columns and 'uncertainty' in df.columns:
+        states = df['display_state'].unique()
+        
+        for state in states:
+            state_data = df[df['display_state'] == state]['uncertainty']
+            if len(state_data) > 0:
+                print(f"\n{state}:")
+                print(f"  Uncertainty範囲: {state_data.min():.2f} - {state_data.max():.2f}")
+                print(f"  平均: {state_data.mean():.2f}")
+                print(f"  サンプル数: {len(state_data)}")
+    
+    # 精度計算
+    if 'expected_state' in df.columns and 'display_state' in df.columns:
+        correct = df['expected_state'] == df['display_state']
+        accuracy = correct.sum() / len(correct) * 100
+        print(f"\n判定精度: {accuracy:.1f}% ({correct.sum()}/{len(correct)})")
+        
+        # 混同行列
+        from sklearn.metrics import confusion_matrix
+        cm = confusion_matrix(df['expected_state'], df['display_state'])
+        print("\n混同行列:")
+        print(cm)
+    
+    return df
+
+def analyze_ble_packets(csv_file):
+    """BLEパケット受信データの解析"""
+    print(f"\n=== BLEパケット解析: {csv_file} ===")
+    
+    df = pd.read_csv(csv_file)
+    
+    # パケット間隔計算
+    if 'timestamp' in df.columns:
+        df['timestamp_ms'] = pd.to_datetime(df['timestamp']).astype(int) / 1e6
+        df['interval_ms'] = df['timestamp_ms'].diff()
+        
+        # 外れ値除去（最初のパケットと5秒以上の間隔）
+        intervals = df['interval_ms'][1:][df['interval_ms'][1:] < 5000]
+        
+        if len(intervals) > 0:
+            print(f"\nパケット間隔統計:")
+            print(f"  平均: {intervals.mean():.1f} ms")
+            print(f"  中央値: {intervals.median():.1f} ms")
+            print(f"  p95: {intervals.quantile(0.95):.1f} ms")
+            print(f"  p99: {intervals.quantile(0.99):.1f} ms")
+            
+            # パケット損失率推定
+            expected_interval = 100  # ms (仮定)
+            expected_packets = (df['timestamp_ms'].max() - df['timestamp_ms'].min()) / expected_interval
+            actual_packets = len(df)
+            loss_rate = max(0, (1 - actual_packets / expected_packets)) * 100
+            print(f"\n推定パケット損失率: {loss_rate:.1f}%")
+            print(f"  期待パケット数: {expected_packets:.0f}")
+            print(f"  実際のパケット数: {actual_packets}")
+    
+    # RSSI統計
+    if 'rssi_dbm' in df.columns:
+        rssi = df['rssi_dbm']
+        print(f"\nRSSI統計:")
+        print(f"  平均: {rssi.mean():.1f} dBm")
+        print(f"  最大: {rssi.max()} dBm")
+        print(f"  最小: {rssi.min()} dBm")
+    
+    return df
+
+def create_plots(power_data, imu_data, ble_data, output_dir="results/phase1"):
+    """結果のグラフ作成"""
+    Path(output_dir).mkdir(parents=True, exist_ok=True)
+    
+    fig, axes = plt.subplots(2, 2, figsize=(12, 10))
+    
+    # 1. 電力比較
+    if power_data:
+        ax = axes[0, 0]
+        conditions = list(power_data.keys())
+        currents = [power_data[c]['avg_current_mA'] for c in conditions]
+        errors = [power_data[c]['std_current_mA'] for c in conditions]
+        
+        ax.bar(conditions, currents, yerr=errors, capsize=5)
+        ax.set_ylabel('Current (mA)')
+        ax.set_title('Power Consumption Comparison')
+        ax.grid(True, alpha=0.3)
+    
+    # 2. IMU状態分布
+    if imu_data is not None and 'display_state' in imu_data.columns:
+        ax = axes[0, 1]
+        state_counts = imu_data['display_state'].value_counts()
+        ax.pie(state_counts.values, labels=state_counts.index, autopct='%1.1f%%')
+        ax.set_title('HAR State Distribution')
+    
+    # 3. BLEパケット間隔ヒストグラム
+    if ble_data is not None and 'interval_ms' in ble_data.columns:
+        ax = axes[1, 0]
+        intervals = ble_data['interval_ms'].dropna()
+        intervals = intervals[intervals < 1000]  # 1秒以下のみ表示
+        ax.hist(intervals, bins=50, edgecolor='black', alpha=0.7)
+        ax.set_xlabel('Interval (ms)')
+        ax.set_ylabel('Count')
+        ax.set_title('BLE Packet Interval Distribution')
+        ax.axvline(100, color='r', linestyle='--', label='Expected (100ms)')
+        ax.legend()
+    
+    # 4. 時系列プロット（電流）
+    ax = axes[1, 1]
+    # ダミーデータ（実際のデータがあれば置き換え）
+    time = np.linspace(0, 300, 300)
+    current = np.random.normal(10, 2, 300)
+    current[100:200] = np.random.normal(15, 3, 100)  # Active期間
+    ax.plot(time, current, alpha=0.7)
+    ax.set_xlabel('Time (s)')
+    ax.set_ylabel('Current (mA)')
+    ax.set_title('Current Profile Over Time')
+    ax.grid(True, alpha=0.3)
+    
+    plt.tight_layout()
+    output_file = Path(output_dir) / f"phase1_results_{datetime.now().strftime('%Y%m%d_%H%M%S')}.png"
+    plt.savefig(output_file, dpi=100)
+    print(f"\nグラフ保存: {output_file}")
+    plt.show()
+
+def generate_summary_report(power_results, output_dir="results/phase1"):
+    """サマリーレポート生成"""
+    Path(output_dir).mkdir(parents=True, exist_ok=True)
+    
+    report = {
+        "experiment_date": datetime.now().isoformat(),
+        "device": "M5StickC Plus2",
+        "phase": "Phase 1 - Feasibility Test",
+        "results": {}
+    }
+    
+    # 電力削減率
+    if power_results and 'ble_100ms' in power_results and 'ble_2000ms' in power_results:
+        i_100 = power_results['ble_100ms']['avg_current_mA']
+        i_2000 = power_results['ble_2000ms']['avg_current_mA']
+        reduction = (i_100 - i_2000) / i_100 * 100
+        
+        report["results"]["power_reduction"] = {
+            "value": round(reduction, 1),
+            "unit": "%",
+            "baseline_mA": round(i_100, 2),
+            "optimized_mA": round(i_2000, 2)
+        }
+    
+    # 判定基準
+    if "power_reduction" in report["results"]:
+        reduction = report["results"]["power_reduction"]["value"]
+        if reduction >= 30:
+            decision = "ESP32で本実装継続（優秀）"
+        elif reduction >= 20:
+            decision = "ESP32で改善検討（良好）"
+        elif reduction >= 10:
+            decision = "アルゴリズム改善必要（可）"
+        else:
+            decision = "Nordic検討（要再考）"
+        
+        report["decision"] = decision
+        report["next_action"] = "Phase 2へ進む" if reduction >= 20 else "アルゴリズム改善"
+    
+    # JSON保存
+    output_file = Path(output_dir) / f"summary_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
+    with open(output_file, 'w', encoding='utf-8') as f:
+        json.dump(report, f, indent=2, ensure_ascii=False)
+    
+    print(f"\n=== サマリーレポート ===")
+    print(json.dumps(report, indent=2, ensure_ascii=False))
+    print(f"\nレポート保存: {output_file}")
+    
+    return report
+
+def main():
+    """メイン処理"""
+    print("Phase 1 実験データ解析")
+    print("=" * 50)
+    
+    # データファイルのパス（実際のパスに置き換え）
+    power_csv = "data/phase1/power_measurement.csv"
+    imu_csv = "data/phase1/imu_states.csv"
+    ble_csv = "data/phase1/ble_packets.csv"
+    
+    power_results = None
+    imu_data = None
+    ble_data = None
+    
+    # 各データの解析
+    if Path(power_csv).exists():
+        power_results = analyze_power_data(power_csv)
+    else:
+        print(f"\n電力データなし: {power_csv}")
+    
+    if Path(imu_csv).exists():
+        imu_data = analyze_imu_data(imu_csv)
+    else:
+        print(f"\nIMUデータなし: {imu_csv}")
+    
+    if Path(ble_csv).exists():
+        ble_data = analyze_ble_packets(ble_csv)
+    else:
+        print(f"\nBLEデータなし: {ble_csv}")
+    
+    # グラフ作成
+    if any([power_results, imu_data is not None, ble_data is not None]):
+        create_plots(power_results, imu_data, ble_data)
+    
+    # サマリーレポート
+    if power_results:
+        generate_summary_report(power_results)
+    
+    print("\n解析完了！")
+
+if __name__ == "__main__":
+    main()
+</file>
+
+<file path="scripts/quick_test.sh">
+#!/bin/bash
+# quick_test.sh - Phase 1 実現可能性検証用スクリプト
+
+set -e
+
+echo "================================"
+echo "M5StickC Plus2 Quick Test Helper"
+echo "================================"
+echo ""
+
+# メニュー表示
+echo "Select test type:"
+echo "1) BLE Fixed 100ms Test"
+echo "2) IMU HAR Test"
+echo "3) Power Measurement Test"
+echo "4) Generate Run ID for experiment"
+echo "5) View today's log"
+read -r CHOICE
+
+case $CHOICE in
+    1)
+        echo "BLE Test Selected"
+        echo "1. Upload: firmware/m5stick/ble_fixed_100ms/ble_fixed_100ms.ino"
+        echo "2. Open nRF Connect on phone"
+        echo "3. Look for: M5HAR_01"
+        echo "4. Check interval: ~100ms"
+        echo ""
+        echo "Press Enter when ready to log results..."
+        read
+        echo "Test completed at: $(date +%Y-%m-%d\ %H:%M:%S)"
+        echo "- Device found: [Y/N]?"
+        read FOUND
+        echo "Result logged: BLE test - Device found: $FOUND" >> docs/logs/daily_log_$(date +%Y%m%d).md
+        ;;
+    
+    2)
+        echo "IMU HAR Test Selected"
+        echo "1. Upload: firmware/m5stick/imu_har_test/imu_har_test.ino"
+        echo "2. Move device: Still -> Walking -> Still"
+        echo "3. Check display for state changes"
+        echo ""
+        echo "States observed (comma-separated: IDLE,ACTIVE,UNCERTAIN):"
+        read STATES
+        echo "Uncertainty range (min-max):"
+        read UNCERT
+        echo "Result logged: IMU test - States: $STATES, Uncertainty: $UNCERT" >> docs/logs/daily_log_$(date +%Y%m%d).md
+        ;;
+    
+    3)
+        echo "Power Test Selected"
+        echo "1. Upload: firmware/m5stick/power_test/power_test.ino"
+        echo "2. Open Serial Monitor (115200 baud)"
+        echo "3. Copy CSV data after 5 minutes"
+        echo ""
+        echo "Average current for 100ms interval (mA):"
+        read CURR_100
+        echo "Average current for 2000ms interval (mA):"
+        read CURR_2000
+        REDUCTION=$(echo "scale=2; ($CURR_100 - $CURR_2000) / $CURR_100 * 100" | bc)
+        echo "Power reduction: ${REDUCTION}%"
+        echo "Result logged: Power test - 100ms: ${CURR_100}mA, 2000ms: ${CURR_2000}mA, Reduction: ${REDUCTION}%" >> docs/logs/daily_log_$(date +%Y%m%d).md
+        ;;
+    
+    4)
+        echo "Generating Run ID..."
+        DATE=$(date -u +%Y%m%d)
+        TIME=$(date -u +%H%M%S)
+        echo "Run ID: ${DATE}_${TIME}Z_S01_Test_001"
+        echo "Use this for file naming!"
+        ;;
+    
+    5)
+        echo "Today's Log:"
+        echo "============"
+        cat docs/logs/daily_log_$(date +%Y%m%d).md 2>/dev/null || echo "No log for today yet"
+        ;;
+    
+    *)
+        echo "Invalid choice"
+        ;;
+esac
+
+echo ""
+echo "Next step: Continue with Phase 1 tasks"
+echo "See: docs/手順書_M5StickC_Plus2_環境構築.md"
+</file>
+
+<file path="PHASE1_STATUS.md">
+# Phase 1 実現可能性検証 - STATUS
+
+## 🎯 目標
+**1-2日以内にM5StickC Plus2で基本動作確認し、削減率データを取得**
+
+## 📊 現在の進捗
+
+### Track 1: Firmware (M5StickC)
+| タスク | ステータス | ファイル | 次のアクション |
+|--------|-----------|----------|----------------|
+| 環境構築 | ✅ 完了 | `docs/手順書_M5StickC_Plus2_環境構築.md` | - |
+| BLE固定広告 | ✅ 完了 | `firmware/m5stick/ble_fixed_100ms/` | nRF Connectで確認 |
+| IMUテスト | 🔄 **実行中** | `firmware/m5stick/imu_har_test/` | **👉 アップロードして動作確認** |
+| 電力測定 | ⏳ 待機 | `firmware/m5stick/power_test/` | IMU後に実施 |
+
+### Track 2: Phone Logger
+| タスク | ステータス | ファイル | 次のアクション |
+|--------|-----------|----------|----------------|
+| Androidアプリ | ⏳ 待機 | `docs/手順書_Android_BLEロガー.md` | 並行で開発可能 |
+
+## 🚀 今すぐやること
+
+### 1. IMUテスト（30分）
+```bash
+# Arduino IDEで開く
+firmware/m5stick/imu_har_test/imu_har_test.ino
+
+# アップロード後、動作確認:
+# - 静止 → "IDLE"表示
+# - 歩行 → "ACTIVE"表示  
+# - ゆっくり → "UNCERTAIN"表示
+
+# 結果記録
+./scripts/quick_test.sh  # Option 2を選択
+```
+
+### 2. 電力測定テスト（30分）
+```bash
+# Arduino IDEで開く
+firmware/m5stick/power_test/power_test.ino
+
+# シリアルモニタ(115200)でCSV出力確認
+# 100ms vs 2000msで比較
+
+# 結果記録
+./scripts/quick_test.sh  # Option 3を選択
+```
+
+### 3. 統合テスト（1時間）
+- BLE + IMU + 電力を統合
+- 5分シナリオ実行
+- データ収集
+
+## 📁 重要ファイル
+
+### コード（すべて作成済み）
+- ✅ `firmware/m5stick/ble_fixed_100ms/ble_fixed_100ms.ino`
+- ✅ `firmware/m5stick/imu_har_test/imu_har_test.ino`
+- ✅ `firmware/m5stick/power_test/power_test.ino`
+
+### ドキュメント
+- 📖 `docs/手順書_M5StickC_Plus2_環境構築.md` - セットアップ手順
+- 📝 `docs/logs/daily_log_20241217.md` - 本日の作業ログ
+
+### ツール
+- 🔧 `scripts/quick_test.sh` - テスト結果記録ヘルパー
+- 🔧 `scripts/new_run.sh` - 実験Run ID生成
+
+## 📈 期待される結果
+
+### Phase 1完了時
+- **削減率**: 10-20%（ESP32での現実的な値）
+- **遅延**: p95 < 300ms
+- **データ**: CSVファイル生成
+
+### 判断基準
+- 削減率 > 30% → ESP32で継続
+- 削減率 < 30% → Nordic調達検討
+
+## ⚡ コマンドまとめ
+
+```bash
+# テストヘルパー起動
+./scripts/quick_test.sh
+
+# 本日のログ確認
+cat docs/logs/daily_log_20241217.md
+
+# Run ID生成
+./scripts/new_run.sh
+```
+
+---
+**残り作業時間**: 約2-3時間でPhase 1完了可能
+**ボトルネック**: Androidアプリ（並行開発推奨）
+</file>
+
+<file path=".serena/memories/code_conventions.md">
+# Code Style and Conventions
+
+## Python (ML/Scripts)
+- Follow PEP 8 guidelines
+- Use type hints where applicable
+- Clear docstrings for functions
+- Descriptive variable names
+- Imports organized (standard lib, third-party, local)
+
+## C++ (M5Stack/Arduino)
+- Arduino coding style
+- Clear inline comments
+- Meaningful function and variable names
+- Constants in UPPERCASE
+- Functions in camelCase
+
+## Swift (iOS)
+- SwiftUI and MVVM pattern
+- Swift naming conventions
+- Clear documentation comments
+- Proper error handling
+- Async/await for asynchronous operations
+
+## Git Conventions
+- Branch naming: `feature/description`, `fix/issue`
+- Clear, descriptive commit messages
+- Daily commits with progress updates
+- Keep commits atomic and focused
+
+## File Organization
+- Logical directory structure
+- Related files grouped together
+- Clear separation of concerns
+- Documentation alongside code
+</file>
+
+<file path=".serena/project.yml">
+# language of the project (csharp, python, rust, java, typescript, go, cpp, or ruby)
+#  * For C, use cpp
+#  * For JavaScript, use typescript
+# Special requirements:
+#  * csharp: Requires the presence of a .sln file in the project folder.
+language: python
+
+# whether to use the project's gitignore file to ignore files
+# Added on 2025-04-07
+ignore_all_files_in_gitignore: true
+# list of additional paths to ignore
+# same syntax as gitignore, so you can use * and **
+# Was previously called `ignored_dirs`, please update your config if you are using that.
+# Added (renamed)on 2025-04-07
+ignored_paths: []
+
+# whether the project is in read-only mode
+# If set to true, all editing tools will be disabled and attempts to use them will result in an error
+# Added on 2025-04-18
+read_only: false
+
+
+# list of tool names to exclude. We recommend not excluding any tools, see the readme for more details.
+# Below is the complete list of tools for convenience.
+# To make sure you have the latest list of tools, and to view their descriptions, 
+# execute `uv run scripts/print_tool_overview.py`.
+#
+#  * `activate_project`: Activates a project by name.
+#  * `check_onboarding_performed`: Checks whether project onboarding was already performed.
+#  * `create_text_file`: Creates/overwrites a file in the project directory.
+#  * `delete_lines`: Deletes a range of lines within a file.
+#  * `delete_memory`: Deletes a memory from Serena's project-specific memory store.
+#  * `execute_shell_command`: Executes a shell command.
+#  * `find_referencing_code_snippets`: Finds code snippets in which the symbol at the given location is referenced.
+#  * `find_referencing_symbols`: Finds symbols that reference the symbol at the given location (optionally filtered by type).
+#  * `find_symbol`: Performs a global (or local) search for symbols with/containing a given name/substring (optionally filtered by type).
+#  * `get_current_config`: Prints the current configuration of the agent, including the active and available projects, tools, contexts, and modes.
+#  * `get_symbols_overview`: Gets an overview of the top-level symbols defined in a given file or directory.
+#  * `initial_instructions`: Gets the initial instructions for the current project.
+#     Should only be used in settings where the system prompt cannot be set,
+#     e.g. in clients you have no control over, like Claude Desktop.
+#  * `insert_after_symbol`: Inserts content after the end of the definition of a given symbol.
+#  * `insert_at_line`: Inserts content at a given line in a file.
+#  * `insert_before_symbol`: Inserts content before the beginning of the definition of a given symbol.
+#  * `list_dir`: Lists files and directories in the given directory (optionally with recursion).
+#  * `list_memories`: Lists memories in Serena's project-specific memory store.
+#  * `onboarding`: Performs onboarding (identifying the project structure and essential tasks, e.g. for testing or building).
+#  * `prepare_for_new_conversation`: Provides instructions for preparing for a new conversation (in order to continue with the necessary context).
+#  * `read_file`: Reads a file within the project directory.
+#  * `read_memory`: Reads the memory with the given name from Serena's project-specific memory store.
+#  * `remove_project`: Removes a project from the Serena configuration.
+#  * `replace_lines`: Replaces a range of lines within a file with new content.
+#  * `replace_symbol_body`: Replaces the full definition of a symbol.
+#  * `restart_language_server`: Restarts the language server, may be necessary when edits not through Serena happen.
+#  * `search_for_pattern`: Performs a search for a pattern in the project.
+#  * `summarize_changes`: Provides instructions for summarizing the changes made to the codebase.
+#  * `switch_modes`: Activates modes by providing a list of their names
+#  * `think_about_collected_information`: Thinking tool for pondering the completeness of collected information.
+#  * `think_about_task_adherence`: Thinking tool for determining whether the agent is still on track with the current task.
+#  * `think_about_whether_you_are_done`: Thinking tool for determining whether the task is truly completed.
+#  * `write_memory`: Writes a named memory (for future reference) to Serena's project-specific memory store.
+excluded_tools: []
+
+# initial prompt for the project. It will always be given to the LLM upon activating the project
+# (contrary to the memories, which are loaded on demand).
+initial_prompt: ""
+
+project_name: "MobileNLD-FL"
+</file>
+
+<file path="docs/templates/adr_template.md">
+# ADR-YYYY-NNN: [Short Title]
+
+## Status
+[Proposed | Accepted | Deprecated | Superseded]
+
+## Context
+[Describe the issue or problem that needs to be addressed. Include relevant background information and constraints.]
+
+## Decision
+[Clearly state the decision that was made.]
+
+## Consequences
+
+### Positive
+- [List positive outcomes]
+- [Benefits of this decision]
+
+### Negative
+- [List negative outcomes]
+- [Trade-offs accepted]
+
+### Neutral
+- [List neutral impacts]
+- [Things that don't change]
+
+## Alternatives Considered
+
+### Option 1: [Alternative Name]
+**Description**: [Brief description]  
+**Pros**: [Advantages]  
+**Cons**: [Disadvantages]  
+**Reason for rejection**: [Why not chosen]
+
+### Option 2: [Alternative Name]
+**Description**: [Brief description]  
+**Pros**: [Advantages]  
+**Cons**: [Disadvantages]  
+**Reason for rejection**: [Why not chosen]
+
+## Implementation Notes
+[Any specific implementation details or guidelines]
+
+## References
+- [Link to relevant documentation]
+- [Link to related ADRs]
+- [External references]
+
+---
+*Date*: YYYY-MM-DD  
+*Author*: [Name]  
+*Reviewers*: [Names]
+</file>
+
+<file path="docs/templates/daily_log.md">
+# Daily Log - YYYY-MM-DD
+
+## Summary
+**Operator**: [Your Name]  
+**Location**: [Lab/Room]  
+**Weather**: [If relevant for BLE]  
+
+## Goals for Today
+- [ ] Goal 1
+- [ ] Goal 2
+- [ ] Goal 3
+
+## Completed Runs
+| Run ID | Subject | Condition | Duration | QC Status | Notes |
+|--------|---------|-----------|----------|-----------|-------|
+| [run_id] | S01 | Adaptive | 20min | passed | |
+| | | | | | |
+
+## Issues Encountered
+1. **Issue**: [Description]
+   - **Impact**: [Low/Medium/High]
+   - **Resolution**: [How resolved or workaround]
+
+## Decisions Made
+1. **Decision**: [What was decided]
+   - **Reason**: [Why]
+   - **Impact**: [Expected outcome]
+
+## Data Management
+- [ ] All runs saved to `data/raw/YYYYMMDD/`
+- [ ] Checksums generated
+- [ ] Manifests created
+- [ ] Catalog.csv updated
+- [ ] Cloud backup completed
+- [ ] External backup completed
+
+## Tomorrow's Plan
+1. [Task 1]
+2. [Task 2]
+3. [Task 3]
+
+## Notes
+[Any additional observations or thoughts]
+
+---
+*Signed*: [Your Name]  
+*Time*: [HH:MM UTC]
+</file>
+
+<file path="docs/templates/incident_report.md">
+# Incident Report - YYYY-MM-DD HH:MM
+
+## Summary
+**Severity**: [Low|Medium|High|Critical]  
+**Type**: [Data Loss|Equipment Failure|Protocol Violation|Other]  
+**Status**: [Open|Investigating|Resolved|Closed]  
+
+## Timeline
+| Time (UTC) | Event |
+|------------|-------|
+| HH:MM | Incident discovered |
+| HH:MM | Initial response |
+| HH:MM | Root cause identified |
+| HH:MM | Fix applied |
+| HH:MM | Verification complete |
+
+## What Happened
+[Detailed description of the incident]
+
+## Impact
+- **Data Affected**: [Which runs/files]
+- **Time Lost**: [Hours/Days]
+- **Quality Impact**: [None|Minor|Major]
+- **Subjects Affected**: [S01, S02, etc.]
+
+## Root Cause Analysis
+[Why did this happen? What was the underlying cause?]
+
+## Immediate Actions Taken
+1. [Action 1]
+2. [Action 2]
+3. [Action 3]
+
+## Long-term Fix
+[What needs to be done to prevent recurrence]
+
+## Lessons Learned
+- [Lesson 1]
+- [Lesson 2]
+- [Lesson 3]
+
+## Action Items
+| Action | Owner | Due Date | Status |
+|--------|-------|----------|--------|
+| [Task] | [Name] | YYYY-MM-DD | [Open|Done] |
+
+## Affected Files/Runs
+- Run IDs: [List affected run_ids]
+- Files modified: [List files]
+- Meta patches applied: [Yes/No]
+
+## Prevention Measures
+[What will be done to prevent this in the future]
+
+---
+*Reported by*: [Name]  
+*Date*: YYYY-MM-DD  
+*Time*: HH:MM UTC  
+*Reviewed by*: [PI Name]
+</file>
+
+<file path="docs/templates/run_log.md">
+# Run Log
+
+## Basic Information
+**Run ID**: [YYYYMMDD_HHMMSSZ_SXX_Condition_NNN]  
+**Date**: [YYYY-MM-DD]  
+**Operator**: [Name]  
+
+## Subject & Condition
+**Subject ID**: [S01-S99]  
+**Condition**: [Fixed-100ms|Fixed-200ms|Fixed-500ms|Adaptive]  
+**Distance**: [1|3|5] meters  
+**Location**: [Room/Lab]  
+
+## Timing
+**Start Time (UTC)**: [YYYY-MM-DDTHH:MM:SSZ]  
+**End Time (UTC)**: [YYYY-MM-DDTHH:MM:SSZ]  
+**Duration**: [MM:SS]  
+
+## Configuration
+**FW Commit**: [git hash]  
+**App Commit**: [git hash]  
+**Thresholds**: θ_q=[in/out] θ_a=[in/out]  
+**EWMA Alpha**: [0.2]  
+**Rate Limit**: [2] seconds  
+**TX Power**: [0|-4|-8] dBm  
+
+## Environment
+**WiFi Networks**: [count]  
+**BLE Devices**: [count]  
+**Temperature**: [°C]  
+**Interference**: [None|Low|Medium|High]  
+
+## Schedule
+| Phase | Start (s) | End (s) | Activity |
+|-------|-----------|---------|----------|
+| Warm-up | 0 | 60 | Quiet |
+| Phase 1 | 60 | 360 | [Activity] |
+| Phase 2 | 360 | 660 | [Activity] |
+| Phase 3 | 660 | 960 | [Activity] |
+| Phase 4 | 960 | 1200 | [Activity] |
+
+## Data Files
+- [ ] PPK2: `ppk2_[run_id].csv`
+- [ ] Phone: `phone_[run_id].csv`
+- [ ] UART: `uart_[run_id].log`
+- [ ] Meta: `meta_[run_id].json`
+- [ ] Manifest: `manifest_[run_id].txt`
+
+## Quality Check
+- [ ] Packet loss < 10%
+- [ ] All files present
+- [ ] File sizes reasonable
+- [ ] Average current > 0
+- [ ] No gaps > 1 minute
+
+**QC Status**: [planned|passed|failed|excluded]  
+**QC Reason Code**: [R1|R2|R3|R4|R5|R6]  
+
+## Anomalies
+[List any unexpected events, errors, or deviations]
+
+## Notes
+[Additional observations]
+
+---
+*Completed by*: [Name]  
+*Time*: [HH:MM UTC]
+</file>
+
+<file path="docs/governance.md">
+# Research Governance & Data Management Rules
+
+## 0. Purpose and Scope
+
+**Purpose**: Ensure complete traceability and reproducibility of all experimental work  
+**Scope**: All project activities (design, experiments, analysis, publication)
+
+## 1. Five Core Principles
+
+1. **Immutable (Append-only)**: Raw data and metadata are READ-ONLY after creation
+2. **Traceable (Unique IDs)**: Every artifact linked by run_id/commit hash
+3. **UTC Time (Single timezone)**: All timestamps in UTC milliseconds, ISO8601 format
+4. **Automated (Script-first)**: Manual operations minimized, everything regeneratable
+5. **Dual-backup (Redundancy)**: Immediate checksum + cloud + local backup
+
+## 2. Identifier & Naming Rules
+
+### Regular Expressions
+```regex
+subject_id:     S[0-9]{2}                    # S01, S02, ..., S99
+device_id:      [A-Za-z0-9_-]{1,16}         # devA01, nrf52_01
+session_id:     [0-9A-F]{4}                 # 16-bit hex random
+condition:      Fixed-(100|200|500)ms|Adaptive(-.*)?
+run_id:         \d{8}_\d{6}Z_S\d{2}_[A-Za-z0-9-]+_\d{3}
+filename:       (ppk2|phone|uart|meta)_.*\.(csv|log|json|txt)
+```
+
+### Examples
+```
+run_id:    20250901_043015Z_S01_Adaptive_001
+filename:  ppk2_20250901_043015Z_S01_Adaptive_001.csv
+```
+
+### Forbidden
+- Spaces in filenames
+- Non-ASCII characters  
+- Mixed case extensions
+- Timezone suffixes other than Z (UTC)
+
+## 3. Directory Structure
+
+```
+MobileNLD-FL/
+├── data/
+│   ├── raw/                    # 🔒 READ-ONLY after save
+│   │   └── YYYYMMDD/
+│   │       └── {subject_id}/
+│   │           └── {condition}/
+│   │               ├── ppk2_{run_id}.csv
+│   │               ├── phone_{run_id}.csv
+│   │               ├── uart_{run_id}.log
+│   │               ├── meta_{run_id}.json
+│   │               └── manifest_{run_id}.txt
+│   ├── processed/              # Intermediate files
+│   └── releases/               # Tagged snapshots
+├── results/
+│   ├── summary_by_run.csv
+│   ├── summary_by_condition.csv
+│   └── statistical_tests.csv
+├── figs/
+├── logs/
+├── configs/
+└── catalog.csv                 # Master index
+```
+
+## 4. Metadata Schema (Required Fields)
+
+```json
+{
+  "run_id": "20250901_043015Z_S01_Adaptive_001",
+  "subject_id": "S01",
+  "device_id": "nrf52_01",
+  "session_id": "A3F2",
+  "condition": "Adaptive",
+  "distance_m": 3,
+  "location": "Lab Room 301",
+  "phone_model": "Pixel 6",
+  "phone_os_ver": "Android 13",
+  
+  "experiment_config": {
+    "fw_commit": "abc123def",
+    "app_commit": "456ghi789",
+    "thresholds": {
+      "theta_q_in": 0.3,
+      "theta_q_out": 0.2,
+      "theta_a_in": 0.7,
+      "theta_a_out": 0.6
+    },
+    "ewma_alpha": 0.2,
+    "rate_limit_s": 2,
+    "adv_min_ms": 100,
+    "adv_max_ms": 2000,
+    "tx_power_dbm": 0,
+    "imu_fs_hz": 50,
+    "window_s": 2.0,
+    "stride_s": 0.5
+  },
+  
+  "environment": {
+    "wifi_ssid_count": 12,
+    "ble_devices_seen": 45,
+    "room_temp_c": 22.5,
+    "interferers_note": "None observed"
+  },
+  
+  "schedule": [
+    {"start_s": 0, "end_s": 300, "label": "Quiet"},
+    {"start_s": 300, "end_s": 600, "label": "Active"},
+    {"start_s": 600, "end_s": 900, "label": "Mixed"},
+    {"start_s": 900, "end_s": 1200, "label": "Quiet"}
+  ],
+  
+  "recording": {
+    "operator": "researcher_id",
+    "notes": "Subject comfortable, no issues",
+    "start_iso8601_utc": "2025-09-01T04:30:15Z",
+    "end_iso8601_utc": "2025-09-01T04:50:15Z"
+  },
+  
+  "quality": {
+    "qc_status": "passed",
+    "qc_reason_code": [],
+    "qc_timestamp": "2025-09-01T04:52:00Z"
+  },
+  
+  "posthoc_patch": []
+}
+```
+
+## 5. Log Formats
+
+### PPK2 Power Log
+```csv
+Time(s),Current(mA),Voltage(V)
+0.0001,8.234,3.001
+0.0002,8.156,3.002
+```
+- Sample rate: 10 ksps minimum
+- Zero calibration before each run
+
+### Phone BLE Log
+See `AndroidロガーCSVスキーマ定義.md` for complete schema
+
+### UART Debug Log
+```
+[2025-09-01T04:30:15.123Z] RUN_START session=A3F2
+[2025-09-01T04:30:15.456Z] CFG_SNAPSHOT theta_q=0.3/0.2 theta_a=0.7/0.6
+[2025-09-01T04:30:20.789Z] STATE_CHANGE from=QUIET to=UNCERTAIN tick=5789
+[2025-09-01T04:50:15.123Z] RUN_END packets_sent=1234 errors=0
+```
+
+### Manifest File
+```
+# Manifest for run_id: 20250901_043015Z_S01_Adaptive_001
+# Generated: 2025-09-01T04:52:00Z
+ppk2_20250901_043015Z_S01_Adaptive_001.csv    SHA256:abc123...  Size:1234567
+phone_20250901_043015Z_S01_Adaptive_001.csv   SHA256:def456...  Size:2345678
+uart_20250901_043015Z_S01_Adaptive_001.log    SHA256:ghi789...  Size:345678
+meta_20250901_043015Z_S01_Adaptive_001.json   SHA256:jkl012...  Size:4567
+```
+
+## 6. Standard Operating Procedures (SOP)
+
+### Pre-Run (MANDATORY)
+1. **Time Sync**: NTP sync PC and Android
+2. **Run ID**: Generate with `scripts/new_run.sh`
+3. **Meta Template**: Fill operator, environment, schedule
+4. **Commits**: Record firmware and app git hashes
+5. **Calibration**: Zero PPK2, verify BLE reception
+
+### During Run (MANDATORY)
+1. **SYNC Phase**: 3-second sync sequence with LEDs
+2. **Measurement**: 20 minutes continuous
+3. **Triple Log**: PPK2 + Phone + UART simultaneous
+4. **Monitoring**: Watch for anomalies, note in real-time
+5. **Distance**: Maintain specified distance throughout
+
+### Post-Run (WITHIN 5 MINUTES)
+1. **Save Files**: To `data/raw/YYYYMMDD/subject_id/condition/`
+2. **Checksums**: Generate SHA256 for all files
+3. **Manifest**: Create with file list and hashes
+4. **Permissions**: Set raw/ folder to READ-ONLY
+5. **Light QC**: Verify loss<10%, files present
+6. **Catalog**: Update master catalog.csv
+7. **Backup**: Upload to cloud and external drive
+8. **Issue**: Post completion comment with run_id
+
+### End of Day
+1. **Daily Log**: Fill `docs/logs/daily/YYYYMMDD.md`
+2. **Backup Verify**: Confirm all backups complete
+3. **Issue Summary**: Post day's achievements
+
+## 7. Quality Control
+
+### Light QC (Immediate)
+- [ ] Packet loss < 10%
+- [ ] p95 reception interval < 2× configured max
+- [ ] All files present (ppk2, phone, uart, meta)
+- [ ] Average current > 0 mA
+- [ ] File sizes reasonable (>1KB)
+
+### Full QC (Post-Analysis)
+- [ ] Power reduction ≥ 40% vs Fixed-100ms
+- [ ] p95 latency ≤ 300ms
+- [ ] F1 score degradation ≤ 1.5 points  
+- [ ] Packet loss ≤ 5%
+- [ ] 8-hour stability (if tested)
+
+### Exclusion Codes
+- **R1**: BLE reception gap >1 minute continuous
+- **R2**: PPK2 overrange or power disconnection
+- **R3**: Protocol deviation (distance/posture)
+- **R4**: Excessive interference (construction/WiFi)
+- **R5**: Subject non-compliance
+- **R6**: Equipment malfunction
+
+## 8. Change Management
+
+### Code Changes
+- Git commits: `feat:`, `fix:`, `docs:`, `refactor:`, `test:`
+- Experiment-affecting changes require Issue + PR
+- Tag releases for paper submissions
+
+### Design Decisions
+- Document in `docs/adr/YYYY-NNN-title.md`
+- Include: Context, Decision, Status, Consequences, Alternatives
+
+### Configuration Changes
+- Runtime changes via UART must be logged
+- Post-run: Copy to meta.posthoc_patch array
+- Format: `{"ts": "ISO8601", "field": "x", "old": "y", "new": "z", "reason": "..."}`
+
+## 9. Data Integrity & Preservation
+
+### Checksums
+- SHA256 for all raw files
+- Store in manifest_{run_id}.txt
+- Verify weekly in audit
+
+### Backup Strategy
+- **Immediate**: Local working copy
+- **Same day**: Cloud backup (Google Drive/Dropbox)
+- **Weekly**: External HDD snapshot
+- **Monthly**: Archive to cold storage
+
+### Version Control
+- Raw data: NOT in git (too large)
+- Processed/results: Git LFS if needed
+- Releases: Tag with `paper-v1.0` etc.
+
+## 10. Time, Units, and Precision
+
+### Time Standards
+- **Internal**: UTC milliseconds (Unix epoch)
+- **Logs**: ISO 8601 with Z suffix
+- **Analysis**: pandas datetime64[ns, UTC]
+- **Display**: Can convert to local for figures
+
+### Unit Standards
+| Measurement | Unit | Format | Example |
+|-------------|------|--------|---------|
+| Current | mA | 0.000 | 8.234 |
+| Voltage | V | 0.000 | 3.001 |
+| Power | mW | 0.00 | 24.71 |
+| Energy | mJ | 0.0 | 494.2 |
+| Time | ms | integer | 1234 |
+| Distance | m | 0.0 | 3.0 |
+| RSSI | dBm | integer | -67 |
+
+### Numerical Precision
+- Raw data: Full precision, no rounding
+- Analysis: Round only for display
+- CSV decimal: Period (.) not comma
+- Random seeds: Fixed for reproducibility
+
+## 11. Security & Privacy
+
+### PII Protection
+- No real names, only subject IDs
+- No photos/videos of subjects
+- No audio recordings
+- No personal device IDs
+
+### Data Sharing
+- Anonymize MAC addresses
+- Use dummy Company ID (0xFFFF)
+- Remove SSIDs from logs
+- PI approval before external sharing
+
+## 12. Automation Scripts
+
+### Essential Scripts
+```bash
+scripts/new_run.sh              # Generate run_id and templates
+scripts/ingest_run.py           # Move files and create manifest
+scripts/qc_run.py               # Perform light QC
+scripts/rebuild_all.sh          # Regenerate all results
+scripts/backup_daily.sh         # Daily backup routine
+scripts/audit_weekly.py         # Weekly integrity check
+```
+
+### Helper Scripts
+```bash
+scripts/validate_schema.py      # Check meta.json format
+scripts/plot_run.py             # Quick visualization
+scripts/compare_conditions.py   # Statistical comparison
+scripts/generate_paper_figs.py  # Publication-ready figures
+```
+
+## 13. Templates
+
+Located in `docs/templates/`:
+
+### daily_log.md
+```markdown
+# Daily Log - YYYY-MM-DD
+
+**Operator**: [name]
+**Goals**: [what planned]
+**Completed Runs**: [list of run_ids]
+**Issues**: [any problems]
+**Decisions**: [any changes made]
+**Tomorrow**: [next steps]
+```
+
+### run_log.md
+```markdown
+# Run Log
+
+**Run ID**: [run_id]
+**Subject**: [S01]
+**Condition**: [Adaptive]
+**Start/End**: [times]
+**Anomalies**: [any issues]
+**QC Status**: [passed/failed]
+```
+
+## 14. Weekly Audit
+
+Every Monday:
+1. Verify catalog.csv completeness
+2. Check all manifests valid
+3. Test restore random run from backup
+4. Validate checksums sample (10%)
+5. Create `docs/audit/YYYYWW.md` report
+
+## 15. Incident Response
+
+When SOP violated:
+1. Stop current activity
+2. Create `docs/incidents/YYYYMMDD_HH_incident.md`
+3. Document: What, When, Why, Impact, Fix
+4. Update affected meta.json files
+5. File GitHub Issue with `incident` label
+6. PI notification if data compromised
+
+## 16. Definition of Done
+
+### Experiment Run
+- [ ] All files in correct location
+- [ ] Checksums generated
+- [ ] Manifest created
+- [ ] Raw folder READ-ONLY
+- [ ] Light QC passed
+- [ ] Catalog updated
+- [ ] Backup completed
+- [ ] Issue comment posted
+
+### Analysis
+- [ ] Scripts reproduce from raw
+- [ ] Results in standard format
+- [ ] Statistical tests documented
+- [ ] Figures meet standards
+- [ ] Notebook committed
+
+### Paper Submission
+- [ ] Data snapshot created
+- [ ] Code tagged
+- [ ] DOI requested
+- [ ] Reproducibility tested
+- [ ] Archive deposited
+
+## 17. Contact & Escalation
+
+**Principal Investigator**: [Name] - [email]  
+**Data Manager**: [Name] - [email]  
+**Emergency**: [Phone number]
+
+For violations or incidents, escalate within 24 hours.
+
+---
+*Version: 1.0*  
+*Effective Date: 2024-12-17*  
+*Review Schedule: Monthly*  
+*Owner: Project Lead*
+</file>
+
+<file path="firmware/m5stick/ble_fixed_100ms/ble_fixed_100ms.ino">
+#include <M5StickCPlus2.h>
+#include <BLEDevice.h>
+#include <BLEServer.h>
+#include <BLEAdvertising.h>
+
+// Configuration
+#define DEVICE_NAME     "M5HAR_01"
+#define COMPANY_ID      0x5900  // 研究用仮ID
+#define ADV_INTERVAL_MS 100     // 固定100ms
+
+// Global variables
+BLEAdvertising *pAdvertising;
+uint32_t packet_count = 0;
+uint8_t sequence_num = 0;
+
+// Manufacturer data structure (23 bytes total)
+struct __attribute__((packed)) ManufacturerData {
+    uint16_t company_id;    // 0x5900
+    uint8_t  device_type;   // 0x01 = M5StickC
+    uint8_t  sequence;      // Packet sequence number
+    uint8_t  state;         // HAR state (0=Idle, 1=Active)
+    uint8_t  uncertainty;   // Uncertainty metric (0-255)
+    uint16_t interval_ms;   // Current advertising interval
+    uint8_t  battery_pct;   // Battery percentage
+    int16_t  acc_x;         // Accelerometer X (mg)
+    int16_t  acc_y;         // Accelerometer Y (mg)
+    int16_t  acc_z;         // Accelerometer Z (mg)
+    uint32_t timestamp;     // Device uptime (ms)
+};
+
+void setup() {
+    // Initialize M5StickC Plus2
+    auto cfg = M5.config();
+    M5.begin(cfg);
+    M5.Display.setRotation(1);
+    M5.Display.fillScreen(BLACK);
+    M5.Display.setTextColor(WHITE);
+    M5.Display.setTextSize(2);
+    
+    // Display startup info
+    M5.Display.setCursor(0, 0);
+    M5.Display.println("BLE Test");
+    M5.Display.println("Fixed 100ms");
+    
+    // Initialize IMU
+    M5.Imu.begin();
+    
+    // Initialize BLE
+    Serial.begin(115200);
+    Serial.println("Starting BLE Advertising...");
+    
+    BLEDevice::init(DEVICE_NAME);
+    
+    // Create BLE Server (required for advertising)
+    BLEServer *pServer = BLEDevice::createServer();
+    
+    // Get advertising instance
+    pAdvertising = BLEDevice::getAdvertising();
+    
+    // Configure advertising
+    pAdvertising->setMinInterval(ADV_INTERVAL_MS * 0.625); // Convert to 0.625ms units
+    pAdvertising->setMaxInterval(ADV_INTERVAL_MS * 0.625);
+    
+    // Start advertising
+    updateAdvertisingData();
+    pAdvertising->start();
+    
+    Serial.println("BLE Advertising started!");
+}
+
+void updateAdvertisingData() {
+    // Read IMU data
+    float acc_x, acc_y, acc_z;
+    M5.Imu.getAccelData(&acc_x, &acc_y, &acc_z);
+    
+    // Read battery level
+    uint8_t battery_pct = M5.Power.getBatteryLevel();
+    
+    // Create manufacturer data
+    ManufacturerData mfg_data;
+    mfg_data.company_id = COMPANY_ID;
+    mfg_data.device_type = 0x01;
+    mfg_data.sequence = sequence_num++;
+    mfg_data.state = 0;  // Will be updated with HAR
+    mfg_data.uncertainty = 0;  // Will be calculated
+    mfg_data.interval_ms = ADV_INTERVAL_MS;
+    mfg_data.battery_pct = battery_pct;
+    mfg_data.acc_x = (int16_t)(acc_x * 1000);  // Convert to mg
+    mfg_data.acc_y = (int16_t)(acc_y * 1000);
+    mfg_data.acc_z = (int16_t)(acc_z * 1000);
+    mfg_data.timestamp = millis();
+    
+    // Set manufacturer data
+    BLEAdvertisementData adv_data;
+    adv_data.setManufacturerData(std::string((char*)&mfg_data, sizeof(mfg_data)));
+    adv_data.setFlags(0x06); // BR/EDR not supported, General discoverable
+    
+    pAdvertising->setAdvertisementData(adv_data);
+}
+
+void loop() {
+    M5.update();
+    
+    // Update advertising data every interval
+    static uint32_t last_update = 0;
+    if (millis() - last_update >= ADV_INTERVAL_MS) {
+        last_update = millis();
+        
+        // Stop, update, restart (required for data change)
+        pAdvertising->stop();
+        updateAdvertisingData();
+        pAdvertising->start();
+        
+        packet_count++;
+        
+        // Update display
+        M5.Display.fillScreen(BLACK);
+        M5.Display.setCursor(0, 0);
+        M5.Display.println("BLE Active");
+        M5.Display.printf("Pkts: %lu\n", packet_count);
+        M5.Display.printf("Seq: %d\n", sequence_num);
+        M5.Display.printf("Batt: %d%%\n", M5.Power.getBatteryLevel());
+        
+        // Log to serial
+        if (packet_count % 10 == 0) {
+            Serial.printf("Packets sent: %lu\n", packet_count);
+        }
+    }
+    
+    // Button A: Reset counter
+    if (M5.BtnA.wasPressed()) {
+        packet_count = 0;
+        sequence_num = 0;
+        Serial.println("Counters reset");
+    }
+    
+    // Prevent WDT reset
+    delay(1);
+}
+</file>
+
+<file path="scripts/setup/setup_python_env.sh">
+#!/bin/bash
+# Python環境セットアップスクリプト
+# BLE適応広告制御プロジェクト用
+
+set -e
+
+echo "==================================="
+echo "Python環境セットアップ開始"
+echo "==================================="
+
+# Python version check
+PYTHON_VERSION=$(python3 --version 2>&1 | grep -Po '(?<=Python )\d+\.\d+')
+echo "Python version: $PYTHON_VERSION"
+
+# Create virtual environment
+echo "Creating virtual environment..."
+python3 -m venv venv
+source venv/bin/activate
+
+# Upgrade pip
+echo "Upgrading pip..."
+pip install --upgrade pip
+
+# Install required packages
+echo "Installing required packages..."
+pip install tensorflow==2.13.0
+pip install scikit-learn==1.3.0
+pip install pandas==2.0.3
+pip install numpy==1.24.3
+pip install matplotlib==3.7.2
+pip install seaborn==0.12.2
+pip install scipy==1.11.1
+pip install jupyter==1.0.0
+pip install notebook==7.0.2
+
+# For data processing
+pip install h5py==3.9.0
+pip install tables==3.8.0
+
+# For TensorFlow Lite
+pip install tflite==2.13.0
+pip install flatbuffers==23.5.26
+
+# For power analysis
+pip install pyserial==3.5  # For UART communication
+
+echo ""
+echo "==================================="
+echo "インストール完了パッケージ:"
+echo "==================================="
+pip list
+
+echo ""
+echo "==================================="
+echo "セットアップ完了!"
+echo "==================================="
+echo "仮想環境を有効化するには:"
+echo "  source venv/bin/activate"
+echo ""
+echo "Jupyterを起動するには:"
+echo "  jupyter notebook"
+echo "==================================="
+</file>
+
+<file path="scripts/ingest_run.py">
+#!/usr/bin/env python3
+"""
+ingest_run.py - Move experiment files to correct location and generate checksums
+"""
+
+import os
+import sys
+import json
+import hashlib
+import shutil
+import argparse
+from datetime import datetime
+from pathlib import Path
+
+def calculate_sha256(filepath):
+    """Calculate SHA256 checksum of a file."""
+    sha256_hash = hashlib.sha256()
+    with open(filepath, "rb") as f:
+        for byte_block in iter(lambda: f.read(4096), b""):
+            sha256_hash.update(byte_block)
+    return sha256_hash.hexdigest()
+
+def parse_run_id(run_id):
+    """Parse run_id to extract components."""
+    parts = run_id.split('_')
+    if len(parts) != 5:
+        raise ValueError(f"Invalid run_id format: {run_id}")
+    
+    date = parts[0]
+    time = parts[1]
+    subject = parts[2]
+    condition = '_'.join(parts[3:-1])  # Handle Fixed-XXXms format
+    seq = parts[-1]
+    
+    return {
+        'date': date,
+        'time': time,
+        'subject': subject,
+        'condition': condition,
+        'seq': seq,
+        'run_id': run_id
+    }
+
+def main():
+    parser = argparse.ArgumentParser(description='Ingest experiment run data')
+    parser.add_argument('--run_id', required=True, help='Run ID')
+    parser.add_argument('--source_dir', default='./temp', help='Source directory with files')
+    parser.add_argument('--dry_run', action='store_true', help='Preview actions without executing')
+    
+    args = parser.parse_args()
+    
+    # Parse run ID
+    try:
+        run_info = parse_run_id(args.run_id)
+    except ValueError as e:
+        print(f"Error: {e}")
+        sys.exit(1)
+    
+    # Define paths
+    dest_dir = Path(f"data/raw/{run_info['date']}/{run_info['subject']}/{run_info['condition']}")
+    source_dir = Path(args.source_dir)
+    
+    # Expected files
+    expected_files = [
+        f"ppk2_{args.run_id}.csv",
+        f"phone_{args.run_id}.csv",
+        f"uart_{args.run_id}.log",
+        f"meta_{args.run_id}.json"
+    ]
+    
+    # Check source files exist
+    missing_files = []
+    for filename in expected_files:
+        if not (source_dir / filename).exists():
+            missing_files.append(filename)
+    
+    if missing_files:
+        print(f"Error: Missing files in {source_dir}:")
+        for f in missing_files:
+            print(f"  - {f}")
+        sys.exit(1)
+    
+    # Create destination directory
+    if not args.dry_run:
+        dest_dir.mkdir(parents=True, exist_ok=True)
+    
+    print(f"{'[DRY RUN] ' if args.dry_run else ''}Ingesting run: {args.run_id}")
+    print(f"Source: {source_dir}")
+    print(f"Destination: {dest_dir}")
+    print("")
+    
+    # Copy files and calculate checksums
+    manifest_lines = []
+    manifest_lines.append(f"# Manifest for run_id: {args.run_id}")
+    manifest_lines.append(f"# Generated: {datetime.utcnow().isoformat()}Z")
+    manifest_lines.append("")
+    
+    for filename in expected_files:
+        source_path = source_dir / filename
+        dest_path = dest_dir / filename
+        
+        # Calculate checksum
+        checksum = calculate_sha256(source_path)
+        file_size = source_path.stat().st_size
+        
+        # Copy file
+        if not args.dry_run:
+            shutil.copy2(source_path, dest_path)
+            print(f"✓ Copied: {filename}")
+        else:
+            print(f"[DRY RUN] Would copy: {filename}")
+        
+        # Add to manifest
+        manifest_lines.append(f"{filename:<50} SHA256:{checksum}  Size:{file_size}")
+    
+    # Write manifest
+    manifest_path = dest_dir / f"manifest_{args.run_id}.txt"
+    if not args.dry_run:
+        with open(manifest_path, 'w') as f:
+            f.write('\n'.join(manifest_lines))
+        print(f"✓ Created manifest: {manifest_path}")
+    else:
+        print(f"[DRY RUN] Would create manifest: {manifest_path}")
+    
+    # Update catalog.csv
+    catalog_path = Path("catalog.csv")
+    catalog_entry = {
+        'run_id': args.run_id,
+        'date': run_info['date'],
+        'subject': run_info['subject'],
+        'condition': run_info['condition'],
+        'path': str(dest_dir),
+        'ingested_at': datetime.utcnow().isoformat() + 'Z',
+        'status': 'ingested'
+    }
+    
+    if not args.dry_run:
+        # Create catalog if doesn't exist
+        if not catalog_path.exists():
+            with open(catalog_path, 'w') as f:
+                f.write("run_id,date,subject,condition,path,ingested_at,status\n")
+        
+        # Append entry
+        with open(catalog_path, 'a') as f:
+            f.write(','.join(str(catalog_entry[k]) for k in 
+                           ['run_id', 'date', 'subject', 'condition', 'path', 'ingested_at', 'status']))
+            f.write('\n')
+        print(f"✓ Updated catalog.csv")
+    else:
+        print(f"[DRY RUN] Would update catalog.csv")
+    
+    # Set directory to read-only
+    if not args.dry_run:
+        for file_path in dest_dir.glob(f"*_{args.run_id}.*"):
+            os.chmod(file_path, 0o444)  # Read-only for all
+        print(f"✓ Set files to READ-ONLY")
+    else:
+        print(f"[DRY RUN] Would set files to READ-ONLY")
+    
+    print("")
+    print("✅ Ingestion complete!")
+    print("")
+    print("Next steps:")
+    print(f"1. Run quality check: python scripts/qc_run.py --run_id {args.run_id}")
+    print(f"2. Backup to cloud storage")
+    print(f"3. Update experiment log")
+
+if __name__ == "__main__":
+    main()
+</file>
+
+<file path="scripts/new_run.sh">
+#!/bin/bash
+# new_run.sh - Generate run ID and create templates for new experiment run
+
+set -e  # Exit on error
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m' # No Color
+
+# Get current date/time in UTC
+DATE=$(date -u +%Y%m%d)
+TIME=$(date -u +%H%M%S)
+DATETIME="${DATE}_${TIME}Z"
+
+# Prompt for subject ID
+echo -e "${YELLOW}Enter Subject ID (e.g., S01):${NC}"
+read -r SUBJECT_ID
+if [[ ! $SUBJECT_ID =~ ^S[0-9]{2}$ ]]; then
+    echo -e "${RED}Invalid subject ID format. Must be S01-S99${NC}"
+    exit 1
+fi
+
+# Prompt for condition
+echo -e "${YELLOW}Select Condition:${NC}"
+echo "1) Fixed-100ms"
+echo "2) Fixed-200ms"
+echo "3) Fixed-500ms"
+echo "4) Adaptive"
+read -r CONDITION_CHOICE
+
+case $CONDITION_CHOICE in
+    1) CONDITION="Fixed-100ms" ;;
+    2) CONDITION="Fixed-200ms" ;;
+    3) CONDITION="Fixed-500ms" ;;
+    4) CONDITION="Adaptive" ;;
+    *) echo -e "${RED}Invalid choice${NC}"; exit 1 ;;
+esac
+
+# Find next sequence number for today
+SEQ=001
+DATA_DIR="data/raw/${DATE}/${SUBJECT_ID}/${CONDITION}"
+while [ -d "${DATA_DIR}_${SEQ}" ]; do
+    SEQ=$(printf "%03d" $((10#$SEQ + 1)))
+done
+
+# Generate run ID
+RUN_ID="${DATETIME}_${SUBJECT_ID}_${CONDITION}_${SEQ}"
+
+# Create directory structure
+RUN_DIR="data/raw/${DATE}/${SUBJECT_ID}/${CONDITION}"
+mkdir -p "$RUN_DIR"
+
+echo -e "${GREEN}✓ Generated Run ID: ${RUN_ID}${NC}"
+echo -e "${GREEN}✓ Created directory: ${RUN_DIR}${NC}"
+
+# Create meta.json template
+META_FILE="${RUN_DIR}/meta_${RUN_ID}.json"
+cat > "$META_FILE" << EOF
+{
+  "run_id": "${RUN_ID}",
+  "subject_id": "${SUBJECT_ID}",
+  "device_id": "DEVICE_ID_HERE",
+  "session_id": "XXXX",
+  "condition": "${CONDITION}",
+  "distance_m": 3,
+  "location": "Lab Room XXX",
+  "phone_model": "Pixel 6",
+  "phone_os_ver": "Android 13",
+  
+  "experiment_config": {
+    "fw_commit": "GIT_HASH_HERE",
+    "app_commit": "GIT_HASH_HERE",
+    "thresholds": {
+      "theta_q_in": 0.3,
+      "theta_q_out": 0.2,
+      "theta_a_in": 0.7,
+      "theta_a_out": 0.6
+    },
+    "ewma_alpha": 0.2,
+    "rate_limit_s": 2,
+    "adv_min_ms": 100,
+    "adv_max_ms": 2000,
+    "tx_power_dbm": 0,
+    "imu_fs_hz": 50,
+    "window_s": 2.0,
+    "stride_s": 0.5
+  },
+  
+  "environment": {
+    "wifi_ssid_count": 0,
+    "ble_devices_seen": 0,
+    "room_temp_c": 22.0,
+    "interferers_note": "None"
+  },
+  
+  "schedule": [
+    {"start_s": 0, "end_s": 300, "label": "TBD"},
+    {"start_s": 300, "end_s": 600, "label": "TBD"},
+    {"start_s": 600, "end_s": 900, "label": "TBD"},
+    {"start_s": 900, "end_s": 1200, "label": "TBD"}
+  ],
+  
+  "recording": {
+    "operator": "YOUR_NAME_HERE",
+    "notes": "",
+    "start_iso8601_utc": "",
+    "end_iso8601_utc": ""
+  },
+  
+  "quality": {
+    "qc_status": "planned",
+    "qc_reason_code": [],
+    "qc_timestamp": ""
+  },
+  
+  "posthoc_patch": []
+}
+EOF
+
+echo -e "${GREEN}✓ Created meta template: ${META_FILE}${NC}"
+
+# Display checklist
+echo ""
+echo -e "${YELLOW}═══════════════════════════════════════════════════${NC}"
+echo -e "${YELLOW}PRE-RUN CHECKLIST:${NC}"
+echo -e "${YELLOW}═══════════════════════════════════════════════════${NC}"
+echo "□ NTP time sync completed (PC and Android)"
+echo "□ PPK2 connected and calibrated"
+echo "□ Android app ready with location permission"
+echo "□ Subject briefed and consent obtained"
+echo "□ Update meta.json with:"
+echo "  - device_id"
+echo "  - fw_commit (git rev-parse HEAD)"
+echo "  - app_commit"
+echo "  - operator name"
+echo "  - environment details"
+echo ""
+echo -e "${YELLOW}DURING RUN:${NC}"
+echo "□ Start PPK2 recording"
+echo "□ Start Android app logging"
+echo "□ Start UART logging"
+echo "□ Perform 3-second SYNC sequence"
+echo "□ Monitor for 20 minutes"
+echo ""
+echo -e "${YELLOW}FILES TO COLLECT:${NC}"
+echo "  - ppk2_${RUN_ID}.csv"
+echo "  - phone_${RUN_ID}.csv"
+echo "  - uart_${RUN_ID}.log"
+echo ""
+echo -e "${YELLOW}═══════════════════════════════════════════════════${NC}"
+
+# Save run ID to clipboard if possible
+if command -v pbcopy &> /dev/null; then
+    echo "$RUN_ID" | pbcopy
+    echo -e "${GREEN}✓ Run ID copied to clipboard${NC}"
+elif command -v xclip &> /dev/null; then
+    echo "$RUN_ID" | xclip -selection clipboard
+    echo -e "${GREEN}✓ Run ID copied to clipboard${NC}"
+fi
+
+# Create a run command file for easy reference
+echo "$RUN_ID" > "current_run_id.txt"
+echo -e "${GREEN}✓ Saved to current_run_id.txt${NC}"
+
+echo ""
+echo -e "${GREEN}Ready to start experiment!${NC}"
+echo -e "${GREEN}Run ID: ${RUN_ID}${NC}"
+</file>
+
+<file path="scripts/prepare_binary_dataset.py">
+#!/usr/bin/env python3
+"""
+UCI HARデータセットを2クラス（Active/Idle）に変換
+BLE適応広告制御プロジェクト用
+"""
+
+import numpy as np
+import pandas as pd
+from pathlib import Path
+import json
+
+def load_uci_har_data(dataset_path):
+    """Load UCI HAR dataset."""
+    
+    print("Loading UCI HAR dataset...")
+    
+    # Load training data
+    X_train = np.loadtxt(dataset_path / "train" / "X_train.txt")
+    y_train = np.loadtxt(dataset_path / "train" / "y_train.txt")
+    
+    # Load test data
+    X_test = np.loadtxt(dataset_path / "test" / "X_test.txt")
+    y_test = np.loadtxt(dataset_path / "test" / "y_test.txt")
+    
+    # Load activity labels
+    activity_labels = pd.read_csv(
+        dataset_path / "activity_labels.txt",
+        sep=' ',
+        header=None,
+        names=['id', 'activity']
+    )
+    
+    print(f"✓ Loaded train: {X_train.shape[0]} samples")
+    print(f"✓ Loaded test: {X_test.shape[0]} samples")
+    print(f"✓ Features: {X_train.shape[1]}")
+    
+    return X_train, y_train, X_test, y_test, activity_labels
+
+def convert_to_binary(y, activity_labels):
+    """
+    Convert 6-class labels to 2-class (Active/Idle).
+    
+    Active (1): WALKING, WALKING_UPSTAIRS, WALKING_DOWNSTAIRS
+    Idle (0): SITTING, STANDING, LAYING
+    """
+    
+    # Define active activities (1, 2, 3)
+    active_ids = [1, 2, 3]  # WALKING, WALKING_UPSTAIRS, WALKING_DOWNSTAIRS
+    
+    # Convert to binary
+    y_binary = np.zeros_like(y)
+    for active_id in active_ids:
+        y_binary[y == active_id] = 1
+    
+    # Count samples
+    active_count = np.sum(y_binary == 1)
+    idle_count = np.sum(y_binary == 0)
+    
+    print(f"\nBinary conversion:")
+    print(f"  Active samples: {active_count} ({active_count/len(y)*100:.1f}%)")
+    print(f"  Idle samples: {idle_count} ({idle_count/len(y)*100:.1f}%)")
+    
+    return y_binary
+
+def select_imu_features(X):
+    """
+    Select only IMU-related features (accelerometer + gyroscope).
+    From 561 features, select first 6 raw signals or computed features.
+    """
+    
+    # For simplicity, use first 6 features (typically tBodyAcc-XYZ, tBodyGyro-XYZ)
+    # In practice, you might want to select specific feature indices
+    
+    # Indices for body acceleration and gyroscope (example)
+    # These would need to be verified against feature_info.txt
+    selected_indices = list(range(6))  # First 6 features as example
+    
+    X_imu = X[:, selected_indices]
+    
+    print(f"✓ Selected {X_imu.shape[1]} IMU features from {X.shape[1]} total features")
+    
+    return X_imu
+
+def save_binary_dataset(X_train, y_train, X_test, y_test, output_dir):
+    """Save processed dataset."""
+    
+    output_dir = Path(output_dir)
+    output_dir.mkdir(parents=True, exist_ok=True)
+    
+    # Save as numpy arrays
+    np.save(output_dir / "X_train_binary.npy", X_train)
+    np.save(output_dir / "y_train_binary.npy", y_train)
+    np.save(output_dir / "X_test_binary.npy", X_test)
+    np.save(output_dir / "y_test_binary.npy", y_test)
+    
+    # Save metadata
+    metadata = {
+        "num_classes": 2,
+        "classes": ["Idle", "Active"],
+        "num_features": X_train.shape[1],
+        "train_samples": int(X_train.shape[0]),
+        "test_samples": int(X_test.shape[0]),
+        "train_active_ratio": float(np.mean(y_train)),
+        "test_active_ratio": float(np.mean(y_test))
+    }
+    
+    with open(output_dir / "metadata.json", 'w') as f:
+        json.dump(metadata, f, indent=2)
+    
+    print(f"\n✓ Saved binary dataset to: {output_dir}")
+    print(f"  - X_train_binary.npy: {X_train.shape}")
+    print(f"  - y_train_binary.npy: {y_train.shape}")
+    print(f"  - X_test_binary.npy: {X_test.shape}")
+    print(f"  - y_test_binary.npy: {y_test.shape}")
+    print(f"  - metadata.json")
+
+def main():
+    """Main processing pipeline."""
+    
+    print("="*60)
+    print("UCI HAR → Binary (Active/Idle) Dataset Conversion")
+    print("="*60)
+    
+    # Paths
+    dataset_path = Path("data/uci_har/UCI HAR Dataset")
+    output_dir = Path("data/binary_har")
+    
+    # Check if dataset exists
+    if not dataset_path.exists():
+        print(f"Error: Dataset not found at {dataset_path}")
+        print("Please run: python scripts/download_uci_har.py")
+        return
+    
+    # Load data
+    X_train, y_train, X_test, y_test, activity_labels = load_uci_har_data(dataset_path)
+    
+    # Convert to binary
+    y_train_binary = convert_to_binary(y_train, activity_labels)
+    y_test_binary = convert_to_binary(y_test, activity_labels)
+    
+    # Select IMU features (optional - for now use all)
+    # X_train_imu = select_imu_features(X_train)
+    # X_test_imu = select_imu_features(X_test)
+    
+    # For now, keep all features
+    X_train_imu = X_train
+    X_test_imu = X_test
+    
+    # Save dataset
+    save_binary_dataset(
+        X_train_imu, y_train_binary,
+        X_test_imu, y_test_binary,
+        output_dir
+    )
+    
+    print("\n" + "="*60)
+    print("✅ Binary dataset preparation complete!")
+    print("="*60)
+    print("\nNext steps:")
+    print("1. Run: python scripts/train_har_model.py")
+    print("2. Run: python scripts/quantize_model.py")
+
+if __name__ == "__main__":
+    main()
+</file>
+
+<file path="scripts/qc_run.py">
+#!/usr/bin/env python3
+"""
+qc_run.py - Perform quality check on ingested run data
+"""
+
+import os
+import sys
+import json
+import pandas as pd
+import argparse
+from pathlib import Path
+from datetime import datetime
+
+def check_ppk2_data(filepath):
+    """Check PPK2 power measurement data."""
+    try:
+        df = pd.read_csv(filepath)
+        
+        # Expected columns
+        expected_cols = ['Time(s)', 'Current(mA)', 'Voltage(V)']
+        if not all(col in df.columns for col in expected_cols):
+            return False, "Missing expected columns"
+        
+        # Check data quality
+        avg_current = df['Current(mA)'].mean()
+        if avg_current <= 0:
+            return False, f"Invalid average current: {avg_current:.2f} mA"
+        
+        # Check for gaps
+        time_diff = df['Time(s)'].diff()
+        max_gap = time_diff.max()
+        if max_gap > 1.0:  # More than 1 second gap
+            return False, f"Large time gap detected: {max_gap:.2f} seconds"
+        
+        stats = {
+            'rows': len(df),
+            'duration_s': df['Time(s)'].max() - df['Time(s)'].min(),
+            'avg_current_mA': avg_current,
+            'avg_voltage_V': df['Voltage(V)'].mean(),
+            'avg_power_mW': (df['Current(mA)'] * df['Voltage(V)']).mean()
+        }
+        
+        return True, stats
+    except Exception as e:
+        return False, str(e)
+
+def check_phone_data(filepath):
+    """Check Android BLE log data."""
+    try:
+        df = pd.read_csv(filepath)
+        
+        # Check minimum required columns
+        required_cols = ['timestamp_phone_unix_ms', 'rssi', 'mfg_raw_hex']
+        if not all(col in df.columns for col in required_cols):
+            return False, "Missing required columns"
+        
+        # Calculate packet statistics
+        df['timestamp_s'] = df['timestamp_phone_unix_ms'] / 1000.0
+        df['interval_ms'] = df['timestamp_phone_unix_ms'].diff()
+        
+        # Check for large gaps (>10 seconds)
+        max_gap_ms = df['interval_ms'].max()
+        if max_gap_ms > 10000:
+            gap_count = (df['interval_ms'] > 10000).sum()
+            return False, f"Found {gap_count} gaps > 10 seconds"
+        
+        # Calculate loss rate (approximate)
+        expected_packets = (df['timestamp_s'].max() - df['timestamp_s'].min()) / 0.1  # Assuming ~100ms average
+        actual_packets = len(df)
+        loss_rate = max(0, 1 - (actual_packets / expected_packets)) * 100
+        
+        stats = {
+            'packets': len(df),
+            'duration_s': df['timestamp_s'].max() - df['timestamp_s'].min(),
+            'avg_rssi_dBm': df['rssi'].mean(),
+            'p50_interval_ms': df['interval_ms'].quantile(0.50),
+            'p95_interval_ms': df['interval_ms'].quantile(0.95),
+            'p99_interval_ms': df['interval_ms'].quantile(0.99),
+            'est_loss_rate_pct': loss_rate
+        }
+        
+        return True, stats
+    except Exception as e:
+        return False, str(e)
+
+def check_uart_log(filepath):
+    """Check UART debug log."""
+    try:
+        with open(filepath, 'r') as f:
+            lines = f.readlines()
+        
+        # Look for key markers
+        has_start = any('RUN_START' in line for line in lines)
+        has_end = any('RUN_END' in line for line in lines)
+        has_config = any('CFG_SNAPSHOT' in line for line in lines)
+        
+        if not has_start:
+            return False, "Missing RUN_START marker"
+        if not has_end:
+            return False, "Missing RUN_END marker"
+        if not has_config:
+            return False, "Missing CFG_SNAPSHOT"
+        
+        # Count state changes
+        state_changes = sum(1 for line in lines if 'STATE_CHANGE' in line)
+        errors = sum(1 for line in lines if 'ERROR' in line)
+        
+        stats = {
+            'lines': len(lines),
+            'state_changes': state_changes,
+            'errors': errors,
+            'file_size_kb': filepath.stat().st_size / 1024
+        }
+        
+        return True, stats
+    except Exception as e:
+        return False, str(e)
+
+def main():
+    parser = argparse.ArgumentParser(description='Quality check experiment run')
+    parser.add_argument('--run_id', required=True, help='Run ID to check')
+    parser.add_argument('--update_meta', action='store_true', help='Update meta.json with QC results')
+    
+    args = parser.parse_args()
+    
+    # Parse run_id to find files
+    parts = args.run_id.split('_')
+    date = parts[0]
+    subject = parts[2]
+    condition = '_'.join(parts[3:-1])
+    
+    # Define data directory
+    data_dir = Path(f"data/raw/{date}/{subject}/{condition}")
+    
+    if not data_dir.exists():
+        print(f"Error: Directory not found: {data_dir}")
+        sys.exit(1)
+    
+    print(f"Quality Check for Run: {args.run_id}")
+    print("=" * 50)
+    
+    # Check each file type
+    qc_passed = True
+    qc_results = {}
+    
+    # Check PPK2 data
+    ppk2_file = data_dir / f"ppk2_{args.run_id}.csv"
+    if ppk2_file.exists():
+        success, result = check_ppk2_data(ppk2_file)
+        qc_results['ppk2'] = result
+        if success:
+            print(f"✓ PPK2 data: PASS")
+            print(f"  - Duration: {result['duration_s']:.1f} seconds")
+            print(f"  - Avg Current: {result['avg_current_mA']:.2f} mA")
+            print(f"  - Avg Power: {result['avg_power_mW']:.2f} mW")
+        else:
+            print(f"✗ PPK2 data: FAIL - {result}")
+            qc_passed = False
+    else:
+        print(f"✗ PPK2 data: FILE NOT FOUND")
+        qc_passed = False
+    
+    print()
+    
+    # Check Phone data
+    phone_file = data_dir / f"phone_{args.run_id}.csv"
+    if phone_file.exists():
+        success, result = check_phone_data(phone_file)
+        qc_results['phone'] = result
+        if success:
+            print(f"✓ Phone data: PASS")
+            print(f"  - Packets: {result['packets']}")
+            print(f"  - p50 interval: {result['p50_interval_ms']:.1f} ms")
+            print(f"  - p95 interval: {result['p95_interval_ms']:.1f} ms")
+            print(f"  - Est. loss rate: {result['est_loss_rate_pct']:.1f}%")
+            
+            # Check against thresholds
+            if result['est_loss_rate_pct'] > 10:
+                print(f"  ⚠ Warning: Loss rate > 10%")
+            if result['p95_interval_ms'] > 600:  # Assuming max 2× 300ms
+                print(f"  ⚠ Warning: p95 interval > 600ms")
+        else:
+            print(f"✗ Phone data: FAIL - {result}")
+            qc_passed = False
+    else:
+        print(f"✗ Phone data: FILE NOT FOUND")
+        qc_passed = False
+    
+    print()
+    
+    # Check UART log
+    uart_file = data_dir / f"uart_{args.run_id}.log"
+    if uart_file.exists():
+        success, result = check_uart_log(uart_file)
+        qc_results['uart'] = result
+        if success:
+            print(f"✓ UART log: PASS")
+            print(f"  - Lines: {result['lines']}")
+            print(f"  - State changes: {result['state_changes']}")
+            print(f"  - Errors: {result['errors']}")
+            
+            if result['errors'] > 0:
+                print(f"  ⚠ Warning: {result['errors']} errors logged")
+        else:
+            print(f"✗ UART log: FAIL - {result}")
+            qc_passed = False
+    else:
+        print(f"✗ UART log: FILE NOT FOUND")
+        qc_passed = False
+    
+    print()
+    print("=" * 50)
+    
+    # Update meta.json if requested
+    meta_file = data_dir / f"meta_{args.run_id}.json"
+    if args.update_meta and meta_file.exists():
+        with open(meta_file, 'r') as f:
+            meta = json.load(f)
+        
+        # Update QC status
+        meta['quality']['qc_status'] = 'passed' if qc_passed else 'failed'
+        meta['quality']['qc_timestamp'] = datetime.utcnow().isoformat() + 'Z'
+        meta['quality']['qc_results'] = qc_results
+        
+        # Determine reason codes if failed
+        if not qc_passed:
+            reason_codes = []
+            if 'phone' in qc_results and isinstance(qc_results['phone'], dict):
+                if qc_results['phone'].get('est_loss_rate_pct', 0) > 10:
+                    reason_codes.append('R1')  # High loss rate
+            meta['quality']['qc_reason_code'] = reason_codes
+        
+        # Write back (temporarily remove read-only)
+        os.chmod(meta_file, 0o644)
+        with open(meta_file, 'w') as f:
+            json.dump(meta, f, indent=2)
+        os.chmod(meta_file, 0o444)
+        
+        print(f"✓ Updated meta.json with QC results")
+    
+    # Final verdict
+    if qc_passed:
+        print("✅ QUALITY CHECK: PASSED")
+    else:
+        print("❌ QUALITY CHECK: FAILED")
+        sys.exit(1)
+
+if __name__ == "__main__":
+    main()
+</file>
+
+<file path="scripts/rebuild_all.sh">
+#!/bin/bash
+# rebuild_all.sh - Regenerate all analysis results from raw data
+
+set -e  # Exit on error
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
+
+echo -e "${BLUE}═══════════════════════════════════════════════════${NC}"
+echo -e "${BLUE}     COMPLETE ANALYSIS REGENERATION${NC}"
+echo -e "${BLUE}═══════════════════════════════════════════════════${NC}"
+echo ""
+
+# Check if analysis notebooks exist
+NOTEBOOK_DIR="analysis/notebooks"
+if [ ! -d "$NOTEBOOK_DIR" ]; then
+    echo -e "${RED}Error: Analysis notebooks directory not found: $NOTEBOOK_DIR${NC}"
+    exit 1
+fi
+
+# Clean previous results (with confirmation)
+echo -e "${YELLOW}This will delete and regenerate all results. Continue? (y/N)${NC}"
+read -r CONFIRM
+if [ "$CONFIRM" != "y" ] && [ "$CONFIRM" != "Y" ]; then
+    echo "Aborted."
+    exit 0
+fi
+
+# Backup existing results
+if [ -d "results" ]; then
+    BACKUP_DIR="results_backup_$(date +%Y%m%d_%H%M%S)"
+    mv results "$BACKUP_DIR"
+    echo -e "${GREEN}✓ Backed up existing results to: $BACKUP_DIR${NC}"
+fi
+
+if [ -d "figs" ]; then
+    BACKUP_DIR="figs_backup_$(date +%Y%m%d_%H%M%S)"
+    mv figs "$BACKUP_DIR"
+    echo -e "${GREEN}✓ Backed up existing figures to: $BACKUP_DIR${NC}"
+fi
+
+# Create fresh directories
+mkdir -p results
+mkdir -p figs
+mkdir -p logs/analysis
+
+echo ""
+echo -e "${YELLOW}Step 1: Processing raw data...${NC}"
+
+# Check for Python environment
+if [ ! -f "analysis/requirements.txt" ]; then
+    echo -e "${RED}Warning: requirements.txt not found${NC}"
+else
+    echo "Checking Python dependencies..."
+    pip install -q -r analysis/requirements.txt
+fi
+
+# Run main analysis notebook (if exists)
+if [ -f "$NOTEBOOK_DIR/main_analysis.ipynb" ]; then
+    echo "Running main_analysis.ipynb..."
+    jupyter nbconvert --to notebook --execute \
+        --ExecutePreprocessor.timeout=600 \
+        --output-dir=logs/analysis \
+        "$NOTEBOOK_DIR/main_analysis.ipynb"
+    echo -e "${GREEN}✓ Main analysis complete${NC}"
+else
+    echo -e "${YELLOW}main_analysis.ipynb not found, skipping${NC}"
+fi
+
+echo ""
+echo -e "${YELLOW}Step 2: Generating summary tables...${NC}"
+
+# Run Python script to generate summary CSVs
+python3 << 'EOF'
+import pandas as pd
+import json
+from pathlib import Path
+import sys
+
+# Find all runs in catalog
+catalog_path = Path("catalog.csv")
+if not catalog_path.exists():
+    print("No catalog.csv found, creating empty summaries")
+    pd.DataFrame().to_csv("results/summary_by_run.csv")
+    pd.DataFrame().to_csv("results/summary_by_condition.csv")
+    sys.exit(0)
+
+catalog = pd.read_csv(catalog_path)
+
+# Collect all run summaries
+run_summaries = []
+
+for _, row in catalog.iterrows():
+    run_id = row['run_id']
+    data_path = Path(row['path'])
+    
+    # Load meta
+    meta_path = data_path / f"meta_{run_id}.json"
+    if meta_path.exists():
+        with open(meta_path) as f:
+            meta = json.load(f)
+        
+        # Check if QC passed
+        if meta.get('quality', {}).get('qc_status') != 'passed':
+            continue
+        
+        # Extract key metrics (placeholder - customize based on actual analysis)
+        summary = {
+            'run_id': run_id,
+            'subject': meta['subject_id'],
+            'condition': meta['condition'],
+            'distance_m': meta.get('distance_m', 'NA'),
+            'qc_status': meta['quality']['qc_status']
+        }
+        
+        # Add QC results if available
+        qc_results = meta.get('quality', {}).get('qc_results', {})
+        if 'ppk2' in qc_results and isinstance(qc_results['ppk2'], dict):
+            summary['avg_current_mA'] = qc_results['ppk2'].get('avg_current_mA', 'NA')
+            summary['avg_power_mW'] = qc_results['ppk2'].get('avg_power_mW', 'NA')
+        
+        if 'phone' in qc_results and isinstance(qc_results['phone'], dict):
+            summary['p95_latency_ms'] = qc_results['phone'].get('p95_interval_ms', 'NA')
+            summary['packet_loss_pct'] = qc_results['phone'].get('est_loss_rate_pct', 'NA')
+        
+        run_summaries.append(summary)
+
+# Create summary dataframes
+if run_summaries:
+    df_runs = pd.DataFrame(run_summaries)
+    df_runs.to_csv("results/summary_by_run.csv", index=False)
+    print(f"✓ Generated summary_by_run.csv ({len(df_runs)} runs)")
+    
+    # Group by condition
+    df_conditions = df_runs.groupby('condition').agg({
+        'avg_current_mA': ['mean', 'std'],
+        'avg_power_mW': ['mean', 'std'],
+        'p95_latency_ms': ['mean', 'std'],
+        'packet_loss_pct': ['mean', 'std']
+    }).round(2)
+    
+    df_conditions.to_csv("results/summary_by_condition.csv")
+    print(f"✓ Generated summary_by_condition.csv ({len(df_conditions)} conditions)")
+else:
+    print("No valid runs found in catalog")
+EOF
+
+echo ""
+echo -e "${YELLOW}Step 3: Generating figures...${NC}"
+
+# Generate standard figures
+if [ -f "$NOTEBOOK_DIR/generate_figures.ipynb" ]; then
+    echo "Running generate_figures.ipynb..."
+    jupyter nbconvert --to notebook --execute \
+        --ExecutePreprocessor.timeout=600 \
+        --output-dir=logs/analysis \
+        "$NOTEBOOK_DIR/generate_figures.ipynb"
+    echo -e "${GREEN}✓ Figures generated${NC}"
+else
+    echo -e "${YELLOW}generate_figures.ipynb not found, skipping${NC}"
+fi
+
+echo ""
+echo -e "${YELLOW}Step 4: Running statistical tests...${NC}"
+
+# Run statistical analysis
+if [ -f "$NOTEBOOK_DIR/statistical_tests.ipynb" ]; then
+    echo "Running statistical_tests.ipynb..."
+    jupyter nbconvert --to notebook --execute \
+        --ExecutePreprocessor.timeout=600 \
+        --output-dir=logs/analysis \
+        "$NOTEBOOK_DIR/statistical_tests.ipynb"
+    echo -e "${GREEN}✓ Statistical tests complete${NC}"
+else
+    echo -e "${YELLOW}statistical_tests.ipynb not found, skipping${NC}"
+fi
+
+echo ""
+echo -e "${YELLOW}Step 5: Checking acceptance criteria...${NC}"
+
+# Check if we meet acceptance criteria
+python3 << 'EOF'
+import pandas as pd
+from pathlib import Path
+
+# Load summary by condition
+summary_path = Path("results/summary_by_condition.csv")
+if not summary_path.exists():
+    print("No condition summary available")
+else:
+    df = pd.read_csv(summary_path, index_col=0)
+    
+    # Check criteria (placeholder - customize based on actual metrics)
+    print("\nAcceptance Criteria Check:")
+    print("-" * 40)
+    
+    # Example checks (update based on actual column names)
+    print("[ ] Power reduction ≥ 40%")
+    print("[ ] p95 latency ≤ 300ms")
+    print("[ ] F1 degradation ≤ 1.5 points")
+    print("[ ] Packet loss ≤ 5%")
+EOF
+
+echo ""
+echo -e "${BLUE}═══════════════════════════════════════════════════${NC}"
+echo -e "${BLUE}     REGENERATION COMPLETE${NC}"
+echo -e "${BLUE}═══════════════════════════════════════════════════${NC}"
+
+# List generated files
+echo ""
+echo -e "${GREEN}Generated files:${NC}"
+if [ -d "results" ]; then
+    echo "Results:"
+    ls -lh results/ | tail -n +2
+fi
+
+if [ -d "figs" ]; then
+    echo ""
+    echo "Figures:"
+    ls -lh figs/ | tail -n +2
+fi
+
+echo ""
+echo -e "${GREEN}✅ All analysis artifacts regenerated successfully!${NC}"
+echo ""
+echo "Next steps:"
+echo "1. Review results/summary_by_condition.csv"
+echo "2. Check figures in figs/"
+echo "3. Verify acceptance criteria are met"
+echo "4. Create paper-ready figures if needed"
+</file>
+
+<file path=".mcp.json">
+{
+  "mcpServers": {
+    "serena": {
+      "type": "stdio",
+      "command": "uvx",
+      "args": [
+        "--from",
+        "git+https://github.com/oraios/serena",
+        "serena",
+        "start-mcp-server",
+        "--context",
+        "ide-assistant",
+        "--project",
+        "/Users/kadoshima/Documents/MobileNLD-FL"
+      ],
+      "env": {}
+    }
+  }
+}
+</file>
+
+<file path="scripts/download_uci_har.py">
+#!/usr/bin/env python3
+"""
+UCI HARデータセットのダウンロードと解凍
+BLE適応広告制御プロジェクト用
+"""
+
+import os
+import zipfile
+import urllib.request
+from pathlib import Path
+
+def download_uci_har():
+    """Download and extract UCI HAR dataset."""
+    
+    # URLs
+    dataset_url = "https://archive.ics.uci.edu/ml/machine-learning-databases/00240/UCI%20HAR%20Dataset.zip"
+    
+    # Paths
+    data_dir = Path("data/uci_har")
+    zip_path = data_dir / "UCI_HAR_Dataset.zip"
+    
+    # Create directory
+    data_dir.mkdir(parents=True, exist_ok=True)
+    
+    # Download if not exists
+    if not zip_path.exists():
+        print(f"Downloading UCI HAR Dataset...")
+        print(f"URL: {dataset_url}")
+        print(f"Destination: {zip_path}")
+        
+        # Download with progress
+        def download_progress(block_num, block_size, total_size):
+            downloaded = block_num * block_size
+            percent = min(downloaded * 100 / total_size, 100)
+            print(f"Progress: {percent:.1f}%", end='\r')
+        
+        urllib.request.urlretrieve(dataset_url, zip_path, download_progress)
+        print("\n✓ Download complete!")
+    else:
+        print(f"Dataset already downloaded: {zip_path}")
+    
+    # Extract
+    extract_dir = data_dir / "UCI HAR Dataset"
+    if not extract_dir.exists():
+        print(f"Extracting dataset...")
+        with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+            zip_ref.extractall(data_dir)
+        print("✓ Extraction complete!")
+    else:
+        print(f"Dataset already extracted: {extract_dir}")
+    
+    # List contents
+    print("\nDataset structure:")
+    for root, dirs, files in os.walk(extract_dir):
+        level = root.replace(str(extract_dir), '').count(os.sep)
+        indent = ' ' * 2 * level
+        print(f"{indent}{os.path.basename(root)}/")
+        subindent = ' ' * 2 * (level + 1)
+        for file in files[:5]:  # Show first 5 files
+            print(f"{subindent}{file}")
+        if len(files) > 5:
+            print(f"{subindent}... and {len(files)-5} more files")
+    
+    # Dataset info
+    print("\n" + "="*50)
+    print("UCI HAR Dataset Info:")
+    print("="*50)
+    print("- 30 subjects (volunteers)")
+    print("- 6 activities: WALKING, WALKING_UPSTAIRS, WALKING_DOWNSTAIRS,")
+    print("                SITTING, STANDING, LAYING")
+    print("- 561 features from accelerometer and gyroscope")
+    print("- Sampling rate: 50 Hz")
+    print("- Train/Test split: 70%/30%")
+    print("="*50)
+    
+    return extract_dir
+
+if __name__ == "__main__":
+    dataset_path = download_uci_har()
+    print(f"\n✅ Dataset ready at: {dataset_path}")
+    print("\nNext steps:")
+    print("1. Run: python scripts/prepare_binary_dataset.py")
+    print("2. Run: python scripts/train_har_model.py")
+</file>
+
+<file path=".gitignore">
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+*.egg-info/
+dist/
+build/
+
+# Data
+data/uci_har/
+data/custom/
+*.csv
+*.txt
+*.log
+
+# Models
+*.h5
+*.tflite
+*.pb
+*.ckpt
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# iOS
+*.xcuserstate
+xcuserdata/
+DerivedData/
+*.pbxuser
+*.mode1v3
+*.mode2v3
+*.perspectivev3
+
+# Arduino
+*.hex
+*.elf
+
+# Results
+results/
+figures/
+*.png
+*.jpg
+*.pdf
+
+# Temporary files
+*.tmp
+*.bak
+~*
+
+# Archive
+MobileNLD-FL-old/
+</file>
+
+<file path="docs/README.md">
+# Documentation Directory
+
+## 📁 Current Documents
+
+### Essential Documents
+- `CLAUDE.md` - AI assistant guidance (root directory)
+- `governance.md` - Research execution rules & data management
+- `手順書_M5StickC_Plus2_環境構築.md` - M5StickC Plus2 setup guide
+- `手順書_Android_BLEロガー.md` - Android BLE logger implementation
+
+### Templates
+- `templates/` - Experiment tracking templates
+  - `daily_log.md` - Daily experiment log
+  - `run_log.md` - Per-run documentation
+  - `incident_report.md` - Incident tracking
+  - `adr_template.md` - Architecture decisions
+
+### Directories
+- `adr/` - Architecture Decision Records
+- `audit/` - Weekly audit logs
+- `incidents/` - Incident reports
+- `logs/` - Execution logs
+- `meetings/` - Meeting notes
+
+## 🗑️ Removed Documents (2024-12-17)
+Following documents were removed as they are obsolete for M5StickC Plus2 pivot:
+- nRF SDK setup guides
+- PPK2 measurement procedures  
+- Original requirements (nRF52-based)
+- UCI HAR notebooks (now in scripts/)
+- Old project archives
+
+## 📝 Document Management Policy
+- Keep only actively used documents
+- Templates remain for future experiments
+- Governance rules are maintained (APPEND-ONLY for data)
+- All procedures updated for M5StickC Plus2
+
+---
+*Last cleanup: 2024-12-17*
+</file>
+
+<file path="README.md">
+# Context-Uncertainty-Driven Adaptive BLE Advertising for Ultra-Low-Power Wearable HAR
+
+## Overview
+Research project implementing adaptive BLE advertising interval control based on HAR (Human Activity Recognition) uncertainty metrics for power reduction in wearable devices.
+
+**Current Implementation**: M5StickC Plus2 (ESP32-based) as proof-of-concept  
+**Target**: IEICE Communications Express (ComEX) - 4 pages
+
+## Key Innovation
+- **Adaptive BLE Advertising**: Dynamic adjustment of advertising intervals (100-2000ms) based on HAR uncertainty
+- **Uncertainty-Driven Control**: Combined metric of classification uncertainty and temporal volatility
+- **Power Optimization**: Target ≥30% reduction in average current consumption (ESP32 platform)
+- **Real-world Validation**: On-device implementation with AXP192 power measurements
+
+## System Architecture
+
+### Hardware Configuration (Revised)
+```
+[M5StickC Plus2] × 3 units
+  ├─ ESP32-PICO-V3-02 MCU
+  ├─ MPU6886 6-axis IMU (内蔵)
+  ├─ AXP192 Power Management IC
+  └─ 135mAh Battery
+
+[Smartphones]
+  ├─ iPhone 13, 15
+  └─ Galaxy S9
+```
+
+### Software Components
+- **Firmware**: Arduino IDE / ESP-IDF
+- **HAR Model**: TensorFlow Lite Micro (2-class: Active/Idle)
+- **Mobile Apps**: nRF Connect (iOS/Android)
+- **Analysis**: Python (pandas, matplotlib)
+
+## Quick Start
+
+### 1. Environment Setup
+```bash
+# Python environment
+chmod +x scripts/setup/setup_python_env.sh
+./scripts/setup/setup_python_env.sh
+
+# Arduino IDE for M5StickC Plus2
+# Follow: docs/手順書_M5StickC_Plus2_環境構築.md
+```
+
+### 2. Data Preparation
+```bash
+# Download UCI HAR dataset
+python scripts/download_uci_har.py
+
+# Convert to 2-class (Active/Idle)
+python scripts/prepare_binary_dataset.py
+```
+
+### 3. Upload Firmware
+1. Open `firmware/m5stick/ble_fixed_100ms/ble_fixed_100ms.ino`
+2. Select Board: M5StickC Plus2
+3. Upload to device
+
+### 4. Start Logging
+Use nRF Connect app on smartphone to:
+1. Scan for "M5HAR_01"
+2. Verify 100ms advertising interval
+3. Log manufacturer data (0x5900)
+
+## Experiment Protocol
+
+### Phase 1: Feasibility Test (Day 1)
+- [x] BLE advertising test (Fixed 100ms)
+- [x] IMU data collection (50Hz)
+- [x] Power measurement via AXP192
+- [ ] Baseline comparison (100ms vs 2000ms)
+
+### Phase 2: Adaptive Control (Day 2-3)
+- [ ] Simple HAR implementation (threshold-based)
+- [ ] 3-state BLE control (Quiet/Uncertain/Active)
+- [ ] Integration testing
+
+### Phase 3: Evaluation (Day 4-5)
+- [ ] 3-device simultaneous measurement
+- [ ] Fixed vs Adaptive comparison
+- [ ] Statistical analysis
+
+## Project Structure
+```
+MobileNLD-FL/
+├── firmware/m5stick/       # M5StickC Plus2 firmware
+├── scripts/                # Python scripts
+├── data/                   # Experiment data (APPEND-ONLY)
+├── docs/                   # Documentation & procedures
+│   ├── 手順書_*.md        # Setup guides
+│   └── governance.md      # Research rules
+├── analysis/              # Jupyter notebooks
+└── results/               # Analysis outputs
+```
+
+## Key Metrics
+1. **Power Reduction**: ≥30% vs fixed 100ms (M5StickC/ESP32)
+2. **p95 Latency**: ≤300ms
+3. **F1 Score**: Degradation ≤1.5 points
+4. **Packet Loss**: <5%
+
+## Current Status
+- **Hardware**: M5StickC Plus2 × 3 (Available)
+- **Phase**: Implementation (Phase 1)
+- **Target**: IEICE ComEX 2025
+
+## Documentation
+- [環境構築手順](docs/手順書_M5StickC_Plus2_環境構築.md)
+- [実験ガバナンス](docs/governance.md)
+- [Android BLEロガー](docs/手順書_Android_BLEロガー.md)
+
+## License
+Research use only. Copyright (c) 2024
+
+---
+*Last Updated: 2024-12-17*
+</file>
+
+<file path="CLAUDE.md">
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+## Project Overview
+
+**Context-Uncertainty-Driven Adaptive BLE Advertising for Ultra-Low-Power Wearable HAR** is a research project implementing adaptive BLE advertising interval control based on HAR (Human Activity Recognition) uncertainty metrics for significant power reduction in wearable devices.
+
+## Research Focus
+
+### Current Research (2024-12-17 onwards)
+**Title**: "Context-Uncertainty-Driven Adaptive BLE Advertising for Ultra-Low-Power Wearable HAR"
+**Target**: IEICE Communications Express (ComEX) - 4 pages, submission target: 2025
+
+### Key Innovation
+- **Adaptive BLE Advertising**: Dynamic adjustment of advertising intervals (100-2000ms) based on HAR uncertainty
+- **Composite Context Score**: Combined metric of classification uncertainty and temporal volatility
+- **Power Optimization**: ≥40% reduction in average current consumption vs fixed 100ms intervals
+- **Real-world Validation**: On-device implementation with actual power measurements using PPK2
+
+## System Architecture
+
+### Hardware Configuration (PIVOT: M5StickC Plus2)
+```
+[M5StickC Plus2] - Wearable Device
+  ├─ ESP32-PICO-V3-02 MCU (520KB RAM)
+  ├─ MPU6886 6-axis IMU (内蔵)
+  ├─ AXP192 Power Management IC
+  ├─ 135mAh Battery
+  ├─ On-device HAR inference
+  ├─ Uncertainty calculation
+  └─ Adaptive BLE advertising
+
+[iPhone/Galaxy] - Receiver & Logger
+  ├─ BLE packet reception
+  ├─ Timestamp logging
+  ├─ CSV export
+  └─ Real-time monitoring
+```
+
+### Available Hardware
+- **M5StickC Plus2**: 3台 (ESP32-based)
+- **iPhone**: 13, 15
+- **Android**: Galaxy S9
+- **PPK2**: なし (AXP192で代替)
+- **nRF52**: なし
+
+### Software Stack
+- **MCU Firmware**: Arduino IDE / ESP-IDF
+- **HAR Model**: TensorFlow Lite Micro (2-class: Active/Idle)
+- **Mobile App**: 
+  - iOS: Swift/CoreBluetooth or nRF Connect
+  - Android: Kotlin/BLE Scanner or nRF Connect
+- **Analysis**: Python, pandas, matplotlib
+
+## Common Commands
+
+### Environment Setup
+```bash
+# Python environment for ML training
+pip install tensorflow scikit-learn pandas numpy matplotlib
+
+# Arduino IDE setup for M5StickC Plus2
+# Install: M5StickCPlus2 library, TensorFlow Lite ESP32
+```
+
+### Data Preparation
+```bash
+# Download UCI HAR dataset
+python scripts/download_uci_har.py
+
+# Preprocess for 2-class (Active/Idle)
+python scripts/prepare_binary_dataset.py
+
+# Generate train/val/test splits
+python scripts/split_dataset.py
+```
+
+### Model Training
+```bash
+# Train 2-class HAR model
+python scripts/train_har_model.py
+
+# Quantize for TFLite Micro
+python scripts/quantize_model.py
+
+# Convert to C header
+xxd -i model.tflite > model_data.h
+```
+
+### Performance Analysis
+```bash
+# Parse PPK2 power measurements
+python scripts/parse_ppk2_csv.py
+
+# Analyze BLE packet logs from Android
+python scripts/analyze_packet_logs.py
+
+# Calculate power reduction metrics
+python scripts/calculate_power_reduction.py
+
+# Generate latency distribution (p50/p95)
+python scripts/latency_analysis.py
+
+# Comparative analysis (Fixed vs Adaptive)
+python scripts/compare_strategies.py
+```
+
+## File Organization (STRICT)
+
+```
+MobileNLD-FL/                    # Repository root
+├── firmware/                    # MCU firmware
+│   ├── src/
+│   └── include/
+├── android_logger/              # Android app
+│   └── app/
+├── analysis/                    # Analysis scripts
+│   ├── notebooks/              # Reproducible notebooks
+│   └── requirements.txt        # Python dependencies
+├── scripts/                     # Automation scripts
+│   ├── new_run.sh              # Run ID generation
+│   ├── ingest_run.py           # Data ingestion
+│   ├── qc_run.py               # Quality check
+│   └── rebuild_all.sh          # Complete regeneration
+├── data/                        # ⚠️ APPEND-ONLY
+│   ├── raw/                    # 🔒 READ-ONLY after save
+│   │   └── YYYYMMDD/           # Date folders
+│   │       └── subject_id/     # Subject folders
+│   │           └── condition/  # Condition folders
+│   │               ├── ppk2_*.csv
+│   │               ├── phone_*.csv
+│   │               ├── uart_*.log
+│   │               ├── meta_*.json
+│   │               └── manifest_*.txt
+│   ├── processed/              # Intermediate files
+│   └── releases/               # Publication snapshots
+├── results/                     # Analysis outputs
+│   ├── summary_by_run.csv
+│   ├── summary_by_condition.csv
+│   └── table_paper.csv
+├── figs/                        # Generated figures
+├── logs/                        # Execution logs
+├── configs/                     # Experiment configs
+├── docs/
+│   ├── templates/              # Document templates
+│   ├── adr/                    # Architecture decisions
+│   ├── meetings/               # Meeting notes
+│   ├── audit/                  # Weekly audits
+│   └── governance.md           # THIS RULEBOOK
+└── catalog.csv                  # Master index of all runs
+```
+
+## 🔴 CRITICAL: Research Execution Rules
+
+### 1. Basic Principles (5 COMMANDMENTS)
+1. **Append-only**: Raw data is IMMUTABLE. Never overwrite.
+2. **Traceable**: Every artifact linked by run_id/commit hash.
+3. **UTC-only**: All timestamps in UTC milliseconds, ISO8601.
+4. **Automated**: Manual entry minimized. Scripts regenerate all.
+5. **Double-backup**: Immediate checksum + dual backup.
+
+### 2. Naming Convention (REGEX)
+```
+subject_id:  S[0-9]{2}              (e.g., S01)
+device_id:   [A-Za-z0-9_-]{1,16}    (e.g., devA01)
+session_id:  16-bit random          (per device boot)
+condition:   Fixed-100ms|Fixed-200ms|Fixed-500ms|Adaptive
+run_id:      YYYYMMDD_HHMMSSZ_{subject}_{condition}_{seq3}
+             (e.g., 20250901_043015Z_S01_Adaptive_001)
+filename:    {type}_{run_id}.{ext}  (ppk2_*, phone_*, uart_*, meta_*)
+```
+**FORBIDDEN**: Spaces, non-ASCII, uppercase extensions
+
+### 3. Metadata Schema (meta_{run_id}.json)
+```json
+{
+  "run_id": "required",
+  "subject_id": "required",
+  "device_id": "required",
+  "condition": "required",
+  "distance_m": "required",
+  "fw_commit": "required",
+  "app_commit": "required",
+  "thresholds": {
+    "theta_q_in": 0.3,
+    "theta_q_out": 0.2,
+    "theta_a_in": 0.7,
+    "theta_a_out": 0.6
+  },
+  "start_iso8601_utc": "required",
+  "end_iso8601_utc": "required",
+  "qc_status": "planned|passed|failed|excluded",
+  "qc_reason_code": [],
+  "posthoc_patch": []
+}
+```
+
+### 4. Execution SOP (MANDATORY)
+
+#### Pre-Run Checklist
+- [ ] NTP sync (PC & Android)
+- [ ] Run ID generated (`scripts/new_run.sh`)
+- [ ] Meta template created
+- [ ] FW/App commit recorded
+- [ ] PPK2 calibrated
+
+#### During Run
+- [ ] SYNC sequence (3 sec, LED×3)
+- [ ] 20-minute measurement
+- [ ] PPK2 + Phone + UART simultaneous
+- [ ] Distance/environment noted
+
+#### Post-Run (WITHIN 5 MIN)
+- [ ] Save to `data/raw/YYYYMMDD/...`
+- [ ] Generate SHA256 checksums
+- [ ] Create manifest
+- [ ] Set raw/ to READ-ONLY
+- [ ] Light QC (loss<10%, files OK)
+- [ ] Update catalog.csv
+- [ ] Backup to cloud/external
+
+### 5. Quality Control Rules
+
+#### Light QC (Immediate)
+- Packet loss < 10%
+- p95 interval < 2× configured max
+- All files present
+- I_avg > 0
+
+#### Full QC (Post-Analysis)
+- Power reduction ≥ 40%
+- p95 latency ≤ 300ms
+- F1 degradation ≤ 1.5 points
+- Packet loss ≤ 5%
+
+#### Exclusion Codes
+- **R1**: Reception gap >1 min
+- **R2**: PPK2 overrange/disconnect
+- **R3**: Protocol deviation
+- **R4**: Excessive interference
+
+### 6. Git & Change Management
+- Commits: `feat:`, `fix:`, `docs:` prefixes
+- Experiments require Issue + PR
+- ADR for design decisions in `docs/adr/`
+- Config changes in UART → meta.posthoc_patch
+
+## Development Guidelines
+
+### Code Style
+- **C (nRF52)**: Zephyr coding style, detailed comments
+- **Kotlin (Android)**: Android style guide, MVVM pattern
+- **Python**: PEP 8, type hints, docstrings
+
+### Testing Protocol
+1. Unit tests for each component
+2. Integration tests for BLE communication
+3. End-to-end system tests
+4. Power consumption measurements
+5. Accuracy validation
+
+## Experiment Execution & Tracking
+
+### Automation Scripts (REQUIRED)
+```bash
+# Start new experiment run
+scripts/new_run.sh                 # Generates run_id, creates templates
+
+# After data collection
+scripts/ingest_run.py --run_id XXX # Moves files, generates checksums
+scripts/qc_run.py --run_id XXX     # Performs light QC
+
+# Regenerate all results
+scripts/rebuild_all.sh              # Complete analysis regeneration
+```
+
+### Key Metrics (Priority Order)
+1. **Average Current**: ≥30% reduction vs fixed 100ms (ADJUSTED)
+   - Measured with AXP192 @ 1Hz (M5StickC内蔵)
+   - Report mean, std, and battery life estimation
+2. **p95 Latency**: ≤300ms (BLE advertising-based)
+   - Packet reception intervals from Android logs
+3. **F1 Score**: Degradation ≤1.5 points
+   - 2-class (Active/Idle) classification
+4. **Packet Loss**: <5% under normal conditions
+
+### Experiment Conditions
+1. **Baseline**: Fixed-100ms, Fixed-200ms, Fixed-500ms
+2. **Proposed**: Adaptive (100-2000ms based on uncertainty)
+3. **Duration**: 20 minutes per condition
+4. **Subjects**: 3-5 participants (S01-S05)
+5. **Activities**: Walking, sitting, standing, stairs
+
+### Data Integrity
+- **Checksums**: SHA256 for all raw files
+- **Backup**: Local + Cloud within same day
+- **Versioning**: Git tags for paper submissions
+- **Audit**: Weekly integrity checks in `docs/audit/`
+
+## Paper Writing Guidelines
+
+### IEICE ComEX Format
+- 4 pages maximum (strict limit)
+- Monthly publication, continuous submission
+- Expected acceptance rate: 40-60%
+
+### Optimized Section Allocation
+- Introduction: 0.5 pages (emphasize adaptive BLE, uncertainty-driven, power reduction)
+- Related Work: 0.3 pages (BLE optimization, HAR uncertainty, adaptive systems)
+- Proposed Method: 1.2 pages (uncertainty metrics, adaptation algorithm, implementation)
+- Experiments: 1.5 pages (power measurements, latency analysis, comparison)
+- Conclusion: 0.5 pages
+
+### Key References
+- BLE power optimization in wearables
+- Uncertainty quantification in HAR
+- Adaptive communication protocols
+- Context-aware systems
+
+## Timeline (6-Week Sprint)
+
+### Week 1: M5StickC Implementation (PIVOT)
+- ESP32 Arduino環境セットアップ
+- BLE広告テスト（固定100ms）
+- IMUデータ取得（MPU6886, 50Hz）
+- AXP192電力測定
+
+### Week 2: Adaptive Control & Apps
+- HAR簡易モデル実装（閾値ベース）
+- BLE適応制御（3状態）
+- Phone側ロガー（Galaxy S9メイン）
+- 統合テスト
+
+### Week 3: Experiments & Analysis
+- M5StickC 3台同時測定
+- Fixed vs Adaptive比較
+- 電力削減率算出（AXP192ベース）
+- Nordic調達判断
+
+### Week 6: Analysis & Writing
+- Data analysis and visualization
+- Statistical significance testing
+- Paper draft (4 pages)
+- Internal review and submission prep
+
+## Success Criteria
+
+### Technical Goals
+- ✅ Adaptive BLE advertising implementation
+- ✅ TFLite Micro model <20KB
+- ✅ Real-time uncertainty calculation
+- ✅ Power reduction ≥40% vs fixed 100ms
+
+### Research Goals
+- ✅ Novel uncertainty-driven adaptation
+- ✅ Real-world power measurements
+- ✅ Statistical validation
+- ✅ Reproducible implementation
+
+## Critical Checklists
+
+### Pre-Experiment Checklist
+```
+□ NTP time sync completed
+□ Run ID generated (scripts/new_run.sh)
+□ Meta template filled
+□ FW/App commits recorded
+□ PPK2 zero calibrated
+□ Android location permission ON
+□ SYNC sequence ready (3 sec)
+```
+
+### Post-Experiment Checklist
+```
+□ Files saved to data/raw/YYYYMMDD/...
+□ SHA256 checksums generated
+□ Manifest created
+□ Raw folder set to READ-ONLY
+□ Light QC passed (loss<10%)
+□ catalog.csv updated
+□ Cloud backup completed
+□ Issue comment posted
+```
+
+### Weekly Audit Checklist
+```
+□ Catalog integrity verified
+□ All manifests validated
+□ Backup integrity tested
+□ Random run reproducibility check
+□ Audit log saved to docs/audit/YYYYWW.md
+```
+
+## Troubleshooting
+
+### Common Issues
+1. **BLE Advertising Conflicts**: Ensure proper interval timing
+2. **PPK2 Measurement Drift**: Calibrate before each session
+3. **Packet Loss**: Check Android scanner buffer size
+4. **Uncertainty Calculation Overhead**: Optimize computation
+
+### Incident Reporting
+Any deviation from SOP requires:
+1. Create `docs/incidents/YYYYMMDD_incident.md`
+2. Record in meta.posthoc_patch
+3. File GitHub Issue with `incident` label
+
+## Resources
+
+### Documentation
+- [M5StickC Plus2](https://docs.m5stack.com/en/core/M5StickC%20PLUS2)
+- [ESP32 Arduino Core](https://github.com/espressif/arduino-esp32)
+- [TensorFlow Lite Micro ESP32](https://github.com/tanakamasayuki/Arduino_TensorFlowLite_ESP32)
+- [UCI HAR Dataset](https://archive.ics.uci.edu/ml/datasets/human+activity+recognition+using+smartphones)
+
+### Tools
+- Arduino IDE 2.x
+- ESP-IDF (optional)
+- Android Studio / Xcode
+- M5StickC Plus2 × 3
+- Python 3.9+
+
+## Prohibited Actions (VIOLATIONS)
+
+❌ **NEVER**:
+- Overwrite or delete raw data files
+- Mix timezones (use UTC only)
+- Change configs without recording in UART log
+- Use custom naming conventions
+- Submit non-reproducible results
+- Skip checksums or manifests
+- Modify analysis notebooks manually
+
+## Templates Location
+
+All templates in `docs/templates/`:
+- `daily_log.md` - Daily experiment log
+- `run_log.md` - Per-run recording
+- `change_log.md` - Change tracking
+- `adr_template.md` - Architecture decisions
+- `incident_report.md` - Incident documentation
+
+---
+*Project Status: Active Development*
+*Last Updated: 2024-12-17*
+*Target: IEICE ComEX (2025)*
+*Governance: STRICT APPEND-ONLY DATA POLICY*
+</file>
+
+</files>

@@ -14,9 +14,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ### Key Innovation
 - **Adaptive BLE Advertising**: Dynamic adjustment of advertising intervals (100-2000ms) based on HAR uncertainty
+- **Non-connectable Advertising (ADV_NONCONN_IND)**: Uses connectionless BLE broadcasts to embed HAR data directly in advertising packets, avoiding connection overhead
 - **Composite Context Score**: Combined metric of classification uncertainty and temporal volatility
-- **Power Optimization**: ≥40% reduction in average current consumption vs fixed 100ms intervals
-- **Real-world Validation**: On-device implementation with actual power measurements using PPK2
+- **Power Optimization**: ≥30-40% reduction in average current consumption vs fixed 100ms intervals (ESP32 estimated value, relative comparison)
+- **Real-world Validation**: On-device implementation with actual power measurements using AXP192 (M5StickC Plus2 internal)
 
 ## System Architecture
 
@@ -42,7 +43,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **M5StickC Plus2**: 3台 (ESP32-based)
 - **iPhone**: 13, 15
 - **Android**: Galaxy S9
-- **PPK2**: なし (AXP192で代替)
+- **PPK2**: なし (AXP192で代替、精度±5mA)
 - **nRF52**: なし
 
 ### Software Stack
@@ -276,21 +277,23 @@ scripts/rebuild_all.sh              # Complete analysis regeneration
 ```
 
 ### Key Metrics (Priority Order)
-1. **Average Current**: ≥30% reduction vs fixed 100ms (ADJUSTED)
-   - Measured with AXP192 @ 1Hz (M5StickC内蔵)
-   - Report mean, std, and battery life estimation
-2. **p95 Latency**: ≤300ms (BLE advertising-based)
-   - Packet reception intervals from Android logs
-3. **F1 Score**: Degradation ≤1.5 points
-   - 2-class (Active/Idle) classification
-4. **Packet Loss**: <5% under normal conditions
+1. **Average Current Reduction**: ≥30-40% vs fixed 100ms (ESP32 estimated)
+   - Measured with AXP192 @ 1Hz (accuracy ±5mA)
+   - Report I_avg [µA], E_min [mJ/min], battery life estimation
+2. **p95 Notification Latency**: ≤300ms (advertising reception-based)
+   - Packet reception intervals from Android logs (Galaxy S9 main)
+   - Calculate p50/p95 percentiles
+3. **HAR F1 Score**: Degradation ≤1.5 points
+   - Macro F1 for coarse categories (Quiet/Active)
+4. **Packet Loss Rate**: ≤5% (indoor 5m range, low interference)
 
 ### Experiment Conditions
 1. **Baseline**: Fixed-100ms, Fixed-200ms, Fixed-500ms
 2. **Proposed**: Adaptive (100-2000ms based on uncertainty)
-3. **Duration**: 20 minutes per condition
+3. **Duration**: 15 minutes per setting × conditions (total ≥3 hours/person)
 4. **Subjects**: 3-5 participants (S01-S05)
-5. **Activities**: Walking, sitting, standing, stairs
+5. **Activities**: Sitting 30min, walking 30min, desk work 60min, stairs/housework 30min, rest 30min
+6. **Multi-device**: 3 units simultaneous measurement (1 master HAR+advertising, 2 slaves for sync test)
 
 ### Data Integrity
 - **Checksums**: SHA256 for all raw files
@@ -320,37 +323,41 @@ scripts/rebuild_all.sh              # Complete analysis regeneration
 
 ## Timeline (6-Week Sprint)
 
-### Week 1: M5StickC Implementation (PIVOT)
-- ESP32 Arduino環境セットアップ
-- BLE広告テスト（固定100ms）
-- IMUデータ取得（MPU6886, 50Hz）
-- AXP192電力測定
+### Week 1: Environment Setup
+- ESP-IDF/Arduino environment setup
+- Fixed BLE advertising (100ms)
 
-### Week 2: Adaptive Control & Apps
-- HAR簡易モデル実装（閾値ベース）
-- BLE適応制御（3状態）
-- Phone側ロガー（Galaxy S9メイン）
-- 統合テスト
+### Week 2: HAR Model Implementation
+- TensorFlow Lite Micro implementation
+- Quantization (int8) and inference measurement
 
-### Week 3: Experiments & Analysis
-- M5StickC 3台同時測定
-- Fixed vs Adaptive比較
-- 電力削減率算出（AXP192ベース）
-- Nordic調達判断
+### Week 3: Adaptive Control Implementation
+- Uncertainty calculation
+- Adaptive logic (EWMA, 3-state machine)
+- Configuration interface
+
+### Week 4: Measurement System Preparation
+- AXP192 logging system
+- Calibration and threshold search (θ_q_in=0.25, θ_a_in=0.60)
+
+### Week 5: Subject Experiments
+- Data collection (3-5 subjects)
+- 15 minutes per condition × multiple sessions
 
 ### Week 6: Analysis & Writing
-- Data analysis and visualization
-- Statistical significance testing
-- Paper draft (4 pages)
-- Internal review and submission prep
+- Statistical analysis (paired t-test, p<0.05)
+- Figure generation (Pareto curves, etc.)
+- ComEX submission preparation (4 pages)
 
 ## Success Criteria
 
-### Technical Goals
-- ✅ Adaptive BLE advertising implementation
-- ✅ TFLite Micro model <20KB
-- ✅ Real-time uncertainty calculation
-- ✅ Power reduction ≥40% vs fixed 100ms
+### Technical Goals (Acceptance Criteria)
+- ✅ Average current reduction ≥30% (vs fixed 100ms) with statistical significance (p<0.05)
+- ✅ p95 latency ≤300ms (advertising reception-based)
+- ✅ Packet loss rate ≤5% (indoor 5m range)
+- ✅ F1 score degradation ≤1.5 points
+- ✅ 1-hour continuous operation without hang/crash
+- ✅ TFLite Micro model <20KB (int8 quantized)
 
 ### Research Goals
 - ✅ Novel uncertainty-driven adaptation

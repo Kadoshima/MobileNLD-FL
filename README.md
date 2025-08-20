@@ -1,160 +1,120 @@
 # Context-Uncertainty-Driven Adaptive BLE Advertising for Ultra-Low-Power Wearable HAR
 
-## 🎯 Research Project
-**Adaptive BLE Communication for Energy-Efficient Human Activity Recognition**
+## Overview
+Research project implementing adaptive BLE advertising interval control based on HAR (Human Activity Recognition) uncertainty metrics for power reduction in wearable devices.
 
-This project implements adaptive BLE advertising interval control based on HAR uncertainty metrics to achieve significant power reduction in wearable devices while maintaining acceptable detection latency.
+**Current Implementation**: M5StickC Plus2 (ESP32-based) as proof-of-concept  
+**Target**: IEICE Communications Express (ComEX) - 4 pages
 
-## 📊 System Architecture
+## Key Innovation
+- **Adaptive BLE Advertising**: Dynamic adjustment of advertising intervals (100-2000ms) based on HAR uncertainty
+- **Non-connectable Mode (ADV_NONCONN_IND)**: Connectionless BLE broadcasts with HAR data embedded in advertising packets
+- **Uncertainty-Driven Control**: Combined metric of classification uncertainty and temporal volatility
+- **Power Optimization**: Target ≥30-40% reduction in average current consumption (ESP32 estimated value)
+- **Real-world Validation**: On-device implementation with AXP192 power measurements (±5mA accuracy)
 
+## System Architecture
+
+### Hardware Configuration (Revised)
 ```
-[nRF52 MCU + IMU Sensor]
-         ↓
-    HAR Inference (2-class: Active/Idle)
-         ↓
-    Uncertainty Calculation
-         ↓
-    Adaptive BLE Advertising (100-2000ms)
-         ↓
-[Android Phone: BLE Scanner & Logger]
-```
+[M5StickC Plus2] × 3 units
+  ├─ ESP32-PICO-V3-02 MCU
+  ├─ MPU6886 6-axis IMU (内蔵)
+  ├─ AXP192 Power Management IC
+  └─ 135mAh Battery
 
-## 🚀 Key Features
-
-- **Adaptive BLE Advertising**: Dynamic intervals (100-2000ms) based on HAR uncertainty
-- **Composite Context Score**: Combined uncertainty and temporal volatility metrics
-- **Power Optimization**: ≥40% reduction in average current vs fixed 100ms intervals
-- **Real-world Validation**: On-device implementation with PPK2 power measurements
-- **Low Latency**: p95 ≤300ms for activity detection
-
-## 📁 Project Structure
-
-```
-MobileNLD-FL/                    # Repository root
-├── firmware/                    # nRF52 MCU firmware
-│   ├── src/                    # Source files
-│   │   ├── main.c             # Main application
-│   │   ├── har_model.c        # HAR inference
-│   │   ├── uncertainty.c      # Uncertainty calculation
-│   │   └── ble_adaptive.c     # Adaptive BLE control
-│   └── include/                # Headers
-├── android/                     # Android app
-│   └── BLELogger/              # BLE scanner & CSV logger
-├── scripts/                     # Python utilities
-│   ├── train_har_model.py     # Model training
-│   ├── parse_ppk2_csv.py      # Power analysis
-│   └── analyze_packet_logs.py # Latency analysis
-├── models/                      # TFLite models
-│   └── har_2class.tflite      # Quantized model (<20KB)
-├── data/                        # Experiment data
-│   ├── uci_har/                # UCI HAR dataset
-│   ├── power_measurements/     # PPK2 CSV files
-│   └── packet_logs/            # Android BLE logs
-├── results/                     # Analysis results
-└── docs/                        # Documentation
+[Smartphones]
+  ├─ iPhone 13, 15
+  └─ Galaxy S9
 ```
 
-## 🛠️ Setup Instructions
+### Software Components
+- **Firmware**: Arduino IDE / ESP-IDF
+- **HAR Model**: TensorFlow Lite Micro (2-class: Active/Idle)
+- **Mobile Apps**: nRF Connect (iOS/Android)
+- **Analysis**: Python (pandas, matplotlib)
 
-### Prerequisites
+## Quick Start
 
-- nRF52840 DK (or nRF52832 DK)
-- 6-axis IMU sensor (LSM6DS3/MPU-6050)
-- Nordic Power Profiler Kit II (PPK2)
-- Android phone (Android 10+, BLE 5.0)
-- Python 3.9+
-- TensorFlow 2.x
-
-### Quick Start
-
-1. **Clone Repository**
+### 1. Environment Setup
 ```bash
-git clone https://github.com/yourusername/MobileNLD-FL.git
-cd MobileNLD-FL
+# Python environment
+chmod +x scripts/setup/setup_python_env.sh
+./scripts/setup/setup_python_env.sh
+
+# Arduino IDE for M5StickC Plus2
+# Follow: docs/手順書_M5StickC_Plus2_環境構築.md
 ```
 
-2. **Setup Python Environment**
+### 2. Data Preparation
 ```bash
-pip install -r requirements.txt
-```
-
-3. **Download Dataset**
-```bash
+# Download UCI HAR dataset
 python scripts/download_uci_har.py
+
+# Convert to 2-class (Active/Idle)
+python scripts/prepare_binary_dataset.py
 ```
 
-4. **Train HAR Model**
-```bash
-python scripts/train_har_model.py     # Train 2-class model
-python scripts/quantize_model.py      # Quantize for TFLite Micro
-xxd -i model.tflite > model_data.h    # Convert to C header
+### 3. Upload Firmware
+1. Open `firmware/m5stick/ble_fixed_100ms/ble_fixed_100ms.ino`
+2. Select Board: M5StickC Plus2
+3. Upload to device
+
+### 4. Start Logging
+Use nRF Connect app on smartphone to:
+1. Scan for "M5HAR_01"
+2. Verify 100ms advertising interval
+3. Log manufacturer data (0x5900)
+
+## Experiment Protocol
+
+### Phase 1: Feasibility Test (Day 1)
+- [x] BLE advertising test (Fixed 100ms)
+- [x] IMU data collection (50Hz)
+- [x] Power measurement via AXP192
+- [ ] Baseline comparison (100ms vs 2000ms)
+
+### Phase 2: Adaptive Control (Day 2-3)
+- [ ] Simple HAR implementation (threshold-based)
+- [ ] 3-state BLE control (Quiet/Uncertain/Active)
+- [ ] Integration testing
+
+### Phase 3: Evaluation (Day 4-5)
+- [ ] 3-device simultaneous measurement
+- [ ] Fixed vs Adaptive comparison
+- [ ] Statistical analysis
+
+## Project Structure
+```
+MobileNLD-FL/
+├── firmware/m5stick/       # M5StickC Plus2 firmware
+├── scripts/                # Python scripts
+├── data/                   # Experiment data (APPEND-ONLY)
+├── docs/                   # Documentation & procedures
+│   ├── 手順書_*.md        # Setup guides
+│   └── governance.md      # Research rules
+├── analysis/              # Jupyter notebooks
+└── results/               # Analysis outputs
 ```
 
-5. **Build Firmware**
-```bash
-cd firmware
-cmake -B build
-cmake --build build
-nrfjprog --program build/app.hex --chiperase
-```
+## Key Metrics
+1. **Power Reduction**: ≥30% vs fixed 100ms (M5StickC/ESP32)
+2. **p95 Latency**: ≤300ms
+3. **F1 Score**: Degradation ≤1.5 points
+4. **Packet Loss**: <5%
 
-6. **Install Android App**
-```bash
-cd android/BLELogger
-./gradlew installDebug
-```
+## Current Status
+- **Hardware**: M5StickC Plus2 × 3 (Available)
+- **Phase**: Implementation (Phase 1)
+- **Target**: IEICE ComEX 2025
 
-## 📈 Performance Targets
+## Documentation
+- [環境構築手順](docs/手順書_M5StickC_Plus2_環境構築.md)
+- [実験ガバナンス](docs/governance.md)
+- [Android BLEロガー](docs/手順書_Android_BLEロガー.md)
 
-| Metric | Target | Priority |
-|--------|--------|----------|
-| Average Current Reduction | ≥40% vs fixed 100ms | PRIMARY |
-| p95 Latency | ≤300ms | HIGH |
-| F1 Score Degradation | ≤1.5 points | MEDIUM |
-| Packet Loss | <1% | LOW |
-| Model Size | <20KB | ✅ Achieved |
-
-## 🔬 Experiment Protocol
-
-### Conditions
-- **Baseline**: Fixed intervals (100ms, 200ms, 500ms)
-- **Proposed**: Adaptive (100-2000ms based on uncertainty)
-- **Duration**: 20 minutes per condition
-- **Subjects**: 3-5 participants
-- **Activities**: Walking, sitting, standing, stairs
-
-See [実験手順書.md](docs/実験手順書.md) for detailed procedures.
-
-## 📝 Timeline (6-Week Sprint)
-
-- **Week 1-2**: Firmware implementation & HAR model integration
-- **Week 3-4**: Android app development & system testing
-- **Week 5**: Power measurements & experiments (PPK2)
-- **Week 6**: Data analysis & paper writing
-- **Target**: IEICE ComEX submission 2025
-
-## 📚 Documentation
-
-- [要件定義書](docs/要件定義書.md) - Requirements specification
-- [実験手順書](docs/実験手順書.md) - Experiment procedures
-- [AndroidロガーCSVスキーマ定義](docs/AndroidロガーCSVスキーマ定義.md) - Data schema
-- [CLAUDE.md](CLAUDE.md) - AI assistant instructions
-
-## 🤝 Contributing
-
-This is an active research project. For collaboration inquiries, please contact the maintainer.
-
-## 📄 License
-
-This project is part of academic research. Please cite appropriately if using any part of this work.
-
-## 🏆 Acknowledgments
-
-- UCI Machine Learning Repository for the HAR dataset
-- Nordic Semiconductor for nRF SDK and PPK2
-- TensorFlow Lite Micro team for embedded ML tools
+## License
+Research use only. Copyright (c) 2024
 
 ---
-*Project Status: Active Development*  
-*Last Updated: December 17, 2024*  
-*Focus: Adaptive BLE advertising for power reduction*
+*Last Updated: 2024-12-17*
