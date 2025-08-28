@@ -92,7 +92,8 @@ void updateAdvertisingData() {
     
     // Set manufacturer data
     BLEAdvertisementData adv_data;
-    adv_data.setManufacturerData(std::string((char*)&mfg_data, sizeof(mfg_data)));
+    String manufacturerData((char*)&mfg_data, sizeof(mfg_data));
+    adv_data.setManufacturerData(manufacturerData);
     adv_data.setFlags(0x06); // BR/EDR not supported, General discoverable
     
     pAdvertising->setAdvertisementData(adv_data);

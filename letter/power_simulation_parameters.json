@@ -1,0 +1,77 @@
+{
+  "device": {
+    "name": "M5StickC Plus2",
+    "battery_capacity_mAh": 135,
+    "battery_voltage_V": 3.7
+  },
+  
+  "power_consumption": {
+    "base_current_mA": {
+      "mcu_idle": 10,
+      "display": 5,
+      "imu": 3,
+      "ble_idle": 2,
+      "total_base": 20
+    },
+    
+    "ble_advertising": {
+      "additional_current_mA": 20,
+      "duration_ms": 10,
+      "packet_size_bytes": 31
+    }
+  },
+  
+  "control_states": {
+    "QUIET": {
+      "interval_ms": 2000,
+      "avg_current_mA": 20.1
+    },
+    "UNCERTAIN": {
+      "interval_ms": 500,
+      "avg_current_mA": 20.4
+    },
+    "ACTIVE": {
+      "interval_ms": 100,
+      "avg_current_mA": 22.0
+    }
+  },
+  
+  "experimental_results": {
+    "fixed_100ms": {
+      "reception_rate_pct": 94.2,
+      "avg_interval_ms": 100.0,
+      "p95_interval_ms": 100.0,
+      "packet_loss_rate_pct": 5.8
+    },
+    "adaptive": {
+      "reception_rate_pct": 18.6,
+      "avg_interval_ms": 880.0,
+      "p95_interval_ms": 2000.0,
+      "packet_loss_rate_pct": 44.9,
+      "packet_reduction_rate_pct": 81.4,
+      "state_distribution": {
+        "QUIET_pct": 87.3,
+        "UNCERTAIN_pct": 4.4,
+        "ACTIVE_pct": 8.3
+      }
+    }
+  },
+  
+  "simulation_params": {
+    "duration_hours": 8,
+    "time_step_ms": 100,
+    "monte_carlo_iterations": 1000,
+    "activity_model": {
+      "sleep_rest_pct": 25,
+      "desk_work_pct": 50,
+      "walking_active_pct": 18.75,
+      "other_pct": 6.25
+    }
+  },
+  
+  "optimization_targets": {
+    "min_battery_life_hours": 6,
+    "max_p95_latency_ms": 300,
+    "min_packet_reduction_pct": 80
+  }
+}

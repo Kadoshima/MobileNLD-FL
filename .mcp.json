@@ -11,7 +11,7 @@
         "--context",
         "ide-assistant",
         "--project",
-        "/Users/kadoshima/Documents/MobileNLD-FL"
+        "C:\\Users\\tp240\\Documents\\レター202507\\MobileNLD-FL"
       ],
       "env": {}
     }
